@@ -1,5 +1,10 @@
-# Python Default Project
-
+# Title
+### Team Members
+### Mail Addresses
+### Existing Code Fragments
+### Utilized libraries
+### Contributions
+### Uploading for other team members
 ## Setup
 
 1. [Install](https://pipenv.pypa.io/en/latest/#install-pipenv-today) ```pipenv```. You might want to set ```export PIPENV_VENV_IN_PROJECT=1``` in your ```.bashrc/.zshrc``` for local virtual environments. Thereby you are making sure that all dependencies for your application are stored in the same directory under the `.venv` folder.
