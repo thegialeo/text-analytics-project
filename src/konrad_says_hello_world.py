@@ -1,2 +1,0 @@
-# konrad
-print("Hello World!")
