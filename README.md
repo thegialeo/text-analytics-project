@@ -32,6 +32,8 @@ https://media.discordapp.net/attachments/781604101439619112/789536295902904320/F
 
 Figure: Correlation between Automated Readability Index and complexity labels
 
+Interestingly, all of the simple formulas show a weaker correlation to the labels than the very simple metric which is the number of letters in the sentence.
+
 ## Setup
 
 1. [Install](https://pipenv.pypa.io/en/latest/#install-pipenv-today) ```pipenv```. You might want to set ```export PIPENV_VENV_IN_PROJECT=1``` in your ```.bashrc/.zshrc``` for local virtual environments. Thereby you are making sure that all dependencies for your application are stored in the same directory under the `.venv` folder.
