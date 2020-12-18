@@ -16,5 +16,10 @@ def download_TextComplexityDE19():
     if not exists(download_to_path):
         os.makedirs(download_to_path)
 
+    # download github repository to folder 
+    os.system("git clone {} {}".format(url, download_to_path))
 
-download_TextComplexityDE19()
+
+
+if __name__ == "__main__":
+    download_TextComplexityDE19()
