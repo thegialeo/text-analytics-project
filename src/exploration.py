@@ -1,5 +1,4 @@
 # Exploring TextComplexityDE
-# written by Konrad, 16-Dec-20 - 17-Dec-20
 
 import re
 from os import path
@@ -266,7 +265,7 @@ def coleman_liau_index(letter_count, word_count):
     """
 
     return 0.0588 * letter_count / (word_count * 100) - 0.296 / (word_count * 100) \
-    - 15.8
+        - 15.8
 
 
 def wiener_sachtextformel(
@@ -283,7 +282,7 @@ def wiener_sachtextformel(
     """
 
     return .1935 * polysyllables_count / word_count + .1672 * word_count + .1297 \
-    * long_words_count / word_count - .0327 * monosyllables_count / word_count - 0.875
+        * long_words_count / word_count - .0327 * monosyllables_count / word_count - 0.875
 
 
 def wiener_sachtextformel2(polysyllables_count, word_count, long_words_count):
@@ -299,7 +298,6 @@ def wiener_sachtextformel2(polysyllables_count, word_count, long_words_count):
 
     return .2007 * polysyllables_count / word_count + .1682 * word_count + .1373 \
         * long_words_count / word_count - 2.779
-
 
 
 if __name__ == "__main__":
@@ -444,7 +442,7 @@ if __name__ == "__main__":
 
     feature_list = [
         "word_count",
-        "syllables_count",
+        "syllable_count",
         "letter_count",
         "fre",
         "fre_deutsch",
