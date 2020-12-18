@@ -46,5 +46,6 @@
         "editor.codeActionsOnSave": {
             "source.organizeImports": true
         }
-    }
+    },
+    "html.format.wrapLineLength": 80
 }

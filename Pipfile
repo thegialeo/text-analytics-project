@@ -7,6 +7,7 @@ verify_ssl = true
 flake8 = "*"
 autopep8 = "*"
 coverage = "*"
+pytest = "*"
 
 [packages]
 pre-commit = "*"
@@ -17,4 +18,4 @@ report = "coverage html"
 main = "python ./src/main.py"
 
 [requires]
-python_version = "3.7"
+python_version = "3.8.3"
