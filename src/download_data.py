@@ -16,10 +16,17 @@ def download_TextComplexityDE19():
     if not exists(download_to_path):
         os.makedirs(download_to_path)
 
-    # download github repository to folder 
-    os.system("git clone {} {}".format(url, download_to_path))
+    # check if data folder empty, if yes: download github repository to folder 
+    if len(os.listdir(download_to_path)) == 0:
+        os.system("git clone {} {}".format(url, download_to_path))
+    else:
+        print("Folder data is not empty. Please delete the folder data and remove from trash. Rerun the code.")
+        exit()
+
+    # clean downloaded repository 
 
 
 
 if __name__ == "__main__":
     download_TextComplexityDE19()
+
