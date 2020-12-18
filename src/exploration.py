@@ -300,9 +300,8 @@ def wiener_sachtextformel2(polysyllables_count, word_count, long_words_count):
 #   ==================================================================================
 if __name__ == "__main__":
     # load TextComplexityDE dataset
-    df_all = pd.read_excel(
-        path.join("src", "data", "TextComplexityDE19.xlsx"),
-        engine='openpyxl', sheet_name=2, header=1)
+    df_all = pd.read_excel("TextComplexityDE19.xlsx",
+                           engine='openpyxl', sheet_name=2, header=1)
     df_all.columns = df_all.columns.str.lower()
 
     df_all['normalized_sentence'] = normalize_sentence(df_all['sentence'])
@@ -425,7 +424,7 @@ if __name__ == "__main__":
             df_all[feature_list[i]], df_all['mos_r'])
         print('correlation of', feature_list[i], 'with complexity ratings has r:', r)
 
-    x_col = 'wstf2'
+    x_col = 'ari'
     y_col = 'mos_r'
 
     x = df_all[x_col]
