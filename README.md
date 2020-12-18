@@ -4,6 +4,10 @@
 ### Existing Code Fragments
 ### Utilized libraries
 
+## Run code (main entry point will be set later)
+Download dataset:
+> python download_data.py
+
 ## Project State
 
 ## Data Analysis
