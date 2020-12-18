@@ -14,13 +14,13 @@ Download dataset:
 
 Our primary data source is the TextComplexityDE 19 dataset (https://github.com/babaknaderi/TextComplexityDE), which contains 1000 German sentences, labelled by foreign language learners of levels A and B on a 7 point Likert scale, where 1 indicates a low complexity, high readability sentence and 7 indicates the opposite. 900 of the sentences were sourced from 23 German Wikipedia articles, the other 100 were sourced from Leichte Sprache. Each sentence in the dataset was labelled by at least 5 persons, their mean rating is provided in the dataset. Aside from complexity/readability, scores for understandability and lexical difficulty of the sentence were also collected.
 
-https://media.discordapp.net/attachments/781604101439619112/789529682545737769/Figure_1.png
+![image](figures/Figure_1.png)
 
 Figure: Pie chart showing the distribution of (rounded) ratings.
 
 The ratings are not evenly distributed, as no sentence received, on average, a 7, and few received a 6. Of the sentences receiving a 1 complexity rating, the vast majority is from the Leichte Sprache data source.
 
-https://media.discordapp.net/attachments/781604101439619112/789529798355189760/Figure_2.png
+![image](figures/Figure_2.png)
 
 Figure: Stacked bar chart displaying the rating distribution, coloured by source, with median value
 
@@ -28,7 +28,7 @@ We wrote functions for text normalization, to facilitate gathering text statisti
 
 Additionally, we tried a number of different simple metrics which take into account number of words, letters, syllables, polysyllables, monosyllables etc and tested their correlation to the complexity ratings
 
-https://media.discordapp.net/attachments/781604101439619112/789536295902904320/Figure_3.png
+![image](figures/Figure_3.png)
 
 Figure: Correlation between Automated Readability Index and complexity labels
 
