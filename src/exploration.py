@@ -10,7 +10,8 @@ import scipy.stats
 
 
 def remove_numbers(string):
-    """removes numbers from a string (simple regex replacing \d with nothing) and returns the string
+    """removes numbers from a string (simple regex replacing \d with nothing) and 
+    returns the string
 
     Keyword arguments:
     string -- the string to remove numbers from
@@ -19,11 +20,13 @@ def remove_numbers(string):
 
 
 def remove_punctuation(string, hyphens_are_separators=True):
-    """removes punctuation from a string (simple regex replacing everything but \w and \s with nothing) and returns the string
+    """removes punctuation from a string (simple regex replacing everything but \w and
+    \s with nothing) and returns the string
 
     Keyword arguments:
     string -- the string to remove punctuation from
-    hyphens_are_separators -- (optional) replace hyphens with a space first (creates a space in hyphenated words instead of concatenating them) (default True)
+    hyphens_are_separators -- (optional) replace hyphens with a space first (creates a
+    space in hyphenated words instead of concatenating them) (default True)
     """
     if hyphens_are_separators:
         string = re.sub(r'\-', ' ', string)
@@ -31,7 +34,8 @@ def remove_punctuation(string, hyphens_are_separators=True):
 
 
 def remove_whitespace(string):
-    """if the string contains whitespace sequences, all whitespace is replaced by a single space.
+    """if the string contains whitespace sequences, all whitespace is replaced by a 
+    single space.
 
     Keyword arguments:
     string -- the string to remove unnecessary whitespace from
@@ -40,13 +44,15 @@ def remove_whitespace(string):
 
 
 def count_words_and_letters(sentence):
-    """Counts the basic statistics number of words and number of letters. Takes a dataframe column of sentences as the input and returns a new dataframe with two
+    """Counts the basic statistics number of words and number of letters. Takes a 
+    dataframe column of sentences as the input and returns a new dataframe with two
     columns for word_count and letter_count.
-    letter_count only counts so-called word symbols, so letters and numbers, not punctuation. word_count splits the sentence at whitespaces and gives the number
+    letter_count only counts so-called word symbols, so letters and numbers, not 
+    punctuation. word_count splits the sentence at whitespaces and gives the number
     of components after the split.
 
     Keyword arguments:
-    sentence -- a dataframe column containing sentences, maybe also similar structures idk
+    sentence -- a dataframe column containing sentences, maybe also similar structures
     """
     word_count = sentence.str.split().str.len()
     letter_count = sentence.str.count(r'\w')
@@ -54,7 +60,10 @@ def count_words_and_letters(sentence):
 
 
 def count_syllables(words):
-    """Given a list of words, counts the syllables in each and returns the sum. Counting syllables doesn't necessarily give very good results
+    """Given a list of words, counts the syllables in each and returns the sum. 
+    Counting syllables doesn't necessarily give very good results yet
+
+    TODO improve syllable counting method
 
     Keyword arguments:
     words -- list of words (use split() on sentences, maybe)
@@ -82,11 +91,13 @@ def count_syllables(words):
 
 
 def count_polysyllables(sentence, threshold=2):
-    """Given a sentence, computes and returns the number of polysyllabic words containing at least a certain, optionally specified amount of syllables
+    """Given a sentence, computes and returns the number of polysyllabic words 
+    containing at least a certain, optionally specified amount of syllables
 
     Keyword arguments:
     sentence -- sentence or series of sentences
-    threshold -- (optional) this function will count words with at least this many syllables (default 2)
+    threshold -- (optional) this function will count words with at least this many 
+    syllables (default 2)
     """
     cc_pattern = re.compile("[^aeiouyäöü]{2,}")
     polysyllables = 0
@@ -113,7 +124,8 @@ def count_polysyllables(sentence, threshold=2):
 
 
 def count_monosyllables(sentence):
-    """Given a sentence, computes and returns the number of monosyllabic words (words which are just 1 syllable long) contained within
+    """Given a sentence, computes and returns the number of monosyllabic words 
+    (words which are just 1 syllable long) contained within.
 
     Keyword arguments:
     sentence -- sentence or series of sentences
@@ -143,7 +155,8 @@ def count_monosyllables(sentence):
 
 
 def count_long_words(sentence, length):
-    """Given a sentence, computes and returns the number of words equal to or longer than the provided threshold length
+    """Given a sentence, computes and returns the number of words equal to or longer
+    than the provided threshold length
 
     Keyword arguments:
     sentence -- sentence or series of sentences
@@ -158,12 +171,18 @@ def count_long_words(sentence, length):
 
 
 def normalize_sentence(sentence, keep_numbers=False, hyphens_are_separators=True):
-    """Normalizes sentences, meaning it decapitalizes letters, removes whitespace sequences, removes punctuation and removes numbers. Then returns the normalized sentence.
+    """Normalizes sentences, meaning it decapitalizes letters, removes whitespace 
+    sequences, removes punctuation and removes numbers. Then returns the normalized 
+    sentence.
 
     Keyword arguments:
-    sentence -- a series of sentences, for example as in a single column from a pandas dataframe, to be normalized
-    keep_numbers -- (optional) set true to keep numbers in the sentence instead of removing them (default False)
-    hyphens_are_separators -- (optional) if true, a hyphenated word is counted as 2 words (e.g. e-sports -> e sports), otherwise as one (e-sports -> esports) (default True)
+    sentence -- a series of sentences, for example as in a single column from a 
+                              pandas dataframe, to be normalized
+    keep_numbers -- (optional) set true to keep numbers in the sentence instead of 
+                              removing them (default False)
+    hyphens_are_separators -- (optional) if true, a hyphenated word is counted as 2 
+                              words (e.g. e-sports -> e sports), otherwise as one 
+                              (e-sports -> esports) (default True)
     """
     normalized_sentence = sentence.str.lower()
     if not keep_numbers:
@@ -175,7 +194,8 @@ def normalize_sentence(sentence, keep_numbers=False, hyphens_are_separators=True
 
 
 def flesch_reading_ease(word_count, syllable_count, deutsch=True):
-    """Given a number of words and number of syllables in a sentence, this will compute the flesch reading ease score for the sentence
+    """Given a number of words and number of syllables in a sentence, this will 
+    compute the flesch reading ease score for the sentence
 
     Keyword arguments:
     word_count -- number of words in the sentence
@@ -189,7 +209,8 @@ def flesch_reading_ease(word_count, syllable_count, deutsch=True):
 
 
 def flesch_kincaid_grade_level(word_count, syllable_count):
-    """Given a number of words and number of syllables in a sentence, computes the flesch kincaid grade level.
+    """Given a number of words and number of syllables in a sentence, computes the 
+    flesch kincaid grade level.
 
     Keyword arguments:
     word_count -- number of words in the sentence
@@ -199,7 +220,8 @@ def flesch_kincaid_grade_level(word_count, syllable_count):
 
 
 def automated_readability_index(letter_count, word_count):
-    """Given a number of letters and number of words in a sentence, computes the automated readability index
+    """Given a number of letters and number of words in a sentence, computes the 
+    automated readability index
 
     Keyword arguments:
     letter_count -- number of letters in the sentence
@@ -209,8 +231,10 @@ def automated_readability_index(letter_count, word_count):
 
 
 def gunning_fox_index(word_count, polysyllables_count):
-    """Given a number of words and the number of words with at least 3 syllables in a sentence, compute the gunning-fox-index.
-    Note that this was originally intended for the english language, and for a section of text containing at least 100 words.
+    """Given a number of words and the number of words with at least 3 syllables in a 
+    sentence, compute the gunning-fox-index.
+    Note that this was originally intended for the english language, and for a section
+    of text containing at least 100 words.
 
     Keyword arguments:
     word_count -- number of words in the sentence
@@ -220,8 +244,10 @@ def gunning_fox_index(word_count, polysyllables_count):
 
 
 def smog(polysyllables_count):
-    """Given the number of words with at least 3 syllables in a text, compute the SMOG grade.
-    Note that this was originally intended for the english language, and for a section of text containing at least 30 sentences.
+    """Given the number of words with at least 3 syllables in a text, compute the SMOG
+    grade.
+    Note that this was originally intended for the english language, and for a section
+    of text containing at least 30 sentences.
 
     Keyword arguments:
     polysyllables_count -- number of words with at least 3 syllables in the sentence`
@@ -230,18 +256,21 @@ def smog(polysyllables_count):
 
 
 def coleman_liau_index(letter_count, word_count):
-    """Given a number of letters and number of words in a sentence, computes the coleman-liau index
+    """Given a number of letters and number of words in a sentence, computes the 
+    coleman-liau index
 
     Keyword arguments:
     letter_count -- number of letters in the sentence
     word_count -- number of words in the sentence
     """
-    return 0.0588 * letter_count / (word_count * 100) - 0.296 / (word_count * 100) - 15.8
+    return 0.0588 * letter_count / (word_count * 100) - 0.296 / (word_count * 100) \
+    - 15.8
 
 
 def wiener_sachtextformel(
         polysyllables_count, word_count, long_words_count, monosyllables_count):
-    """Computes the first wiener sachtextformel, using the number of words with 3 or more syllables, the number of words, the number of words with 6 or more 
+    """Computes the first wiener sachtextformel, using the number of words with 3 or 
+    more syllables, the number of words, the number of words with 6 or more 
     letters and the number of monosyllabic words
 
     Keyword arguments:
@@ -250,11 +279,13 @@ def wiener_sachtextformel(
     long_words_count -- number of words with 6 or more letters
     monosyllables_count -- number of words with only a single syllable
     """
-    return .1935 * polysyllables_count / word_count + .1672 * word_count + .1297 * long_words_count / word_count - .0327 * monosyllables_count / word_count - 0.875
+    return .1935 * polysyllables_count / word_count + .1672 * word_count + .1297 \
+    * long_words_count / word_count - .0327 * monosyllables_count / word_count - 0.875
 
 
 def wiener_sachtextformel2(polysyllables_count, word_count, long_words_count):
-    """Computes the second wiener sachtextformel, using the number of words with 3 or more syllables, the number of words and the number of words with 6 or more 
+    """Computes the second wiener sachtextformel, using the number of words with 3 or 
+    more syllables, the number of words and the number of words with 6 or more 
     letters.
 
     Keyword arguments:
@@ -262,10 +293,11 @@ def wiener_sachtextformel2(polysyllables_count, word_count, long_words_count):
     word_count -- number of words
     long_words_count -- number of words with 6 or more letters
     """
-    return .2007 * polysyllables_count / word_count + .1682 * word_count + .1373 * long_words_count / word_count - 2.779
+    return .2007 * polysyllables_count / word_count + .1682 * word_count + .1373 \
+        * long_words_count / word_count - 2.779
 
 
-#   ======================================================================================================================
+#   ==================================================================================
 if __name__ == "__main__":
     # load TextComplexityDE dataset
     df_all = pd.read_excel(
@@ -275,10 +307,6 @@ if __name__ == "__main__":
 
     df_all['normalized_sentence'] = normalize_sentence(df_all['sentence'])
 
-    #df_all['word_count'] = df_all['normalized_sentence'].str.split().str.len()
-    #df_all['letter_count'] = df_all['normalized_sentence'].str.count(r'\w')
-
-    #df_all['word_count'], df_all['letter_count'] = count_words_and_letters(df_all['normalized_sentence'])
     df_all[['word_count', 'letter_count']] = count_words_and_letters(
         df_all['normalized_sentence'])
 
@@ -302,7 +330,6 @@ if __name__ == "__main__":
 
     df_all['fkgl'] = flesch_kincaid_grade_level(
         df_all['word_count'], df_all['syllable_count'])
-    # df_all['fkgl'] = .39 * df_all['word_count'] + 11.8 * df_all['syllable_count'] / df_all['word_count'] - 15.59 #flesch kincaid grade level
     df_all['ari'] = automated_readability_index(
         df_all['letter_count'], df_all['word_count'])
     df_all['gfi'] = gunning_fox_index(
@@ -322,7 +349,8 @@ if __name__ == "__main__":
 
     df_all['mean_word_length'] = (df_all['letter_count'] * 1.0) / df_all['word_count']
 
-    string = 'beim aufblasen entsteht eine kugelform die wasserversorgung erfolgte über brunnen etwa jahre ist es her seit die sumerer das'
+    string = 'beim aufblasen entsteht eine kugelform die wasserversorgung erfolgte ' \
+        + 'über brunnen etwa jahre ist es her seit die sumerer das'
     for word in string.split():
         print(word, count_syllables([word]))
 
@@ -388,8 +416,15 @@ if __name__ == "__main__":
 
     plt.tight_layout()
 
-    feature_list = ['word_count', 'syllables_count', 'letter_count', 'fre',
-                    'fre_deutsch', 'fkgl', 'ari', 'gfi', 'smog', 'cli', 'wstf', 'wstf2']
+    feature_list = ['word_count', 'syllable_count', 'letter_count', 'fre',
+                    'fre_deutsch', 'fkgl', 'ari', 'gfi', 'smog', 'cli', 'wstf',
+                    'wstf2']
+
+    for i in range(len(feature_list)):
+        slope, intercept, r, p, stderr = scipy.stats.linregress(
+            df_all[feature_list[i]], df_all['mos_r'])
+        print('correlation of', feature_list[i], 'with complexity ratings has r:', r)
+
     x_col = 'wstf2'
     y_col = 'mos_r'
 
@@ -406,3 +441,5 @@ if __name__ == "__main__":
     ax.set_ylabel(y_col)
     ax.legend(facecolor='white')
     plt.show()
+
+    print()
