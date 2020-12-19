@@ -1,5 +1,4 @@
 # Exploring TextComplexityDE
-# written by Konrad, 16-Dec-20 - 17-Dec-20
 
 import re
 from os import path
@@ -266,7 +265,7 @@ def coleman_liau_index(letter_count, word_count):
     """
 
     return 0.0588 * letter_count / (word_count * 100) - 0.296 / (word_count * 100) \
-    - 15.8
+        - 15.8
 
 
 def wiener_sachtextformel(
@@ -283,7 +282,7 @@ def wiener_sachtextformel(
     """
 
     return .1935 * polysyllables_count / word_count + .1672 * word_count + .1297 \
-    * long_words_count / word_count - .0327 * monosyllables_count / word_count - 0.875
+        * long_words_count / word_count - .0327 * monosyllables_count / word_count - 0.875
 
 
 def wiener_sachtextformel2(polysyllables_count, word_count, long_words_count):
@@ -301,15 +300,12 @@ def wiener_sachtextformel2(polysyllables_count, word_count, long_words_count):
         * long_words_count / word_count - 2.779
 
 
-
 if __name__ == "__main__":
     # load TextComplexityDE dataset
-    df_all = pd.read_excel(
-        path.join("src", "data", "TextComplexityDE19.xlsx"),
-        engine="openpyxl",
-        sheet_name=2,
-        header=1,
-    )
+    df_all = pd.read_excel("TextComplexityDE19.xlsx",
+                           engine='openpyxl',
+                           sheet_name=2,
+                           header=1)
     df_all.columns = df_all.columns.str.lower()
 
     df_all['normalized_sentence'] = normalize_sentence(df_all['sentence'])
@@ -446,7 +442,7 @@ if __name__ == "__main__":
 
     feature_list = [
         "word_count",
-        "syllables_count",
+        "syllable_count",
         "letter_count",
         "fre",
         "fre_deutsch",
@@ -458,7 +454,13 @@ if __name__ == "__main__":
         "wstf",
         "wstf2",
     ]
-    x_col = "wstf2"
+
+    for i in range(len(feature_list)):
+        slope, intercept, r, p, stderr = scipy.stats.linregress(
+            df_all[feature_list[i]], df_all['mos_r'])
+        print('correlation of', feature_list[i], 'with complexity ratings has r:', r)
+
+    x_col = "ari"
     y_col = "mos_r"
 
     x = df_all[x_col]

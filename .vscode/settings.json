@@ -40,7 +40,7 @@
         "-p",
         "*_test.py"
     ],
-    "python.pythonPath": "${workspaceFolder}/.venv/bin/python3.7",
+    "python.pythonPath": "D:\\Anaconda3\\python.exe",
     "python.envFile": "${workspaceFolder}/.env",
     "[python]": {
         "editor.codeActionsOnSave": {
