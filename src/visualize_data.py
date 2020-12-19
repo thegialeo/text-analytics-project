@@ -40,6 +40,11 @@ if __name__ == "__main__":
     plt.scatter(reduced_cluster_centers[:, 0], reduced_cluster_centers[:, 1], marker='x', s=150, c='r')
     plt.show()
 
+    # Evaluate homogeneity score
+    print(homogeneity_score(df_complexity.MOS_Complexity.values.round(0), cls_kmeans.predict(features)))
+
+    # Evaluate silhouette score
+    print(silhouette_score(features, labels=cls_kmeans.predict(features)))
    
    
 
