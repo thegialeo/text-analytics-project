@@ -4,6 +4,7 @@ from nltk.corpus import stopwords
 from sklearn.cluster import MiniBatchKMeans
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import PCA
+from sklearn.metrics import homogeneity_score, silhouette_score
 import matplotlib.pyplot as plt
 
 
@@ -34,7 +35,15 @@ if __name__ == "__main__":
     plt.scatter(reduced_cluster_centers[:, 0], reduced_cluster_centers[:, 1], marker='x', s=150, c='r')
     plt.show()
 
-    
+    # Plot rounded targets
+    plt.scatter(reduced_features[:, 0], reduced_features[:, 1], c=df_complexity.MOS_Complexity.values.round(0))
+    plt.scatter(reduced_cluster_centers[:, 0], reduced_cluster_centers[:, 1], marker='x', s=150, c='r')
+    plt.show()
+
+   
+   
+
+
     
 
     
