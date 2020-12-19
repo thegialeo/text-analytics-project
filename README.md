@@ -40,7 +40,7 @@ The plot indicates that the features extracted with sklearn TfidfVectorizer are 
 
 TODO: Explore further Vectorizer options + improve preprocessing
 
-The homogeneity score shows a value close to zero, which means the cluster found with KMeans are completely different from the rounded MOS Complexity label(k=6, the plot above shows that there are no sentences for the highest difficulty level 7 -> effectively there are only 6 labels). Maybe KMeans clustered by topic other something else (to be further explored). The silhouette score shows that we have overlapping clusters, but at least they somewhat separable. This further make us sceptical, if the Tfidf feature space is suitable (it doesn't seem to promising).   
+The homogeneity score shows a value close to zero, which means the cluster found with KMeans are completely different from the rounded MOS Complexity label(k=6, the plot above shows that there are no sentences for the highest difficulty level 7 -> effectively there are only 6 labels). Maybe KMeans clustered by topic other something else (to be further explored). The silhouette score shows that we have strongly overlapping clusters. This further make us sceptical, if the Tfidf feature space is suitable (it doesn't seem too promising).   
 
 homogeneity score: 0.0084
 silhouette score: -0.0026
