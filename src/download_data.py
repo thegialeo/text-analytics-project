@@ -27,9 +27,7 @@ def download_TextComplexityDE19():
         os.remove(join(download_to_path, "LICENSE"))
         os.remove(join(download_to_path, "README.md"))
     else:
-        print(
-            "Folder data is not empty. Please delete the folder data and remove from trash. Rerun the code."
-        )
+        print("Folder data is not empty. Please delete the folder data and remove from trash. Rerun the code.")
         exit()
 
 
