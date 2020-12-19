@@ -4,11 +4,12 @@ import shutil
 import requests
 
 
+
 def download_TextComplexityDE19():
     """Download the TextComplexityDE dataset from Github Repository.
-    Contact Badak Naderi (babak.naderi[at]tu-berlin.de) for further support concerning the dataset itself.
+       Contact Badak Naderi (babak.naderi[at]tu-berlin.de) for further support concerning the dataset itself. 
 
-    Written by Leo Nguyen. Contact Xenovortex, if problems arises.
+       Written by Leo Nguyen. Contact Xenovortex, if problems arises.
     """
     # url of dataset github repository
     url = "https://github.com/babaknaderi/TextComplexityDE.git"
@@ -18,7 +19,7 @@ def download_TextComplexityDE19():
     if not exists(download_to_path):
         os.makedirs(download_to_path)
 
-    # check if data folder empty, if yes: download github repository to folder
+    # check if data folder empty, if yes: download github repository to folder 
     if len(os.listdir(download_to_path)) == 0:
         os.system("git clone {} {}".format(url, download_to_path))
         # clean up downloaded repository
@@ -27,11 +28,10 @@ def download_TextComplexityDE19():
         os.remove(join(download_to_path, "LICENSE"))
         os.remove(join(download_to_path, "README.md"))
     else:
-        print(
-            "Folder data is not empty. Please delete the folder data and remove from trash. Rerun the code."
-        )
+        print("Folder data is not empty. Please delete the folder data and remove from trash. Rerun the code.")
         exit()
 
 
 if __name__ == "__main__":
     download_TextComplexityDE19()
+
