@@ -34,6 +34,21 @@ Figure: Correlation between Automated Readability Index and complexity labels
 
 Interestingly, all of the simple formulas show a weaker correlation to the labels than the very simple metric which is the number of letters in the sentence.
 
+## Clustering Results (to be updated, in progress)
+
+The plot indicates that the features extracted with sklearn TfidfVectorizer are not indicative of the sentence complexity. There is a high change that brute-force Regression might not work well. Note that the preprossing was minimal at this point. However, we should also consider alternative feature spaces/vectorizations for the sentences. 
+
+TODO: Explore further Vectorizer options + improve preprocessing
+
+The homogeneity score shows a value close to zero, which means the cluster found with KMeans are completely different from the rounded MOS Complexity label(k=6, the plot above shows that there are no sentences for the highest difficulty level 7 -> effectively there are only 6 labels). Maybe KMeans clustered by topic other something else (to be further explored). The silhouette score shows that we have overlapping clusters, but at least they somewhat separable. This further make us sceptical, if the Tfidf feature space is suitable (it doesn't seem to promising).   
+
+homogeneity score: 0.0084
+silhouette score: -0.0026
+
+![image](figures/KMeans_clustering_MOS_Complexity.png)
+
+Figure: Comparison Clustering Results against MOS Complexity (rounded to nearest integer)
+
 ## Setup
 
 1. [Install](https://pipenv.pypa.io/en/latest/#install-pipenv-today) ```pipenv```. You might want to set ```export PIPENV_VENV_IN_PROJECT=1``` in your ```.bashrc/.zshrc``` for local virtual environments. Thereby you are making sure that all dependencies for your application are stored in the same directory under the `.venv` folder.
