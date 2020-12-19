@@ -24,7 +24,10 @@ if __name__ == "__main__":
     cls_kmeans.fit(features)
     cls_kmeans.predict(features)
 
-    
+    # Dimension reduction of feature space with PCA
+    pca = PCA(n_components=2, random_state=0)
+    reduced_features = pca.fit_transform(features.toarray())
+    reduced_cluster_centers = pca.transform(cls_kmeans.cluster_centers_)
     
     
     
