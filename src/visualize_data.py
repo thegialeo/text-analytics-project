@@ -30,7 +30,7 @@ if __name__ == "__main__":
     reduced_features = pca.fit_transform(features.toarray())
     reduced_cluster_centers = pca.transform(cls_kmeans.cluster_centers_)
     
-    # Plot cluster result against targets and topic
+    # Plot cluster result against targets 
     fig, ax = plt.subplots(1, 2, sharex=True, sharey=True, figsize=(15,10))
     ax[0].scatter(reduced_features[:, 0], reduced_features[:, 1], c=cls_kmeans.predict(features), alpha=0.5)
     ax[0].scatter(reduced_cluster_centers[:, 0], reduced_cluster_centers[:, 1], marker='x', s=100, c='r')
