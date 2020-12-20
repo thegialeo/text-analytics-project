@@ -25,6 +25,8 @@ repos:
           \.tox|
           \.venv|
           \.htmlcov|
+          \.png|
+          \.txt|
           _build|
           buck-out|
           build|
