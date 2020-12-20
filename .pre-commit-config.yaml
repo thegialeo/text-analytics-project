@@ -26,6 +26,8 @@ repos:
           \.tox|
           \.venv|
           \.htmlcov|
+          figures|
+          requirements.txt|
           _build|
           buck-out|
           build|
