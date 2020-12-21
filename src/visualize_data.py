@@ -1,7 +1,6 @@
 from os.path import abspath, dirname, join
-
-import matplotlib.pyplot as plt
 import pandas as pd
+import matplotlib.pyplot as plt
 from nltk.corpus import stopwords
 from sklearn.metrics import homogeneity_score, silhouette_score
 from utils import clustering, vectorizer

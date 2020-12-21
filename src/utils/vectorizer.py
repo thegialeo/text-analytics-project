@@ -1,7 +1,8 @@
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import (CountVectorizer, HashingVectorizer,
+                                             TfidfVectorizer)
 
 
-def vectorizer_wrapper(data, vectorizer='tfidf', stop_words=None):
+def vectorizer_wrapper(data, vectorizer='tfidf', stopwords=None):
     """Takes in a numpy array of sentences and perform the selected vectorizer on the data. 
        Returns a numpy array of sentence features represented by number vectors.   
 
@@ -18,9 +19,11 @@ def vectorizer_wrapper(data, vectorizer='tfidf', stop_words=None):
 
     # apply selected vectorizer
     if vectorizer == 'tfidf':
-        tfidf = TfidfVectorizer(encoding='ISO-8859-1', stop_words=stop_words)
-        tfidf.fit(data)
-        features = tfidf.transform(data)
+        tfidf = TfidfVectorizer(encoding='ISO-8859-1', stop_words=stopwords)
+        features = tfidf.fit_transform(data)
+    elif vectorizer == 'count':
+        count = CountVectorizer(encoding='ISO-8859-1', stop_words=stopwords)
+        features = count.fit_transform(data)
     else:
         print("Vectorizer {} is not implemented yet. Please select one of the following options: 'tfidf'".format(vectorizer))
         exit()
