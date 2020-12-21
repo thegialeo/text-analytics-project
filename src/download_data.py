@@ -1,8 +1,7 @@
 import os
-from os.path import exists, dirname, abspath, join
 import shutil
-import requests
-
+from distutils.dir_util import copy_tree
+from os.path import abspath, dirname, exists, join
 
 
 def download_TextComplexityDE19():
@@ -19,19 +18,25 @@ def download_TextComplexityDE19():
     if not exists(download_to_path):
         os.makedirs(download_to_path)
 
-    # check if data folder empty, if yes: download github repository to folder 
-    if len(os.listdir(download_to_path)) == 0:
-        os.system("git clone {} {}".format(url, download_to_path))
+    # check if data folder already has subfolder TextComplexityDE, if no: download github repository to folder
+    if "TextComplexityDE19" not in os.listdir(download_to_path):
+        # create temp folder to download github repository
+        if not exists(join(download_to_path, "temp")):
+            os.makedirs(join(download_to_path, "temp"))
+        os.system("git clone {} {}".format(url, join(download_to_path, "temp")))
         # clean up downloaded repository
-        shutil.rmtree(join(download_to_path, ".git"))
-        os.remove(join(download_to_path, ".gitignore"))
-        os.remove(join(download_to_path, "LICENSE"))
-        os.remove(join(download_to_path, "README.md"))
+        shutil.rmtree(join(download_to_path, "temp", ".git"))
+        os.remove(join(download_to_path, "temp", ".gitignore"))
+        os.remove(join(download_to_path, "temp", "LICENSE"))
+        os.remove(join(download_to_path, "temp", "README.md"))
+        # copy content from temp folder to data folder
+        copy_tree(join(download_to_path, "temp"), download_to_path)
+        # delete temp folder
+        shutil.rmtree(join(download_to_path, "temp"))
     else:
-        print("Folder data is not empty. Please delete the folder data and remove from trash. Rerun the code.")
+        print("Folder data already contains TextComplexityDE19. Please delete the folder TextComplexityDE and remove from trash. Rerun the code.")
         exit()
 
 
 if __name__ == "__main__":
     download_TextComplexityDE19()
-
