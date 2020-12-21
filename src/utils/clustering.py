@@ -11,6 +11,20 @@ def clustering_wrapper(features, cluster_method='kmeans', dim_reduc='PCA', save_
         features ([array-like, sparse matrix]): matrix with dimension (number samples, number features)
         cluster_method (str, optional): Select clustering method. Implemented so far are: 'kmeans'. Defaults to 'kmeans'.
         dim_reduc (str, optional): Select dimension reduction method. Implemented so far are: 'PCA'. Defaults to 'PCA'.
-        save_name ([type], optional): name to save plots and result text file under. Defaults to None (plot and result will not be saved!).
+        save_name (str, optional): name to save plots and result text file under. Defaults to None (plot and result will not be saved!).
     """
-    pass 
+    
+    # perform selected clustering method
+    if cluster_method == 'kmeans':
+        clst = MiniBatchKMeans(n_clusters=6, random_state=0)
+        clst.fit(features)
+        clst.predict(features)
+    else:
+        print("Clustering method {} is not implemented yet. Please select one of the following options: 'kmeans'".format(cluster_method))
+        exit()
+
+    # perform selected dimension reduction
+    if dim_reduc == 'PCA':
+        pass
+    else:
+        
