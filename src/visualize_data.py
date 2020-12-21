@@ -49,16 +49,4 @@ if __name__ == "__main__":
     print(homogeneity_score(df_complexity.MOS_Complexity.values.round(0), cls_kmeans.predict(features)))
 
     # Evaluate silhouette score
-    print(silhouette_score(features, labels=cls_kmeans.predict(features)))
-   
-   
-
-
-    
-
-    
-    
-    
-
-    
-    
+    print(silhouette_score(features, labels=cls_kmeans.predict(features)))   

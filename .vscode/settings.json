@@ -40,7 +40,7 @@
         "-p",
         "*_test.py"
     ],
-    "python.pythonPath": "D:\\Anaconda3\\python.exe",
+    "python.pythonPath": "/home/leo/.local/share/virtualenvs/text-analytics-project-3X3X4yf5/bin/python",
     "python.envFile": "${workspaceFolder}/.env",
     "[python]": {
         "editor.codeActionsOnSave": {
