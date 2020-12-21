@@ -16,15 +16,18 @@ def clustering_wrapper(features, cluster_method='kmeans', dim_reduc='PCA', save_
     
     # perform selected clustering method
     if cluster_method == 'kmeans':
-        clst = MiniBatchKMeans(n_clusters=6, random_state=0)
-        clst.fit(features)
-        clst.predict(features)
+        sklearn_cls = MiniBatchKMeans(n_clusters=6, random_state=0)
+        sklearn_cls.fit(features)
+        sklearn_cls.predict(features)
     else:
         print("Clustering method {} is not implemented yet. Please select one of the following options: 'kmeans'".format(cluster_method))
         exit()
 
     # perform selected dimension reduction
     if dim_reduc == 'PCA':
-        pass
+        pca = PCA(n_components=2, random_state=0)
+        reduced_features = pca.fit_transform(features.toarray())
+        reduced_cluster_centers = pca.transform(sklearn_cls.cluster_centers_)
     else:
-        
+        print("Dimension Reduction method {} is not implemented yet. Please select one the folling options: 'PCA'".format(dim_reduc))
+        exit()
