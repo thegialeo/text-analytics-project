@@ -6,6 +6,8 @@ def clustering_wrapper(features, cluster_method='kmeans', dim_reduc='PCA'):
     """Performs clustering, dimension reduction to 2d space and plots the result (see folder figures).
        Evaluate homogeneity and silhouette score (see folder results).
 
+       Written by Leo Nguyen. Contact Xenovortex, if problems arises.
+
     Args:
         features (array-like, sparse matrix): matrix with dimension (number samples, number features)
         cluster_method (str, optional): Select clustering method. Implemented so far are: 'kmeans'. Defaults to 'kmeans'.
