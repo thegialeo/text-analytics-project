@@ -2,10 +2,6 @@ from os.path import dirname, abspath, join
 import pandas as pd
 from nltk.corpus import stopwords
 from utils import vectorizer
-from sklearn.cluster import MiniBatchKMeans
-from sklearn.decomposition import PCA
-from sklearn.metrics import homogeneity_score, silhouette_score
-import matplotlib.pyplot as plt
 
 
 if __name__ == "__main__":
