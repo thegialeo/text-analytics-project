@@ -1,8 +1,6 @@
 from os.path import dirname, abspath, join
 import pandas as pd
-from nltk.corpus import stopwords
 from sklearn.cluster import MiniBatchKMeans
-from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import PCA
 from sklearn.metrics import homogeneity_score, silhouette_score
 import matplotlib.pyplot as plt
