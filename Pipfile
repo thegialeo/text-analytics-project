@@ -13,6 +13,11 @@ pytest = "*"
 pre-commit = "*"
 bs4 = "*"
 requests = "*"
+pandas = "*"
+spacy = "*"
+tqdm = "*"
+langdetect = "*"
+sklearn = "*"
 
 [scripts]
 test = "coverage run -m unittest discover -s ./tests -p *_test.py"

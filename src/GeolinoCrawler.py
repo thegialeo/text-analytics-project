@@ -3,14 +3,10 @@
 
 # ## Früher Version des Crawlers für www.geo.de/geolino und www.geo.de
 
-
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 import csv
-
-
-
 
 def get_paragraphs(url):
     text1 = []
@@ -72,8 +68,7 @@ for liste in urls:
 
 urls2 = [urljoin(GeolinoURL,url) for url in urls2] #join url und geolino url
 
-    
-   
+print(urls2)
 
 
 
