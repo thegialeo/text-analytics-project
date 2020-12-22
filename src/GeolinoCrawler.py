@@ -7,9 +7,9 @@
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
+import csv
 
 
-# In[2]:
 
 
 def get_paragraphs(url):
@@ -53,37 +53,25 @@ def get_urls(url):
     
     return(urls)
 
-if "__name__" == "__main__":
+first_urls = get_urls("https://www.geo.de/geolino")
+#second_urls = [get_urls(url) for url in first_urls]
 
+expand_menu_urls("https://www.geo.de/geolino")
 
-    first_urls = get_urls("https://www.geo.de/geolino")
-    #second_urls = [get_urls(url) for url in first_urls]
+urls = []
+GeolinoURL = "https://www.geo.de/geolino"
+r = requests.get(GeolinoURL)
+doc = BeautifulSoup(r.text, "html.parser")
+for expanded in doc.select(".expanded"):
+    urls.append([x.attrs["href"] for x in expanded.select("a")])
 
-    expand_menu_urls("https://www.geo.de/geolino")
+urls2 = []
+for liste in urls:
+    for elt in liste:
+        urls2.append(elt)
 
+urls2 = [urljoin(GeolinoURL,url) for url in urls2] #join url und geolino url
 
-    # In[7]:
-
-
-    urls = []
-    GeolinoURL = "https://www.geo.de/geolino"
-    r = requests.get(GeolinoURL)
-    doc = BeautifulSoup(r.text, "html.parser")
-    for expanded in doc.select(".expanded"):
-        urls.append([x.attrs["href"] for x in expanded.select("a")])
-
-    urls2 = []
-    for liste in urls:
-        for elt in liste:
-            urls2.append(elt)
-
-
-    # In[10]:
-
-
-    urls2 = [urljoin(GeolinoURL,url) for url in urls2] #join url und geolino url
-
-    print(urls2)
     
    
 
