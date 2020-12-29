@@ -3,10 +3,12 @@ import shutil
 from distutils.dir_util import copy_tree
 from os.path import abspath, dirname, exists, join
 
+from git import Repo
+
 
 def download_TextComplexityDE19():
     """Download the TextComplexityDE dataset from Github Repository.
-       Contact Badak Naderi (babak.naderi[at]tu-berlin.de) for further support concerning the dataset itself. 
+       Contact Badak Naderi (babak.naderi[at]tu-berlin.de) for further support concerning the dataset itself.
 
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
     """
@@ -23,7 +25,8 @@ def download_TextComplexityDE19():
         # create temp folder to download github repository
         if not exists(join(download_to_path, "temp")):
             os.makedirs(join(download_to_path, "temp"))
-        os.system("git clone {} {}".format(url, join(download_to_path, "temp")))
+        #os.system("git clone {} {}".format(url, join(download_to_path, "temp")))
+        Repo.clone_from(url, join(download_to_path, "temp"))
         # clean up downloaded repository
         shutil.rmtree(join(download_to_path, "temp", ".git"))
         os.remove(join(download_to_path, "temp", ".gitignore"))

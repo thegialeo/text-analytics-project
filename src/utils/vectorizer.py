@@ -3,8 +3,8 @@ from sklearn.feature_extraction.text import (CountVectorizer, HashingVectorizer,
 
 
 def vectorizer_wrapper(data, vectorizer='tfidf', stopwords=None):
-    """Takes in a numpy array of sentences and perform the selected vectorizer on the data. 
-       Returns a numpy array of sentence features represented by number vectors.   
+    """Takes in a numpy array of sentences and perform the selected vectorizer on the data.
+       Returns a numpy array of sentence features represented by number vectors.
 
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
 
