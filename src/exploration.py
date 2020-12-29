@@ -9,7 +9,7 @@ import scipy.stats
 
 
 def remove_numbers(string):
-    """removes numbers from a string (simple regex replacing \d with nothing) and 
+    """removes numbers from a string (simple regex replacing d with nothing) and
     returns the string
 
     Keyword arguments:
@@ -18,22 +18,26 @@ def remove_numbers(string):
     return re.sub(r"\d", "", string)
 
 
-def remove_punctuation(string, hyphens_are_separators=True):
-    """removes punctuation from a string (simple regex replacing everything but \w and
-    \s with nothing) and returns the string
+def remove_punctuation(string, hyphens_are_separators=True, keep_commas=False):
+    """removes punctuation from a string (simple regex replacing everything but w and
+    s with nothing) and returns the string
 
     Keyword arguments:
     string -- the string to remove punctuation from
     hyphens_are_separators -- (optional) replace hyphens with a space first (creates a
     space in hyphenated words instead of concatenating them) (default True)
+    keep_commas - (optional) don't delete commas if true (default False)
     """
     if hyphens_are_separators:
         string = re.sub(r"\-", " ", string)
-    return re.sub(r"[^\w\s]", "", string)
+    if not keep_commas:
+        return re.sub(r"[^\w\s]", "", string)
+    else:
+        return re.sub(r"[^\w\s,]", "", string)
 
 
 def remove_whitespace(string):
-    """if the string contains whitespace sequences, all whitespace is replaced by a 
+    """if the string contains whitespace sequences, all whitespace is replaced by a
     single space.
 
     Keyword arguments:
@@ -43,10 +47,10 @@ def remove_whitespace(string):
 
 
 def count_words_and_letters(sentence):
-    """Counts the basic statistics number of words and number of letters. Takes a 
+    """Counts the basic statistics number of words and number of letters. Takes a
     dataframe column of sentences as the input and returns a new dataframe with two
     columns for word_count and letter_count.
-    letter_count only counts so-called word symbols, so letters and numbers, not 
+    letter_count only counts so-called word symbols, so letters and numbers, not
     punctuation. word_count splits the sentence at whitespaces and gives the number
     of components after the split.
 
@@ -59,7 +63,7 @@ def count_words_and_letters(sentence):
 
 
 def count_syllables(words):
-    """Given a list of words, counts the syllables in each and returns the sum. 
+    """Given a list of words, counts the syllables in each and returns the sum.
     Counting syllables doesn't necessarily give very good results yet
 
     TODO improve syllable counting method
@@ -90,12 +94,12 @@ def count_syllables(words):
 
 
 def count_polysyllables(sentence, threshold=2):
-    """Given a sentence, computes and returns the number of polysyllabic words 
+    """Given a sentence, computes and returns the number of polysyllabic words
     containing at least a certain, optionally specified amount of syllables
 
     Keyword arguments:
     sentence -- sentence or series of sentences
-    threshold -- (optional) this function will count words with at least this many 
+    threshold -- (optional) this function will count words with at least this many
     syllables (default 2)
     """
     cc_pattern = re.compile("[^aeiouyäöü]{2,}")
@@ -123,7 +127,7 @@ def count_polysyllables(sentence, threshold=2):
 
 
 def count_monosyllables(sentence):
-    """Given a sentence, computes and returns the number of monosyllabic words 
+    """Given a sentence, computes and returns the number of monosyllabic words
     (words which are just 1 syllable long) contained within.
 
     Keyword arguments:
@@ -153,6 +157,60 @@ def count_monosyllables(sentence):
     return monosyllables
 
 
+def count_pronouns(sentence):
+    # TODO write desc
+    number_of_pronouns = 0
+    number_of_pronouns += len(
+        re.findall(
+            r"(?<!\w)ich(?!\w)"
+            + r"|(?<!\w)du(?!\w)"
+            + r"|(?<!\w)er(?!\w)"
+            + r"|(?<!\w)sie(?!\w)"
+            + r"|(?<!\w)es(?!\w)"
+            + r"|(?<!\w)[mds]einer(?!\w)"
+            + r"|(?<!\w)[mdw]ir(?!\w)"
+            + r"|(?<!\w)ih[nm](?!\w)"
+            + r"|(?<!\w)ihr\w{,2}(?!\w)"
+            + r"|(?<!\w)uns(?!\w)"
+            + r"|(?<!\w)euch(?!\w)"
+            + r"|(?<!\w)ihnen(?!\w)"
+            + r"|(?<!\w)[mds]ich(?!\w)"
+            + r"|(?<!\w)wessen(?!\w)"
+            + r"|(?<!\w)we[rnm](?!\w)"
+            + r"|(?<!\w)was(?!\w)"
+            + r"|(?<!\w)welche[rnms]?(?!\w)"
+            + r"|(?<!\w)etwas(?!\w)"
+            + r"|(?<!\w)nichts(?!\w)"
+            + r"|(?<!\w)jemand\w{,2}(?!\w)"
+            + r"|(?<!\w)jede\w?(?!\w)"
+            + r"|(?<!\w)irgend\w{,6}(?!\w)"
+            + r"|(?<!\w)man(?!\w)"
+            + r"|(?<!\w)[mds]ein\w{,2}(?!\w)"
+            + r"|(?<!\w)unser\w{,2}(?!\w)"
+            + r"|(?<!\w)euer(?!\w)"
+            + r"|(?<!\w)eur\w{1,2}(?!\w)"
+            + r"|, de[nmr](?!\w)"
+            + r"|, die(?!\w)"
+            + r"|, das(?!\w)"
+            + r"|, denen(?!\w)",
+            sentence,
+        )
+    )
+    return number_of_pronouns
+
+
+def count_definite_articles(sentence):
+    # TODO write desc
+    number_of_definite_articles = 0
+    number_of_definite_articles += len(
+        re.findall(
+            r"(?<!\w)de[rsnm](?!\w)|(?<!\w)das(?!\w)|(?<!\w)die(?!\w)",
+            sentence,
+        )
+    )
+    return number_of_definite_articles
+
+
 def count_long_words(sentence, length):
     """Given a sentence, computes and returns the number of words equal to or longer
     than the provided threshold length
@@ -169,32 +227,34 @@ def count_long_words(sentence, length):
     return long_words
 
 
-def normalize_sentence(sentence, keep_numbers=False, hyphens_are_separators=True):
-    """Normalizes sentences, meaning it decapitalizes letters, removes whitespace 
-    sequences, removes punctuation and removes numbers. Then returns the normalized 
+def normalize_sentence(
+    sentence, keep_numbers=False, hyphens_are_separators=True, keep_commas=False
+):
+    """Normalizes sentences, meaning it decapitalizes letters, removes whitespace
+    sequences, removes punctuation and removes numbers. Then returns the normalized
     sentence.
 
     Keyword arguments:
-    sentence -- a series of sentences, for example as in a single column from a 
+    sentence -- a series of sentences, for example as in a single column from a
                               pandas dataframe, to be normalized
-    keep_numbers -- (optional) set true to keep numbers in the sentence instead of 
+    keep_numbers -- (optional) set true to keep numbers in the sentence instead of
                               removing them (default False)
-    hyphens_are_separators -- (optional) if true, a hyphenated word is counted as 2 
-                              words (e.g. e-sports -> e sports), otherwise as one 
+    hyphens_are_separators -- (optional) if true, a hyphenated word is counted as 2
+                              words (e.g. e-sports -> e sports), otherwise as one
                               (e-sports -> esports) (default True)
     """
     normalized_sentence = sentence.str.lower()
     if not keep_numbers:
         normalized_sentence = normalized_sentence.apply(remove_numbers)
     normalized_sentence = normalized_sentence.apply(
-        remove_punctuation, args=(hyphens_are_separators,)
+        remove_punctuation, args=(hyphens_are_separators, keep_commas)
     )
     normalized_sentence = normalized_sentence.apply(remove_whitespace)
     return normalized_sentence
 
 
 def flesch_reading_ease(word_count, syllable_count, deutsch=True):
-    """Given a number of words and number of syllables in a sentence, this will 
+    """Given a number of words and number of syllables in a sentence, this will
     compute the flesch reading ease score for the sentence
 
     Keyword arguments:
@@ -209,7 +269,7 @@ def flesch_reading_ease(word_count, syllable_count, deutsch=True):
 
 
 def flesch_kincaid_grade_level(word_count, syllable_count):
-    """Given a number of words and number of syllables in a sentence, computes the 
+    """Given a number of words and number of syllables in a sentence, computes the
     flesch kincaid grade level.
 
     Keyword arguments:
@@ -220,7 +280,7 @@ def flesch_kincaid_grade_level(word_count, syllable_count):
 
 
 def automated_readability_index(letter_count, word_count):
-    """Given a number of letters and number of words in a sentence, computes the 
+    """Given a number of letters and number of words in a sentence, computes the
     automated readability index
 
     Keyword arguments:
@@ -231,7 +291,7 @@ def automated_readability_index(letter_count, word_count):
 
 
 def gunning_fox_index(word_count, polysyllables_count):
-    """Given a number of words and the number of words with at least 3 syllables in a 
+    """Given a number of words and the number of words with at least 3 syllables in a
     sentence, compute the gunning-fox-index.
     Note that this was originally intended for the english language, and for a section
     of text containing at least 100 words.
@@ -256,7 +316,7 @@ def smog(polysyllables_count):
 
 
 def coleman_liau_index(letter_count, word_count):
-    """Given a number of letters and number of words in a sentence, computes the 
+    """Given a number of letters and number of words in a sentence, computes the
     coleman-liau index
 
     Keyword arguments:
@@ -264,14 +324,16 @@ def coleman_liau_index(letter_count, word_count):
     word_count -- number of words in the sentence
     """
 
-    return 0.0588 * letter_count / (word_count * 100) - 0.296 / (word_count * 100) \
-        - 15.8
+    return (
+        0.0588 * letter_count / (word_count * 100) - 0.296 / (word_count * 100) - 15.8
+    )
 
 
 def wiener_sachtextformel(
-        polysyllables_count, word_count, long_words_count, monosyllables_count):
-    """Computes the first wiener sachtextformel, using the number of words with 3 or 
-    more syllables, the number of words, the number of words with 6 or more 
+    polysyllables_count, word_count, long_words_count, monosyllables_count
+):
+    """Computes the first wiener sachtextformel, using the number of words with 3 or
+    more syllables, the number of words, the number of words with 6 or more
     letters and the number of monosyllabic words
 
     Keyword arguments:
@@ -281,13 +343,18 @@ def wiener_sachtextformel(
     monosyllables_count -- number of words with only a single syllable
     """
 
-    return .1935 * polysyllables_count / word_count + .1672 * word_count + .1297 \
-        * long_words_count / word_count - .0327 * monosyllables_count / word_count - 0.875
+    return (
+        0.1935 * polysyllables_count / word_count
+        + 0.1672 * word_count
+        + 0.1297 * long_words_count / word_count
+        - 0.0327 * monosyllables_count / word_count
+        - 0.875
+    )
 
 
 def wiener_sachtextformel2(polysyllables_count, word_count, long_words_count):
-    """Computes the second wiener sachtextformel, using the number of words with 3 or 
-    more syllables, the number of words and the number of words with 6 or more 
+    """Computes the second wiener sachtextformel, using the number of words with 3 or
+    more syllables, the number of words and the number of words with 6 or more
     letters.
 
     Keyword arguments:
@@ -296,185 +363,234 @@ def wiener_sachtextformel2(polysyllables_count, word_count, long_words_count):
     long_words_count -- number of words with 6 or more letters
     """
 
-    return .2007 * polysyllables_count / word_count + .1682 * word_count + .1373 \
-        * long_words_count / word_count - 2.779
+    return (
+        0.2007 * polysyllables_count / word_count
+        + 0.1682 * word_count
+        + 0.1373 * long_words_count / word_count
+        - 2.779
+    )
+
+
+def gulpease_index(character_count, word_count):
+    return 89 - 10.0 * character_count / word_count + 300.0 / word_count
 
 
 if __name__ == "__main__":
     # load TextComplexityDE dataset
-    df_all = pd.read_excel("TextComplexityDE19.xlsx",
-                           engine='openpyxl',
-                           sheet_name=2,
-                           header=1)
+    df_all = pd.read_excel(
+        "data/TextComplexityDE19/TextComplexityDE19.xlsx",
+        engine="openpyxl",
+        sheet_name=2,
+        header=1,
+    )
     df_all.columns = df_all.columns.str.lower()
 
-    df_all['normalized_sentence'] = normalize_sentence(df_all['sentence'])
+    df_all["normalized_sentence"] = normalize_sentence(df_all["sentence"])
+    df_all["normalized_sentence_with_commas"] = normalize_sentence(
+        df_all["sentence"], keep_commas=True
+    )
 
-    df_all[['word_count', 'letter_count']] = count_words_and_letters(
-        df_all['normalized_sentence'])
+    df_all[["word_count", "letter_count"]] = count_words_and_letters(
+        df_all["normalized_sentence"]
+    )
 
-    df_all['syllable_count'] = df_all['normalized_sentence'].str.split().apply(
-        count_syllables)
-    df_all['monosyllables_count'] = df_all['normalized_sentence'].apply(
-        count_monosyllables)
-    df_all['two_syllables_count'] = df_all['normalized_sentence'].apply(
-        count_polysyllables, args=(2,))  # counts two OR MORE
-    df_all['three_syllables_count'] = df_all['normalized_sentence'].apply(
-        count_polysyllables, args=(3,))
-    df_all['long_words_count'] = df_all['normalized_sentence'].apply(
-        count_long_words, args=(6,))
+    df_all["pronouns_count"] = df_all["normalized_sentence_with_commas"].apply(
+        count_pronouns
+    )
+    df_all["def_arti_count"] = df_all["normalized_sentence_with_commas"].apply(
+        count_definite_articles
+    )
 
-    df_all['fre'] = flesch_reading_ease(
-        df_all['word_count'],
-        df_all['syllable_count'],
-        deutsch=False)
-    df_all['fre_deutsch'] = flesch_reading_ease(
-        df_all['word_count'], df_all['syllable_count'], deutsch=True)
+    df_all["syllable_count"] = (
+        df_all["normalized_sentence"].str.split().apply(count_syllables)
+    )
+    df_all["monosyllables_count"] = df_all["normalized_sentence"].apply(
+        count_monosyllables
+    )
+    df_all["two_syllables_count"] = df_all["normalized_sentence"].apply(
+        count_polysyllables, args=(2,)
+    )  # counts two OR MORE
+    df_all["three_syllables_count"] = df_all["normalized_sentence"].apply(
+        count_polysyllables, args=(3,)
+    )
+    df_all["long_words_count"] = df_all["normalized_sentence"].apply(
+        count_long_words, args=(6,)
+    )
 
-    df_all['fkgl'] = flesch_kincaid_grade_level(
-        df_all['word_count'], df_all['syllable_count'])
-    df_all['ari'] = automated_readability_index(
-        df_all['letter_count'], df_all['word_count'])
-    df_all['gfi'] = gunning_fox_index(
-        df_all['word_count'],
-        df_all['three_syllables_count'])
-    df_all['smog'] = smog(df_all['three_syllables_count'])
-    df_all['cli'] = coleman_liau_index(df_all['letter_count'], df_all['word_count'])
-    df_all['wstf'] = wiener_sachtextformel(
-        df_all['three_syllables_count'],
-        df_all['word_count'],
-        df_all['long_words_count'],
-        df_all['monosyllables_count'])
-    df_all['wstf2'] = wiener_sachtextformel2(
-        df_all['three_syllables_count'],
-        df_all['word_count'],
-        df_all['long_words_count'])
+    df_all["fre"] = flesch_reading_ease(
+        df_all["word_count"], df_all["syllable_count"], deutsch=False
+    )
+    df_all["fre_deutsch"] = flesch_reading_ease(
+        df_all["word_count"], df_all["syllable_count"], deutsch=True
+    )
 
-    df_all['mean_word_length'] = (df_all['letter_count'] * 1.0) / df_all['word_count']
+    df_all["fkgl"] = flesch_kincaid_grade_level(
+        df_all["word_count"], df_all["syllable_count"]
+    )
+    df_all["ari"] = automated_readability_index(
+        df_all["letter_count"], df_all["word_count"]
+    )
+    df_all["gfi"] = gunning_fox_index(
+        df_all["word_count"], df_all["three_syllables_count"]
+    )
+    df_all["smog"] = smog(df_all["three_syllables_count"])
+    df_all["cli"] = coleman_liau_index(df_all["letter_count"], df_all["word_count"])
+    df_all["wstf"] = wiener_sachtextformel(
+        df_all["three_syllables_count"],
+        df_all["word_count"],
+        df_all["long_words_count"],
+        df_all["monosyllables_count"],
+    )
+    df_all["wstf2"] = wiener_sachtextformel2(
+        df_all["three_syllables_count"],
+        df_all["word_count"],
+        df_all["long_words_count"],
+    )
 
-    string = 'beim aufblasen entsteht eine kugelform die wasserversorgung erfolgte ' \
-        + 'über brunnen etwa jahre ist es her seit die sumerer das'
+    df_all["gi"] = gulpease_index(df_all["letter_count"], df_all["word_count"])
 
-    for word in string.split():
-        print(word, count_syllables([word]))
+    df_all["mean_word_length"] = (df_all["letter_count"] * 1.0) / df_all["word_count"]
 
-    print("words in dataset:", df_all["word_count"].sum())
+    string = (
+        "beim aufblasen entsteht eine kugelform die wasserversorgung erfolgte "
+        + "über brunnen etwa jahre ist es her seit die sumerer das"
+    )
+
+    stringo = "über brunnen etwa jahre ist es her seit die sumerer das"
+    print("pronouns in string:", count_pronouns(stringo))
+    print("definite articles in string:", count_definite_articles(stringo))
+
+    # for word in string.split():
+    # print(word, count_syllables([word]))
+
+    # print("words in dataset:", df_all["word_count"].sum())
 
     # R Readability/Complexity, U Understandability, L Lexical difficulty
-    df_all.head()
+    # df_all.head()
 
     df_wikipedia = df_all[df_all["article_id"] < 24]
     df_leichte = df_all[df_all["article_id"] > 23]
 
-    print("Sentences sourced from Wikipedia:", df_wikipedia["id"].size)
-    print("Sentences sourced from Leichte Sprache:", df_leichte["id"].size)
+    if False:
+        print("Sentences sourced from Wikipedia:", df_wikipedia["id"].size)
+        print("Sentences sourced from Leichte Sprache:", df_leichte["id"].size)
 
-    score_distribution = (
-        df_all["mos_r"].round().astype("int64").value_counts().sort_index()
-    )
-    print("score distribution:\n", score_distribution)
-    plot = score_distribution.plot.pie(subplots=True, figsize=(5, 5))
+        score_distribution = (
+            df_all["mos_r"].round().astype("int64").value_counts().sort_index()
+        )
+        print("score distribution:\n", score_distribution)
+        plot = score_distribution.plot.pie(subplots=True, figsize=(5, 5))
 
-    print("median complexity score for all sentences:", df_all["mos_r"].median())
-    print(
-        "median complexity score for wikipedia sentences:",
-        df_wikipedia["mos_r"].median(),
-    )
-    print(
-        "median complexity score for leichte sentences:", df_leichte["mos_r"].median()
-    )
+        print("median complexity score for all sentences:", df_all["mos_r"].median())
+        print(
+            "median complexity score for wikipedia sentences:",
+            df_wikipedia["mos_r"].median(),
+        )
+        print(
+            "median complexity score for leichte sentences:",
+            df_leichte["mos_r"].median(),
+        )
 
-    fig = plt.figure(figsize=(10, 3))
+    if False:
+        fig = plt.figure(figsize=(10, 3))
 
-    plt.subplot(131)
-    plot_colors = ["#457cd6", "#e34262"]
-    plt.title(r"complexity scores")
-    plt.hist(
-        [df_wikipedia["mos_r"], df_leichte["mos_r"]],
-        35,
-        stacked=True,
-        density=True,
-        color=plot_colors,
-    )
-    plt.xticks(range(1, 8))
-    plt.xlim([0.5, 7.5])
-    plt.ylim([0.0, 0.82])
-    plt.yticks([0.0, 0.82], ["", ""])
-    medianx = df_all["mos_r"].median()
-    plt.axvline(medianx, color="#2c1b2e", linestyle="--", alpha=0.8)
+        plt.subplot(131)
+        plot_colors = ["#457cd6", "#e34262"]
+        plt.title(r"complexity scores")
+        plt.hist(
+            [df_wikipedia["mos_r"], df_leichte["mos_r"]],
+            35,
+            stacked=True,
+            density=True,
+            color=plot_colors,
+        )
+        plt.xticks(range(1, 8))
+        plt.xlim([0.5, 7.5])
+        plt.ylim([0.0, 0.82])
+        plt.yticks([0.0, 0.82], ["", ""])
+        medianx = df_all["mos_r"].median()
+        plt.axvline(medianx, color="#2c1b2e", linestyle="--", alpha=0.8)
 
-    plt.subplot(132)
-    plt.title(r"understandability scores")
-    plt.hist(
-        [df_wikipedia["mos_u"], df_leichte["mos_u"]],
-        35,
-        stacked=True,
-        density=True,
-        color=plot_colors,
-    )
-    plt.xticks(range(1, 8))
-    plt.xlim([0.5, 7.5])
-    plt.ylim([0.0, 0.82])
-    plt.yticks([0.0, 0.82], ["", ""])
-    medianx = df_all["mos_u"].median()
-    plt.axvline(medianx, color="#2c1b2e", linestyle="--", alpha=0.8)
-    plt.text(medianx + 0.1, 0.63, "median", rotation=90, color="#2c1b2e", alpha=0.8)
+        plt.subplot(132)
+        plt.title(r"understandability scores")
+        plt.hist(
+            [df_wikipedia["mos_u"], df_leichte["mos_u"]],
+            35,
+            stacked=True,
+            density=True,
+            color=plot_colors,
+        )
+        plt.xticks(range(1, 8))
+        plt.xlim([0.5, 7.5])
+        plt.ylim([0.0, 0.82])
+        plt.yticks([0.0, 0.82], ["", ""])
+        medianx = df_all["mos_u"].median()
+        plt.axvline(medianx, color="#2c1b2e", linestyle="--", alpha=0.8)
+        plt.text(medianx + 0.1, 0.63, "median", rotation=90, color="#2c1b2e", alpha=0.8)
 
-    plt.subplot(133)
-    plt.title(r"lexical difficulty scores")
-    plt.hist(
-        [df_wikipedia["mos_l"], df_leichte["mos_l"]],
-        35,
-        stacked=True,
-        density=True,
-        color=plot_colors,
-        label=["Wikipedia", "Leichte Sprache"],
-    )
-    plt.legend(loc="upper right", title="Source")
-    plt.xticks(range(1, 8))
-    plt.xlim([0.5, 7.5])
-    plt.ylim([0.0, 0.82])
-    plt.yticks([0.0, 0.82], ["", ""])
-    medianx = df_all["mos_l"].median()
-    plt.axvline(medianx, color="#2c1b2e", linestyle="--", alpha=0.8)
+        plt.subplot(133)
+        plt.title(r"lexical difficulty scores")
+        plt.hist(
+            [df_wikipedia["mos_l"], df_leichte["mos_l"]],
+            35,
+            stacked=True,
+            density=True,
+            color=plot_colors,
+            label=["Wikipedia", "Leichte Sprache"],
+        )
+        plt.legend(loc="upper right", title="Source")
+        plt.xticks(range(1, 8))
+        plt.xlim([0.5, 7.5])
+        plt.ylim([0.0, 0.82])
+        plt.yticks([0.0, 0.82], ["", ""])
+        medianx = df_all["mos_l"].median()
+        plt.axvline(medianx, color="#2c1b2e", linestyle="--", alpha=0.8)
 
-    plt.tight_layout()
+        plt.tight_layout()
 
-    feature_list = [
-        "word_count",
-        "syllable_count",
-        "letter_count",
-        "fre",
-        "fre_deutsch",
-        "fkgl",
-        "ari",
-        "gfi",
-        "smog",
-        "cli",
-        "wstf",
-        "wstf2",
-    ]
+    if True:
+        feature_list = [
+            "word_count",
+            "syllable_count",
+            "letter_count",
+            "fre",
+            "fre_deutsch",
+            "fkgl",
+            "ari",
+            "gfi",
+            "smog",
+            "cli",
+            "wstf",
+            "wstf2",
+            "gi",
+            "pronouns_count",
+            "def_arti_count",
+        ]
 
-    for i in range(len(feature_list)):
-        slope, intercept, r, p, stderr = scipy.stats.linregress(
-            df_all[feature_list[i]], df_all['mos_r'])
-        print('correlation of', feature_list[i], 'with complexity ratings has r:', r)
+        for i in range(len(feature_list)):
+            slope, intercept, r, p, stderr = scipy.stats.linregress(
+                df_all[feature_list[i]], df_all["mos_r"]
+            )
+            print(
+                "correlation of", feature_list[i], "with complexity ratings has r:", r
+            )
 
-    x_col = "ari"
-    y_col = "mos_r"
+    if False:
+        x_col = "gi"
+        y_col = "mos_r"
 
-    x = df_all[x_col]
-    y = df_all[y_col]
+        x = df_all[x_col]
+        y = df_all[y_col]
 
-    slope, intercept, r, p, stderr = scipy.stats.linregress(x, y)
-    line = f"Regression line: y={intercept:.2f}+{slope:.2f}x, r={r:.2f}"
+        slope, intercept, r, p, stderr = scipy.stats.linregress(x, y)
+        line = f"Regression line: y={intercept:.2f}+{slope:.2f}x, r={r:.2f}"
 
-    fig, ax = plt.subplots()
-    ax.plot(x, y, linewidth=0, marker="x", alpha=0.43, label="Data points")
-    ax.plot(x, intercept + slope * x, label=line)
-    ax.set_xlabel(x_col)
-    ax.set_ylabel(y_col)
-    ax.legend(facecolor="white")
-    plt.show()
+        fig, ax = plt.subplots()
+        ax.plot(x, y, linewidth=0, marker="x", alpha=0.43, label="Data points")
+        ax.plot(x, intercept + slope * x, label=line)
+        ax.set_xlabel(x_col)
+        ax.set_ylabel(y_col)
+        ax.legend(facecolor="white")
+        plt.show()
 
-    print()
+        print()

@@ -1,6 +1,7 @@
 from os.path import abspath, dirname, join
-import pandas as pd
+
 import matplotlib.pyplot as plt
+import pandas as pd
 from nltk.corpus import stopwords
 from sklearn.metrics import homogeneity_score, silhouette_score
 from utils import clustering, vectorizer
@@ -15,15 +16,18 @@ def visualize_data():
 
     # read data
     data_path = join(dirname(dirname(abspath(__file__))), "data", "TextComplexityDE19")
-    df_ratings = pd.read_csv(join(data_path, "ratings.csv"), sep=",", encoding="ISO-8859-1")
+    df_ratings = pd.read_csv(
+        join(data_path, "ratings.csv"),
+        sep=",", encoding="ISO-8859-1")
 
     # feature extraction
     german_stopwords = stopwords.words('german')
-    features = vectorizer.vectorizer_wrapper(df_ratings.Sentence.values, 'tfidf', german_stopwords)
+    features = vectorizer.vectorizer_wrapper(
+        df_ratings.Sentence.values, 'tfidf', german_stopwords)
 
     # KMeans Clustering and PCA
-    cls_kmeans, reduced_features, reduced_cluster_centers = clustering.clustering_wrapper(features, 'kmeans', 'PCA')
-
+    cls_kmeans, reduced_features, reduced_cluster_centers = clustering.clustering_wrapper(
+        features, 'kmeans', 'PCA')
 
     # Plot cluster result against targets
     fig, ax = plt.subplots(1, 2, sharex=True, sharey=True, figsize=(15, 10))
@@ -66,37 +70,6 @@ def visualize_data():
     # Evaluate silhouette score
     print(silhouette_score(features, labels=cls_kmeans.predict(features)))
 
+
 if __name__ == "__main__":
     visualize_data()
-    
-    
-
-  
-  
-  
-
-  
-  
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-    
-    
-
-    
-    

@@ -1,4 +1,4 @@
-## credits to https://github.com/shlomihod/deep-text-eval/blob/master/data/weebit/prepare_weebit.py
+# credits to https://github.com/shlomihod/deep-text-eval/blob/master/data/weebit/prepare_weebit.py
 
 import glob
 import itertools as it
@@ -8,9 +8,9 @@ from pprint import pprint
 import numpy as np
 import pandas as pd
 import spacy
-from tqdm import tqdm
 from langdetect import detect_langs
 from sklearn.model_selection import train_test_split
+from tqdm import tqdm
 
 RANDOM_STATE = 70988860
 
@@ -26,26 +26,26 @@ LEVELS = {'WRLevel2': 0,  # Age 7–8
           'BitKS3': 3,  # Age 11-14
           'BitGCSE': 4}  # Age 14-16
 
-WR_NON_CONTENT_LINES = ['All trademarks and logos are property of Weekly Reader Corporation.',
-                        'measures published under license with MetaMetrics, Inc.']
+WR_NON_CONTENT_LINES = [
+    'All trademarks and logos are property of Weekly Reader Corporation.',
+    'measures published under license with MetaMetrics, Inc.']
 
-BBC_NON_CONTENT_LINES = ['This page is best viewed in an up-to-date web browser with style sheets (CSS) enabled.',
-                         'While you will be able to view the content of this page in your current browser, you will not be able to get the full visual experience.',
-                         'Please consider upgrading your browser software or enabling style sheets (CSS) if you are able to do so.',
-                         'The BBC is not responsible for the content of external internet sites.',
-                         'For information on how to enable JavaScript please go to th.',
-                         'You will not be able to see this content until you have JavaScript switched on.',
-                         'Your web browser does not have JavaScript switched on at the moment.',
-                         'You have disabled Javascript, or are not running Javascript on this browser.',
-                         'Go to th.',
-                         'go to th.',
-                         'The enhanced version of the site requires the Flash 8 plugin (or higher) to be installed and JavaScript to be enabled on your browser.',
-                         'To find out how to turn on JavaScript',
-                         'The enhanced version of the site requires the Flash 8 plugin (or higher) to be installed and JavaScript to be enabled on your browser.',
-                         'To find out how to install a Flash plugin,',
-                         'The enhanced version of the site requires the Flash 8 plugin (or higher) to be installed and JavaScript to be enabled on your browser.',
-                         'Download the Adobe Flash player to view this conten.',
-                         ]
+BBC_NON_CONTENT_LINES = [
+    'This page is best viewed in an up-to-date web browser with style sheets (CSS) enabled.',
+    'While you will be able to view the content of this page in your current browser, you will not be able to get the full visual experience.',
+    'Please consider upgrading your browser software or enabling style sheets (CSS) if you are able to do so.',
+    'The BBC is not responsible for the content of external internet sites.',
+    'For information on how to enable JavaScript please go to th.',
+    'You will not be able to see this content until you have JavaScript switched on.',
+    'Your web browser does not have JavaScript switched on at the moment.',
+    'You have disabled Javascript, or are not running Javascript on this browser.',
+    'Go to th.', 'go to th.',
+    'The enhanced version of the site requires the Flash 8 plugin (or higher) to be installed and JavaScript to be enabled on your browser.',
+    'To find out how to turn on JavaScript',
+    'The enhanced version of the site requires the Flash 8 plugin (or higher) to be installed and JavaScript to be enabled on your browser.',
+    'To find out how to install a Flash plugin,',
+    'The enhanced version of the site requires the Flash 8 plugin (or higher) to be installed and JavaScript to be enabled on your browser.',
+    'Download the Adobe Flash player to view this conten.', ]
 
 NON_CONTENT_LINES = WR_NON_CONTENT_LINES + BBC_NON_CONTENT_LINES
 
@@ -81,7 +81,8 @@ def filter_start_dups(text_df):
 
     docs = [doc for doc in nlp.pipe(tqdm(text_df['text']))]
 
-    all_lines = sum([list([sent.string.strip() for sent in doc.sents]) for doc in docs], [])
+    all_lines = sum([list([sent.string.strip() for sent in doc.sents])
+                     for doc in docs], [])
     lines_count = Counter(all_lines)
     just_lines = [list([str(sent) for sent in doc.sents]) for doc in docs]
 

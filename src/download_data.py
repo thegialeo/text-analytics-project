@@ -6,7 +6,7 @@ from os.path import abspath, dirname, exists, join
 
 def download_TextComplexityDE19():
     """Download the TextComplexityDE dataset from Github Repository.
-       Contact Badak Naderi (babak.naderi[at]tu-berlin.de) for further support concerning the dataset itself. 
+       Contact Badak Naderi (babak.naderi[at]tu-berlin.de) for further support concerning the dataset itself.
 
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
     """
