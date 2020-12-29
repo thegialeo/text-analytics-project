@@ -25,7 +25,6 @@ def download_TextComplexityDE19():
         # create temp folder to download github repository
         if not exists(join(download_to_path, "temp")):
             os.makedirs(join(download_to_path, "temp"))
-        #os.system("git clone {} {}".format(url, join(download_to_path, "temp")))
         Repo.clone_from(url, join(download_to_path, "temp"))
         # clean up downloaded repository
         shutil.rmtree(join(download_to_path, "temp", ".git"))
