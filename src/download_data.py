@@ -2,7 +2,6 @@ import os
 import shutil
 from distutils.dir_util import copy_tree
 from os.path import abspath, dirname, exists, join
-
 from git import Repo
 
 
