@@ -1,6 +1,17 @@
 # Automatic Complexity Assessment of German Sentences
 ### Team Members
+Leo Nguyen
+Raoul Berger
+Konrad Straube
+Till Nocher
+
 ### Mail Addresses
+Leo.Nguyen@gmx.de
+raoulb97@gmail.com
+konrad.straube@outlook.com
+nocher@cl.uni-heidelberg.de
+
+
 ### Existing Code Fragments
 ### Utilized libraries
 
