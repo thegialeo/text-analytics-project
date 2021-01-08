@@ -3,6 +3,8 @@ import shutil
 from distutils.dir_util import copy_tree
 from os.path import abspath, dirname, exists, join
 from git import Repo
+import zipfile
+import requests
 
 
 def download_TextComplexityDE19():
@@ -38,6 +40,39 @@ def download_TextComplexityDE19():
         print("Folder data already contains TextComplexityDE19. Please delete the folder TextComplexityDE and remove from trash. Rerun the code.")
         exit()
 
+def download_Weebit():
+    """Download the TextComplexityDE dataset from Github Repository.
+
+
+       Written by Raoul Berger. Contact Xenovortex, if problems arises.
+    """
+    # url of dataset github repository
+    url = "https://zenodo.org/record/1219041/files/nishkalavallabhi/OneStopEnglishCorpus-bea2018.zip?download=1"
+
+    #path to which the dataset will be saved
+    download_to_path = join(dirname(dirname(abspath(__file__))), "data")
+
+    #create folder for dataset if it does not exist
+    if not exists(download_to_path):
+        os.makedirs(download_to_path)
+
+    path_with_name = join(download_to_path, "weebit.zip")
+
+    # create folder for dataset (if it doesn't exist yet)
+    r = requests.get(url)
+
+    with open(path_with_name, "wb") as file:
+        file.write(r.content)
+
+    with zipfile.ZipFile(path_with_name, 'r') as zip_ref:
+        zip_ref.extractall(download_to_path)
+
+    extracted_name = join(download_to_path,"nishkalavallabhi-OneStopEnglishCorpus-089be0f")
+    renamed_extracted = join(download_to_path, "WeebitDataset")
+
+    os.remove(path_with_name)
+    os.rename(extracted_name, renamed_extracted)
 
 if __name__ == "__main__":
     download_TextComplexityDE19()
+    download_Weebit()
