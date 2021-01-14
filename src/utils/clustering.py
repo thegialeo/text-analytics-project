@@ -1,4 +1,4 @@
-from sklearn.cluster import MiniBatchKMeans
+from sklearn.cluster import AffinityPropagation, MiniBatchKMeans
 from sklearn.decomposition import PCA
 
 
@@ -9,8 +9,8 @@ def clustering_wrapper(features, cluster_method='kmeans', dim_reduc='PCA'):
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
 
     Args:
-        features (array-like, sparse matrix): matrix with dimension (number samples, number features)
-        cluster_method (str, optional): Select clustering method. Implemented so far are: 'kmeans'. Defaults to 'kmeans'.
+        features (array-like): matrix with dimension (number samples, number features)
+        cluster_method (str, optional): Select clustering method. Implemented so far are: 'kmeans', 'AP'. Defaults to 'kmeans'.
         dim_reduc (str, optional): Select dimension reduction method. Implemented so far are: 'PCA'. Defaults to 'PCA'.
 
     Return:
@@ -24,6 +24,10 @@ def clustering_wrapper(features, cluster_method='kmeans', dim_reduc='PCA'):
         sklearn_cls = MiniBatchKMeans(n_clusters=6, random_state=0)
         sklearn_cls.fit(features)
         sklearn_cls.predict(features)
+    elif cluster_method == 'AP':
+        sklearn_cls = AffinityPropagation(random_state=0)
+        sklearn_cls.fit(features)
+        sklearn_cls.predict(features)
     else:
         print("Clustering method {} is not implemented yet. Please select one of the following options: 'kmeans'".format(
             cluster_method))
@@ -32,7 +36,7 @@ def clustering_wrapper(features, cluster_method='kmeans', dim_reduc='PCA'):
     # perform selected dimension reduction
     if dim_reduc == 'PCA':
         pca = PCA(n_components=2, random_state=0)
-        reduced_features = pca.fit_transform(features.toarray())
+        reduced_features = pca.fit_transform(features)
         reduced_cluster_centers = pca.transform(sklearn_cls.cluster_centers_)
     else:
         print("Dimension Reduction method {} is not implemented yet. Please select one the folling options: 'PCA'".format(dim_reduc))

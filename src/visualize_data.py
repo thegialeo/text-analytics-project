@@ -24,6 +24,7 @@ def visualize_data():
     german_stopwords = stopwords.words('german')
     features = vectorizer.vectorizer_wrapper(
         df_ratings.Sentence.values, 'tfidf', german_stopwords)
+    features = features.toarray()
 
     # KMeans Clustering and PCA
     cls_kmeans, reduced_features, reduced_cluster_centers = clustering.clustering_wrapper(
