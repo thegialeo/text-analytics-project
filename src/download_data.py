@@ -73,6 +73,26 @@ def download_Weebit():
     os.remove(path_with_name)
     os.rename(extracted_name, renamed_extracted)
 
+def download_dw_set():
+    url = "https://github.com/shlomihod/deep-text-eval/raw/master/data/dw/dw.h5"
+
+    # path to which the dataset will be saved
+    download_to_path = join(dirname(dirname(abspath(__file__))), "data")
+
+    # create folder for dataset if it does not exist
+    if not exists(download_to_path):
+        os.makedirs(download_to_path)
+
+    path_with_name = join(download_to_path, "dw.h5")
+
+    # create folder for dataset (if it doesn't exist yet)
+    r = requests.get(url)
+
+    with open(path_with_name, "wb") as file:
+        file.write(r.content)
+
+
 if __name__ == "__main__":
     download_TextComplexityDE19()
     download_Weebit()
+    download_dw_set()

@@ -25,5 +25,6 @@ __pycache__/
 TODO.md
 
 # data
+data
 src/data/*
 !src/data/.gitkeep
