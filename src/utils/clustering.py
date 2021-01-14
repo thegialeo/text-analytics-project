@@ -1,5 +1,5 @@
 from sklearn.cluster import (DBSCAN, OPTICS, AffinityPropagation,
-                             AgglomerativeClustering, MeanShift, MiniBatchKMeans,
+                             AgglomerativeClustering, Birch, MeanShift, MiniBatchKMeans,
                              SpectralClustering)
 from sklearn.decomposition import PCA
 
@@ -18,7 +18,7 @@ def clustering_wrapper(features, cluster_method='kmeans', dim_reduc='PCA'):
     Return:
         sklearn_cls (sklearn.cluster class object): sklearn object (see documentation for sklearn.cluster)
         reduced_features (numpy array): features after applying dimension reduction
-        reduced_cluster_centers (numpy array): cluster centers after applying dimension reduction
+        reduced_cluster_centers (numpy array): cluster centers after applying dimension reduction (only if centroid method)
     """
 
     # perform selected clustering method
@@ -52,6 +52,11 @@ def clustering_wrapper(features, cluster_method='kmeans', dim_reduc='PCA'):
     elif cluster_method == 'OPTICS':
         sklearn_cls = OPTICS()
         sklearn_cls.fit(features)
+        centroid_method = False
+    elif cluster_method == 'Birch':
+        sklearn_cls = Birch(n_clusters=6)
+        sklearn_cls.fit(features)
+        sklearn_cls.predict(features)
         centroid_method = False
     else:
         print("Clustering method {} is not implemented yet. Please select one of the following options: 'kmeans', 'AP', 'mean_shift', 'spectral', 'Agg'".format(

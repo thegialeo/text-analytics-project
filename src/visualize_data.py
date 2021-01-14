@@ -28,30 +28,30 @@ def visualize_data():
 
     # KMeans Clustering and PCA
     #cls_kmeans, reduced_features, reduced_cluster_centers = clustering.clustering_wrapper(
-     #   features, 'spectral', 'PCA')
+     #   features, 'Birch', 'PCA')
     cls_kmeans, reduced_features = clustering.clustering_wrapper(
-         features, 'OPTICS', 'PCA')
+         features, 'Birch', 'PCA')
 
     # Plot cluster result against targets
     fig, ax = plt.subplots(1, 2, sharex=True, sharey=True, figsize=(15, 10))
     ax[0].scatter(
         reduced_features[:, 0],
         reduced_features[:, 1],
-        c=cls_kmeans.labels_,
+        c=cls_kmeans.predict(features),
         alpha=0.5)
- #   ax[0].scatter(
-  #      reduced_cluster_centers[:, 0],
-   #     reduced_cluster_centers[:, 1],
-    #    marker='x', s=100, c='r')
+    #ax[0].scatter(
+     #   reduced_cluster_centers[:, 0],
+      #  reduced_cluster_centers[:, 1],
+       # marker='x', s=100, c='r')
     ax[1].scatter(
         reduced_features[:, 0],
         reduced_features[:, 1],
         c=df_ratings.MOS_Complexity.values.round(0),
         alpha=0.5)
-  #  ax[1].scatter(
-   #     reduced_cluster_centers[:, 0],
-    #    reduced_cluster_centers[:, 1],
-     #   marker='x', s=100, c='r')
+    #ax[1].scatter(
+     #   reduced_cluster_centers[:, 0],
+      #  reduced_cluster_centers[:, 1],
+       # marker='x', s=100, c='r')
     ax[0].set_xlabel("feature 1")
     ax[0].set_ylabel("feature 2")
     ax[1].set_xlabel("feature 1")
