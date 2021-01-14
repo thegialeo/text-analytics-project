@@ -1,5 +1,5 @@
-from sklearn.cluster import (AffinityPropagation, AgglomerativeClustering, MeanShift,
-                             MiniBatchKMeans, SpectralClustering)
+from sklearn.cluster import (DBSCAN, AffinityPropagation, AgglomerativeClustering,
+                             MeanShift, MiniBatchKMeans, SpectralClustering)
 from sklearn.decomposition import PCA
 
 
@@ -42,6 +42,10 @@ def clustering_wrapper(features, cluster_method='kmeans', dim_reduc='PCA'):
         centroid_method = False
     elif cluster_method == 'Agg':
         sklearn_cls = AgglomerativeClustering(n_clusters=6)
+        sklearn_cls.fit(features)
+        centroid_method = False
+    elif cluster_method == 'DBSCAN':
+        sklearn_cls = DBSCAN()
         sklearn_cls.fit(features)
         centroid_method = False
     else:
