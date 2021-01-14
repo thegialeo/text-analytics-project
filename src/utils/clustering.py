@@ -1,4 +1,5 @@
-from sklearn.cluster import AffinityPropagation, MeanShift, MiniBatchKMeans
+from sklearn.cluster import (AffinityPropagation, MeanShift, MiniBatchKMeans,
+                             SpectralClustering)
 from sklearn.decomposition import PCA
 
 
@@ -24,14 +25,21 @@ def clustering_wrapper(features, cluster_method='kmeans', dim_reduc='PCA'):
         sklearn_cls = MiniBatchKMeans(n_clusters=6, random_state=0)
         sklearn_cls.fit(features)
         sklearn_cls.predict(features)
+        centroid_method = True
     elif cluster_method == 'AP':
         sklearn_cls = AffinityPropagation(random_state=0)
         sklearn_cls.fit(features)
         sklearn_cls.predict(features)
+        centroid_method = True
     elif cluster_method == 'mean_shift':
         sklearn_cls = MeanShift()
         sklearn_cls.fit(features)
         sklearn_cls.predict(features)
+        centroid_method = True
+    elif cluster_method == 'spectral':
+        sklearn_cls = SpectralClustering(n_clusters=6, assign_labels='discretize', random_state=0)
+        sklearn_cls.fit(features)
+        centroid_method = False
     else:
         print("Clustering method {} is not implemented yet. Please select one of the following options: 'kmeans'".format(
             cluster_method))
@@ -41,9 +49,13 @@ def clustering_wrapper(features, cluster_method='kmeans', dim_reduc='PCA'):
     if dim_reduc == 'PCA':
         pca = PCA(n_components=2, random_state=0)
         reduced_features = pca.fit_transform(features)
-        reduced_cluster_centers = pca.transform(sklearn_cls.cluster_centers_)
+        if centroid_method:
+            reduced_cluster_centers = pca.transform(sklearn_cls.cluster_centers_)
     else:
         print("Dimension Reduction method {} is not implemented yet. Please select one the folling options: 'PCA'".format(dim_reduc))
         exit()
 
-    return sklearn_cls, reduced_features, reduced_cluster_centers
+    if centroid_method:
+        return sklearn_cls, reduced_features, reduced_cluster_centers
+    else:
+        return sklearn_cls, reduced_features
