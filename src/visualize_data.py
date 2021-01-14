@@ -30,7 +30,7 @@ def visualize_data():
     #cls_kmeans, reduced_features, reduced_cluster_centers = clustering.clustering_wrapper(
      #   features, 'spectral', 'PCA')
     cls_kmeans, reduced_features = clustering.clustering_wrapper(
-         features, 'spectral', 'PCA')
+         features, 'Agg', 'PCA')
 
     # Plot cluster result against targets
     fig, ax = plt.subplots(1, 2, sharex=True, sharey=True, figsize=(15, 10))

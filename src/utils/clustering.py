@@ -1,5 +1,5 @@
-from sklearn.cluster import (AffinityPropagation, MeanShift, MiniBatchKMeans,
-                             SpectralClustering)
+from sklearn.cluster import (AffinityPropagation, AgglomerativeClustering, MeanShift,
+                             MiniBatchKMeans, SpectralClustering)
 from sklearn.decomposition import PCA
 
 
@@ -11,7 +11,7 @@ def clustering_wrapper(features, cluster_method='kmeans', dim_reduc='PCA'):
 
     Args:
         features (array-like): matrix with dimension (number samples, number features)
-        cluster_method (str, optional): Select clustering method. Implemented so far are: 'kmeans', 'AP'. Defaults to 'kmeans'.
+        cluster_method (str, optional): Select clustering method. Implemented so far are: 'kmeans', 'AP', 'mean_shift', 'spectral', 'Agg'. Defaults to 'kmeans'.
         dim_reduc (str, optional): Select dimension reduction method. Implemented so far are: 'PCA'. Defaults to 'PCA'.
 
     Return:
@@ -40,8 +40,12 @@ def clustering_wrapper(features, cluster_method='kmeans', dim_reduc='PCA'):
         sklearn_cls = SpectralClustering(n_clusters=6, assign_labels='discretize', random_state=0)
         sklearn_cls.fit(features)
         centroid_method = False
+    elif cluster_method == 'Agg':
+        sklearn_cls = AgglomerativeClustering(n_clusters=6)
+        sklearn_cls.fit(features)
+        centroid_method = False
     else:
-        print("Clustering method {} is not implemented yet. Please select one of the following options: 'kmeans'".format(
+        print("Clustering method {} is not implemented yet. Please select one of the following options: 'kmeans', 'AP', 'mean_shift', 'spectral', 'Agg'".format(
             cluster_method))
         exit()
 
