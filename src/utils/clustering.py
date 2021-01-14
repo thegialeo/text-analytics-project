@@ -12,7 +12,7 @@ def clustering_wrapper(features, cluster_method='kmeans', dim_reduc='PCA'):
 
     Args:
         features (array-like): matrix with dimension (number samples, number features)
-        cluster_method (str, optional): Select clustering method. Implemented so far are: 'kmeans', 'AP', 'mean_shift', 'spectral', 'Agg'. Defaults to 'kmeans'.
+        cluster_method (str, optional): Select clustering method. Implemented so far are: 'kmeans', 'AP', 'mean_shift', 'spectral', 'Agg', 'DBSCAN', 'OPTICS', 'Birch'. Defaults to 'kmeans'.
         dim_reduc (str, optional): Select dimension reduction method. Implemented so far are: 'PCA'. Defaults to 'PCA'.
 
     Return:
@@ -59,7 +59,7 @@ def clustering_wrapper(features, cluster_method='kmeans', dim_reduc='PCA'):
         sklearn_cls.predict(features)
         centroid_method = False
     else:
-        print("Clustering method {} is not implemented yet. Please select one of the following options: 'kmeans', 'AP', 'mean_shift', 'spectral', 'Agg'".format(
+        print("Clustering method {} is not implemented yet. Please select one of the following options: 'kmeans', 'AP', 'mean_shift', 'spectral', 'Agg', 'DBSCAN', 'OPTICS', 'Birch'".format(
             cluster_method))
         exit()
 
