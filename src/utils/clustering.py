@@ -1,4 +1,4 @@
-from sklearn.cluster import AffinityPropagation, MiniBatchKMeans
+from sklearn.cluster import AffinityPropagation, MeanShift, MiniBatchKMeans
 from sklearn.decomposition import PCA
 
 
@@ -26,6 +26,10 @@ def clustering_wrapper(features, cluster_method='kmeans', dim_reduc='PCA'):
         sklearn_cls.predict(features)
     elif cluster_method == 'AP':
         sklearn_cls = AffinityPropagation(random_state=0)
+        sklearn_cls.fit(features)
+        sklearn_cls.predict(features)
+    elif cluster_method == 'mean_shift':
+        sklearn_cls = MeanShift()
         sklearn_cls.fit(features)
         sklearn_cls.predict(features)
     else:

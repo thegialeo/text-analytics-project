@@ -28,7 +28,7 @@ def visualize_data():
 
     # KMeans Clustering and PCA
     cls_kmeans, reduced_features, reduced_cluster_centers = clustering.clustering_wrapper(
-        features, 'kmeans', 'PCA')
+        features, 'mean_shift', 'PCA')
 
     # Plot cluster result against targets
     fig, ax = plt.subplots(1, 2, sharex=True, sharey=True, figsize=(15, 10))
@@ -69,7 +69,7 @@ def visualize_data():
             df_ratings.MOS_Complexity.values.round(0),
             cls_kmeans.predict(features)))
     # Evaluate silhouette score
-    print(silhouette_score(features, labels=cls_kmeans.predict(features)))
+    #print(silhouette_score(features, labels=cls_kmeans.predict(features)))
 
 
 if __name__ == "__main__":
