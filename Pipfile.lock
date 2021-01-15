@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "fc8cd7eeee5ec1cc073bedd98f507db6d7da7c360d9e43d285466012e3684fab"
+            "sha256": "c45081e901e9ad457b2848216ac856eee9b32c4fe011d5d1ad4dd9655f45dbb4"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -55,6 +55,13 @@
             ],
             "index": "pypi",
             "version": "==0.0.1"
+        },
+        "bz2file": {
+            "hashes": [
+                "sha256:64c1f811e31556ba9931953c8ec7b397488726c63e09a4c67004f43bdd28da88"
+            ],
+            "index": "pypi",
+            "version": "==0.98"
         },
         "catalogue": {
             "hashes": [

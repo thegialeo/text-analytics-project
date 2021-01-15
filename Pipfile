@@ -23,6 +23,7 @@ nltk = "*"
 pandas = "*"
 pygit = "*"
 gitpython = "*"
+bz2file = "*"
 
 [scripts]
 test = "coverage run -m unittest discover -s ./tests -p *_test.py"

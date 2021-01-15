@@ -5,6 +5,7 @@ import pandas as pd
 from nltk.corpus import stopwords
 from sklearn.metrics import homogeneity_score, silhouette_score
 from utils import clustering, vectorizer
+import to_dataframe
 
 
 def visualize_data():
@@ -74,6 +75,22 @@ def visualize_data():
     # Evaluate silhouette score
     #print(silhouette_score(features, labels=cls_kmeans.predict(features)))
 
+def basic_stats():
+
+    """
+    This function is supposed to illustrate the distribution of the data.
+    The number of words, sentences and other important statistics
+    are being displayed. This will further be used to see the effect of the
+    augmentation step.
+    Written by Raoul Berger.
+    """
+
+    all_data = to_dataframe.all_data()
+
+    return all_data
+
+
 
 if __name__ == "__main__":
     visualize_data()
+    #basic_stats()
