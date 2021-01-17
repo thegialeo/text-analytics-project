@@ -1,5 +1,7 @@
 import pandas as pd
 import os
+from os.path import join, abspath, dirname
+import textstat
 
 def text_comp19_to_df():
 
@@ -9,10 +11,12 @@ def text_comp19_to_df():
     """
 
     # Path to relevant csv file
-    csv_path = "..data/TextComplexityDE19/parallel_corpus.csv"
+    csv_path = join(dirname(dirname(abspath(__file__))),
+                    "data","TextComplexityDE19/parallel_corpus.csv")
 
     # read in csv file
-    parallel_corpus = pd.read_csv(csv_path)
+    print("Reading in TextComplexityDE19/parallel_corpus.csv")
+    parallel_corpus = pd.read_csv(csv_path, encoding='windows-1252')
 
     #Rename columns and insert source of this dataframe for consistency
     parallel_corpus = parallel_corpus.rename(
@@ -31,16 +35,18 @@ def weebit_to_df():
 
     """
     Returns a pandas Dataframe object with
-    the data of the Weebit dataset
+    the translated data (from english to german)
+    of the Weebit dataset.
     """
 
     # List paths of all .txt files
-    elementary_path = \
-        "../data/WeebitDataset/Texts-SeparatedByReadingLevel/Ele-Txt"
-    advanced_path = \
-        "../data/WeebitDataset/Texts-SeparatedByReadingLevel/Adv-Txt"
-    intermediate_path = \
-        "../data/WeebitDataset/Texts-SeparatedByReadingLevel/Int-Txt"
+    print("Reading in Weebit Ele-Txt, Int-Txt, Adv-Txt")
+    elementary_path = join(dirname(dirname(abspath(__file__))),
+                           "data","WeebitDataset","Texts-SeparatedByReadingLevel","Ele-Txt")
+    advanced_path = join(dirname(dirname(abspath(__file__))),
+                           "data","WeebitDataset","Texts-SeparatedByReadingLevel","Adv-Txt")
+    intermediate_path = join(dirname(dirname(abspath(__file__))),
+                           "data","WeebitDataset","Texts-SeparatedByReadingLevel","Int-Txt")
 
     path_list = [elementary_path, advanced_path, intermediate_path]
 
@@ -76,6 +82,8 @@ def weebit_to_df():
 
     weebit_data = pd.DataFrame(data_dict)
 
+    #translate weebit dataset to german
+
     return weebit_data
 
 def dw_to_df():
@@ -86,9 +94,11 @@ def dw_to_df():
     """
 
     #.h5 file path
-    h5_path = "../data/dw.h5"
+    h5_path = join(dirname(dirname(abspath(__file__))),
+                           "data","dw.h5")
 
     #read in h5 file
+    print("Reading in dw.h5")
     data = pd.HDFStore(h5_path)
 
     #assign in h5 file contained dataframes to variables
@@ -117,7 +127,8 @@ def dw_to_df():
 def all_data():
 
     """
-    returns one dataframe for all datasets
+    returns one dataframe for all datasets. The datasets are also
+    cleared of "\n" and other special symbols.
     """
 
     # load all datasets into dataframes and store them in variables
@@ -129,10 +140,21 @@ def all_data():
     all_dataset = text_comp19.append(weebit, ignore_index=True)
     all_dataset = all_dataset.append(dw, ignore_index=True)
 
+    # delete "\n" and other special symbols
+    all_dataset.replace("\n", "", regex=True, inplace=True)
+
+    #add word count to data
+    all_dataset['word_count'] = all_dataset['raw_text'].str.findall(r'(\w+)').str.len()
+
+    #add flesch readability index to data
+    all_dataset['flesch_readablty'] = all_dataset['raw_text'].apply(textstat.flesch_reading_ease)
+
     return all_dataset
 
 if __name__ == "__main__":
+    #check if data has been downloaded, if not download it.
     pass
+    #
 
 
 

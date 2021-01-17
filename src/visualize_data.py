@@ -8,6 +8,7 @@ from utils import clustering, vectorizer
 import to_dataframe
 
 
+
 def visualize_data():
     """Perform clustering, dimension reduction on TextComplexityDE19 data and plot the result.
        Evaluate clustering by homogeneity and silhouette score.
@@ -84,8 +85,39 @@ def basic_stats():
     augmentation step.
     Written by Raoul Berger.
     """
+    # define path where figures are saved
+    save_path = join(dirname(dirname(abspath(__file__))), "figures")
 
+    # read in data
     all_data = to_dataframe.all_data()
+
+    # plot the original distribution of rows across the datasets
+    all_data["source"].hist()
+    plt.grid()
+    plt.ylabel("entries")
+    plt.title("distribution of entries across the datasets")
+    plt.savefig(join(save_path,"Original distribution of entries across datasets")
+
+    # plot the original distribution of word count per sentence for every dataset
+    plt.title("Mean word count per entry across datasets")
+    plt.ylabel("Mean word count per entry")
+    plt.bar(["text_comp19",
+             "Weebit",
+             "dw"],
+            [all_data[all_data["source"] == "text_comp19"]["word_count"].mean(),
+             all_data[all_data["source"] == "Weebit"]["word_count"].mean(),
+             all_data[all_data["source"] == "dw"]["word_count"].mean()
+             ])
+    plt.savefig(join(save_path, "Original distribution of word count per entry across datasets")
+
+    # plot the distribution of sentences per dataset
+
+    # plot the distribution of sentences per row for each dataset
+
+    # plot flesch reading ease index and compare to rating
+
+    # plot word cloud with most important words for each dataset
+
 
     return all_data
 
@@ -93,4 +125,4 @@ def basic_stats():
 
 if __name__ == "__main__":
     visualize_data()
-    #basic_stats()
+    basic_stats()

@@ -55,11 +55,14 @@ def download_Weebit():
     """
     # url of dataset github repository
     url = \
-        "https://zenodo.org/record/1219041/files/nishkalavallabhi/" \
-        "OneStopEnglishCorpus-bea2018.zip?download=1"
+        "https://zenodo.org/record/1219041/" \
+        "files/nishkalavallabhi/" \
+        "OneStopEnglishCorpus-bea2018.zip?" \
+        "download=1"
 
     #path to which the dataset will be saved
-    download_to_path = join(dirname(dirname(abspath(__file__))), "data")
+    download_to_path = join(
+        dirname(dirname(abspath(__file__))), "data")
 
     #create folder for dataset if it does not exist
     if not exists(download_to_path):
@@ -76,8 +79,10 @@ def download_Weebit():
     with zipfile.ZipFile(path_with_name, 'r') as zip_ref:
         zip_ref.extractall(download_to_path)
 
-    extracted_name = join(download_to_path,
-                          "nishkalavallabhi-OneStopEnglishCorpus-089be0f")
+    extracted_name = join(
+        download_to_path,"nishkalavallabhi-"
+                         "OneStopEnglishCorpus-"
+                         "089be0f")
     renamed_extracted = join(download_to_path,
                              "WeebitDataset")
 
@@ -92,10 +97,12 @@ def download_dw_set():
     """
 
 
-    url = "https://github.com/shlomihod/deep-text-eval/raw/master/data/dw/dw.h5"
+    url = "https://github.com/shlomihod/" \
+          "deep-text-eval/raw/master/data/dw/dw.h5"
 
     # path to which the dataset will be saved
-    download_to_path = join(dirname(dirname(abspath(__file__))), "data")
+    download_to_path = join(
+        dirname(dirname(abspath(__file__))), "data")
 
     # create folder for dataset if it does not exist
     if not exists(download_to_path):
