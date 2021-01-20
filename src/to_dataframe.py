@@ -12,24 +12,28 @@ def text_comp19_to_df():
 
     # Path to relevant csv file
     csv_path = join(dirname(dirname(abspath(__file__))),
-                    "data","TextComplexityDE19/parallel_corpus.csv")
+                    "data","TextComplexityDE19/ratings.csv")
 
     # read in csv file
-    print("Reading in TextComplexityDE19/parallel_corpus.csv")
-    parallel_corpus = pd.read_csv(csv_path, encoding='windows-1252')
+    print("Reading in TextComplexityDE19/ratings.csv")
+    corpus = pd.read_csv(csv_path, encoding='windows-1252')
 
     #Rename columns and insert source of this dataframe for consistency
-    parallel_corpus = parallel_corpus.rename(
-        columns={"Original_Sentence": "raw_text", "Rating": "rating"})
+    corpus = corpus.rename(
+        columns={"Sentence": "raw_text", "Votes_Complexity": "rating"})
 
-    parallel_corpus.insert(2, "source", "text_comp19")
+    corpus.insert(2, "source", "text_comp19")
 
     #Delete all columns except the raw_text and the rating column
-    parallel_corpus = parallel_corpus.drop(columns=
-                                           ["Sentence_Id", "Article_ID",
-                                            "Article", "Simplification"])
+    corpus = corpus.drop(columns=
+                         ["ID", "Article_ID",
+                          "Article", "MOS_Complexity", "Std_Complexity",
+                          "Votes_Understandability", "MOS_Understandability",
+                          "Std_Understandability", "Vote_Lexical_difficulty",
+                          "MOS_Lexical_difficulty", "Std_Lexical_difficulty"
+                          ])
 
-    return parallel_corpus
+    return corpus
 
 def weebit_to_df():
 
