@@ -5,7 +5,9 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Pipfile" beforeDir="false" afterPath="$PROJECT_DIR$/Pipfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Pipfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Pipfile.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/exploration.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/exploration.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/to_dataframe.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/to_dataframe.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/visualize_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/visualize_data.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
