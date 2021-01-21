@@ -2,6 +2,7 @@ import pandas as pd
 import os
 from os.path import join, abspath, dirname
 import textstat
+from google_trans_new import google_translator
 
 def text_comp19_to_df():
 
@@ -87,6 +88,9 @@ def weebit_to_df():
     weebit_data = pd.DataFrame(data_dict)
 
     #translate weebit dataset to german
+    print("Translating Weebit dataset to german...")
+    trans = google_translator()
+    weebit_data["raw_text"] = weebit_data["raw_text"].apply(lambda x: trans.translate(x, lang_tgt="de"))
 
     return weebit_data
 
@@ -145,12 +149,15 @@ def all_data():
     all_dataset = all_dataset.append(dw, ignore_index=True)
 
     # delete "\n" and other special symbols
+    print("delete \"\n\" and other special symbols")
     all_dataset.replace("\n", "", regex=True, inplace=True)
 
     #add word count to data
+    print("add word count to data")
     all_dataset['word_count'] = all_dataset['raw_text'].str.findall(r'(\w+)').str.len()
 
     #add flesch readability index to data
+    print("")
     all_dataset['flesch_readablty'] = all_dataset['raw_text'].apply(textstat.flesch_reading_ease)
 
     return all_dataset
