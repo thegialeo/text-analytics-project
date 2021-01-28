@@ -10,7 +10,7 @@ from nltk.corpus import stopwords
 #import to_dataframe
 
 
-def visualize_vectorizer(vec='tfdif', dim_reduc='PCA'):
+def visualize_vectorizer(vec='tfidf', dim_reduc='PCA'):
     """Apply vectorizer on TextComplexityDE19 data and visualize the vectorization.
 
     Args:
@@ -154,5 +154,5 @@ def basic_stats():
 """
 
 if __name__ == "__main__":
-    visualize_clustering()
+    visualize_vectorizer()
     #basic_stats()
