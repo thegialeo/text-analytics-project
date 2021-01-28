@@ -19,5 +19,8 @@ def reduce_dim(features, method='PCA'):
     elif method == 'TSNE':
         tsne = TSNE(n_components=2, random_state=0)
         reduced_features = tsne.fit_transform(features)
+    else:
+        print("Dimension Reduction method {} is not implemented yet. Please select one the folling options: 'PCA', 'TSNE'".format(method))
+        exit()
 
     return reduced_features

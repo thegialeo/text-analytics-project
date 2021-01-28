@@ -1,3 +1,4 @@
+from dimension_reduction import reduce_dim
 from sklearn.cluster import (DBSCAN, OPTICS, AffinityPropagation,
                              AgglomerativeClustering, Birch, MeanShift, MiniBatchKMeans,
                              SpectralClustering)
@@ -61,6 +62,7 @@ def clustering_wrapper(features, cluster_method='kmeans', dim_reduc='PCA'):
             cluster_method))
         exit()
 
+
     # perform selected dimension reduction
     if dim_reduc == 'PCA':
         reduced_features = pca.fit_transform(features)
@@ -72,8 +74,9 @@ def clustering_wrapper(features, cluster_method='kmeans', dim_reduc='PCA'):
         if centroid_method:
             reduced_cluster_centers = tsne.transform(sklearn_cls.cluster_centers_)
     else:
-        print("Dimension Reduction method {} is not implemented yet. Please select one the folling options: 'PCA'".format(dim_reduc))
+        print("Dimension Reduction method {} is not implemented yet. Please select one the folling options: 'PCA', 'TSNE'".format(method))
         exit()
+   
 
     if centroid_method:
         return sklearn_cls, reduced_features, reduced_cluster_centers
