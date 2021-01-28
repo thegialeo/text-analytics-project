@@ -5,15 +5,18 @@ import pandas as pd
 from nltk.corpus import stopwords
 from sklearn.metrics import homogeneity_score, silhouette_score
 from utils import clustering, vectorizer
+
 import to_dataframe
 
 
-
-def visualize_data():
+def visualize_data(vec='tfidf'):
     """Perform clustering, dimension reduction on TextComplexityDE19 data and plot the result.
        Evaluate clustering by homogeneity and silhouette score.
 
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
+
+    Args:
+        vec (str, optional): vectorizer to used (current options: 'tfidf', 'count', 'hash'), default: 'tfidf'
     """
 
     # read data
@@ -25,7 +28,7 @@ def visualize_data():
     # feature extraction
     german_stopwords = stopwords.words('german')
     features = vectorizer.vectorizer_wrapper(
-        df_ratings.Sentence.values, 'tfidf', german_stopwords)
+        df_ratings.Sentence.values, vec, german_stopwords)
     features = features.toarray()
 
     # KMeans Clustering and PCA

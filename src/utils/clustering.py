@@ -2,6 +2,7 @@ from sklearn.cluster import (DBSCAN, OPTICS, AffinityPropagation,
                              AgglomerativeClustering, Birch, MeanShift, MiniBatchKMeans,
                              SpectralClustering)
 from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
 
 
 def clustering_wrapper(features, cluster_method='kmeans', dim_reduc='PCA'):
@@ -69,6 +70,11 @@ def clustering_wrapper(features, cluster_method='kmeans', dim_reduc='PCA'):
         reduced_features = pca.fit_transform(features)
         if centroid_method:
             reduced_cluster_centers = pca.transform(sklearn_cls.cluster_centers_)
+    elif dim_reduc == 'TSNE':
+        tsne = TSNE(n_components=2, random_state=0)
+        reduced_features = tsne.fit_transform(features)
+        if centroid_method:
+            reduced_cluster_centers = tsne.transform(sklearn_cls.cluster_centers_)
     else:
         print("Dimension Reduction method {} is not implemented yet. Please select one the folling options: 'PCA'".format(dim_reduc))
         exit()
