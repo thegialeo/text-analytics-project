@@ -1,11 +1,12 @@
 from os.path import abspath, dirname, join
 
+import clustering
 import matplotlib.pyplot as plt
 import pandas as pd
+import vectorizer
 from nltk.corpus import stopwords
-from utils import clustering, vectorizer
 
-import to_dataframe
+#import to_dataframe
 
 
 def visualize_vectorizer(vec='tfdif', dim_reduc='PCA'):
@@ -56,7 +57,7 @@ def visualize_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA'):
     ax[0].scatter(
         reduced_features[:, 0],
         reduced_features[:, 1],
-        c=cls_kmeans.labels_,
+        c=cls_object.labels_,
         alpha=0.5)
     ax[1].scatter(
         reduced_features[:, 0],
@@ -85,16 +86,16 @@ def visualize_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA'):
     plt.tight_layout()
     fig.savefig(join(dirname(dirname(dirname(abspath(__file__)))), "figures", "{}_{}_{}.png".format(cluster, vec, dim_reduc)))
     
-
+"""
 def basic_stats():
 
-    """
+    """"""
     This function is supposed to illustrate the distribution of the data.
     The number of words, sentences and other important statistics
     are being displayed. This will further be used to see the effect of the
     augmentation step.
     Written by Raoul Berger.
-    """
+    """"""
     # define path where figures are saved
     save_path = join(dirname(dirname(abspath(__file__))), "figures")
 
@@ -131,8 +132,8 @@ def basic_stats():
 
     return all_data
 
-
+"""
 
 if __name__ == "__main__":
-    visualize_data()
+    visualize_clustering()
     #basic_stats()
