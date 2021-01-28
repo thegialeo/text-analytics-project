@@ -1,9 +1,10 @@
 from os.path import abspath, dirname, join
 
+import clustering
 import pandas as pd
+import vectorizer
 from nltk.corpus import stopwords
 from sklearn.metrics import homogeneity_score, silhouette_score
-from utils import clustering, vectorizer
 
 
 def evaluate_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA'):
@@ -21,6 +22,9 @@ def evaluate_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA'):
         homo_score: homogeneity score
         sil_score: silhouette score
     """
+
+    # centroid methods
+    centroid_methods = ['kmeans', 'AP', 'mean_shift']
 
     # read data
     data_path = join(dirname(dirname(dirname(abspath(__file__)))), "data", "TextComplexityDE19")
@@ -40,9 +44,10 @@ def evaluate_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA'):
         cls_object, reduced_features = clustering.clustering_wrapper(features, cluster, dim_reduc)
 
     # Evaluate homogeneity score
-    homo_score = homogeneity_score(df_ratings.MOS_Complexity.values.round(0), cls_object.labels_))
+    homo_score = homogeneity_score(df_ratings.MOS_Complexity.values.round(0), cls_object.labels_)
 
     # Evaluate silhouette score
     sil_score = silhouette_score(features, labels=cls_object.labels_)
 
     return homo_score, sil_score
+
