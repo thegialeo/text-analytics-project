@@ -3,7 +3,6 @@ from os.path import abspath, dirname, join
 import matplotlib.pyplot as plt
 import pandas as pd
 from nltk.corpus import stopwords
-from sklearn.metrics import homogeneity_score, silhouette_score
 from utils import clustering, vectorizer
 
 import to_dataframe
@@ -11,7 +10,6 @@ import to_dataframe
 
 def visualize_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA'):
     """Perform clustering, dimension reduction on TextComplexityDE19 data and plot the result.
-       Evaluate clustering by homogeneity and silhouette score.
 
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
 
@@ -25,7 +23,7 @@ def visualize_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA'):
     centroid_methods = ['kmeans', 'AP', 'mean_shift']
 
     # read data
-    data_path = join(dirname(dirname(abspath(__file__))), "data", "TextComplexityDE19")
+    data_path = join(dirname(dirname(dirname(abspath(__file__)))), "data", "TextComplexityDE19")
     df_ratings = pd.read_csv(
         join(data_path, "ratings.csv"),
         sep=",", encoding="ISO-8859-1")
@@ -41,7 +39,7 @@ def visualize_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA'):
     else: 
         cls_object, reduced_features = clustering.clustering_wrapper(features, cluster, dim_reduc)
 
-    # Plot cluster result against targets
+    # Plotting
     fig, ax = plt.subplots(1, 2, sharex=True, sharey=True, figsize=(15, 10))
     ax[0].scatter(
         reduced_features[:, 0],
@@ -73,20 +71,8 @@ def visualize_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA'):
     ax[0].grid(True)
     ax[1].grid(True)
     plt.tight_layout()
-    fig.savefig(
-        join(
-            dirname(dirname(abspath(__file__))),
-            "figures", "{}_{}_{}.png".format(cluster, vec, dim_reduc)))
+    fig.savefig(join(dirname(dirname(dirname(abspath(__file__)))), "figures", "{}_{}_{}.png".format(cluster, vec, dim_reduc)))
     
-    
-    # Evaluate homogeneity score
-    print(
-        homogeneity_score(
-            df_ratings.MOS_Complexity.values.round(0),
-            cls_kmeans.labels_))
-            #cls_kmeans.predict(features)))
-    # Evaluate silhouette score
-    #print(silhouette_score(features, labels=cls_kmeans.predict(features)))
 
 def basic_stats():
 
