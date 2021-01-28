@@ -1,6 +1,7 @@
 from os.path import abspath, dirname, join
 
 import clustering
+import dimension_reduction
 import matplotlib.pyplot as plt
 import pandas as pd
 import vectorizer
@@ -26,10 +27,19 @@ def visualize_vectorizer(vec='tfdif', dim_reduc='PCA'):
     features = vectorizer.vectorizer_wrapper(df_ratings.Sentence.values, vec, german_stopwords)
     features = features.toarray()
 
+    # dimension reduction
+    reduced_features = dimension_reduction.reduce_dim(features, dim_reduc)
+
     # plotting
     fig, ax = plt.subplots(1, 1, figsize = (15, 10))
-    ax.scatter()
-
+    ax.scatter(reduced_features[:, 0], reduced_features[:, 1], c=df_ratings.MOS_Complexity.values.round(0), alpha=0.5)
+    ax.set_xlabel("feature 1")
+    ax.set_ylabel("feature 2")
+    ax.set_title("{} vectorizer (projection. {})".format(vec, dim_reduc))
+    ax.grid(True)
+    plt.tight_layout()
+    fig.savefig(join(dirname(dirname(dirname(abspath(__file__)))), "figures", "{}_{}.png".format(vec, dim_reduc)))
+    
 
 
 def visualize_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA'):
