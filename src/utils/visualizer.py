@@ -8,6 +8,17 @@ from utils import clustering, vectorizer
 import to_dataframe
 
 
+def visualize_vectorizer(vec='tfdif', dim_reduc='PCA'):
+    """Apply vectorizer on TextComplexityDE19 data and visualize the vectorization.
+
+    Args:
+        vec (str, optional): vectorizer method to used (options: 'tfidf', 'count', 'hash'), default: 'tfidf'
+        dim_reduc (str, optional): dimension reduction method to used (options: 'PCA', 'TSNE'), default: 'PCA'
+    """
+    pass
+
+
+
 def visualize_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA'):
     """Perform clustering, dimension reduction on TextComplexityDE19 data and plot the result.
 
