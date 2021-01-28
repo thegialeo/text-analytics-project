@@ -9,15 +9,20 @@ from utils import clustering, vectorizer
 import to_dataframe
 
 
-def visualize_data(vec='tfidf'):
+def visualize_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA'):
     """Perform clustering, dimension reduction on TextComplexityDE19 data and plot the result.
        Evaluate clustering by homogeneity and silhouette score.
 
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
 
     Args:
-        vec (str, optional): vectorizer to used (current options: 'tfidf', 'count', 'hash'), default: 'tfidf'
+        vec (str, optional): vectorizer method to used (options: 'tfidf', 'count', 'hash'), default: 'tfidf'
+        cluster (str, optional): clustering method to used (options: 'kmeans', 'AP', 'mean_shift', 'spectral', 'Agg', 'DBSCAN', 'OPTICS', 'Birch'), default: 'kmeans'
+        dim_reduc (str, optional): dimension reduction method to used (options: 'PCA', 'TSNE'), default: 'PCA'
     """
+
+    # centroid methods
+    centroid_methods = ['kmeans', 'AP', 'mean_shift']
 
     # read data
     data_path = join(dirname(dirname(abspath(__file__))), "data", "TextComplexityDE19")
@@ -27,49 +32,53 @@ def visualize_data(vec='tfidf'):
 
     # feature extraction
     german_stopwords = stopwords.words('german')
-    features = vectorizer.vectorizer_wrapper(
-        df_ratings.Sentence.values, vec, german_stopwords)
+    features = vectorizer.vectorizer_wrapper(df_ratings.Sentence.values, vec, german_stopwords)
     features = features.toarray()
 
-    # KMeans Clustering and PCA
-    #cls_kmeans, reduced_features, reduced_cluster_centers = clustering.clustering_wrapper(
-     #   features, 'Birch', 'PCA')
-    cls_kmeans, reduced_features = clustering.clustering_wrapper(
-         features, 'Birch', 'PCA')
+    # Clustering and Dimension Reduction
+    if cluster in centroid_methods:
+        cls_object, reduced_features, reduced_cluster_centers = clustering.clustering_wrapper(features, cluster, dim_reduc)
+    else: 
+        cls_object, reduced_features = clustering.clustering_wrapper(features, cluster, dim_reduc)
 
     # Plot cluster result against targets
     fig, ax = plt.subplots(1, 2, sharex=True, sharey=True, figsize=(15, 10))
     ax[0].scatter(
         reduced_features[:, 0],
         reduced_features[:, 1],
-        c=cls_kmeans.predict(features),
+        c=cls_kmeans.labels_,
         alpha=0.5)
-    #ax[0].scatter(
-     #   reduced_cluster_centers[:, 0],
-      #  reduced_cluster_centers[:, 1],
-       # marker='x', s=100, c='r')
     ax[1].scatter(
         reduced_features[:, 0],
         reduced_features[:, 1],
         c=df_ratings.MOS_Complexity.values.round(0),
         alpha=0.5)
-    #ax[1].scatter(
-     #   reduced_cluster_centers[:, 0],
-      #  reduced_cluster_centers[:, 1],
-       # marker='x', s=100, c='r')
+
+    if cluster in centroid_methods:
+        ax[0].scatter(
+            reduced_cluster_centers[:, 0],
+            reduced_cluster_centers[:, 1],
+            marker='x', s=100, c='r')
+        ax[1].scatter(
+            reduced_cluster_centers[:, 0],
+            reduced_cluster_centers[:, 1],
+            marker='x', s=100, c='r')
+        
     ax[0].set_xlabel("feature 1")
     ax[0].set_ylabel("feature 2")
     ax[1].set_xlabel("feature 1")
     ax[1].set_ylabel("feature 2")
-    ax[0].set_title("KMeans clustering result (Projection with PCA)")
-    ax[1].set_title("PCA features colorcoded by rounded MOS_Complexity")
+    ax[0].set_title("{} clustering result (projection. {})".format(cluster, dim_reduc))
+    ax[1].set_title("rounded MOS_Complexity label")
     ax[0].grid(True)
     ax[1].grid(True)
     plt.tight_layout()
     fig.savefig(
         join(
             dirname(dirname(abspath(__file__))),
-            "figures", "KMeans_clustering_MOS_Complexity"))
+            "figures", "{}_{}_{}.png".format(cluster, vec, dim_reduc)))
+    
+    
     # Evaluate homogeneity score
     print(
         homogeneity_score(
