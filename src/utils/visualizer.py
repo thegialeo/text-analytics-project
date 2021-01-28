@@ -17,9 +17,18 @@ def visualize_vectorizer(vec='tfdif', dim_reduc='PCA'):
         dim_reduc (str, optional): dimension reduction method to used (options: 'PCA', 'TSNE'), default: 'PCA'
     """
     
-     # read data
+    # read data
     data_path = join(dirname(dirname(dirname(abspath(__file__)))), "data", "TextComplexityDE19")
-    df_ratings = pd.read_csv(join(data_path, "ratings.csv"), sep=",", encoding="ISO-8859-1")
+    df_ratings = pd.read_csv(join(data_path, "ratings.csv"), sep = ",", encoding = "ISO-8859-1")
+    
+    # feature extraction
+    german_stopwords = stopwords.words('german')
+    features = vectorizer.vectorizer_wrapper(df_ratings.Sentence.values, vec, german_stopwords)
+    features = features.toarray()
+
+    # plotting
+    fig, ax = plt.subplots(1, 1, figsize = (15, 10))
+    ax.scatter()
 
 
 
@@ -52,7 +61,7 @@ def visualize_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA'):
     else: 
         cls_object, reduced_features = clustering.clustering_wrapper(features, cluster, dim_reduc)
 
-    # Plotting
+    # plotting
     fig, ax = plt.subplots(1, 2, sharex=True, sharey=True, figsize=(15, 10))
     ax[0].scatter(
         reduced_features[:, 0],

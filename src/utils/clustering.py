@@ -1,20 +1,17 @@
 from sklearn.cluster import (DBSCAN, OPTICS, AffinityPropagation,
                              AgglomerativeClustering, Birch, MeanShift, MiniBatchKMeans,
                              SpectralClustering)
-from sklearn.decomposition import PCA
-from sklearn.manifold import TSNE
 
 
 def clustering_wrapper(features, cluster_method='kmeans', dim_reduc='PCA'):
-    """Performs clustering, dimension reduction to 2d space and plots the result (see folder figures).
-       Evaluate homogeneity and silhouette score (see folder results).
+    """Performs clustering, dimension reduction to 2d space.
 
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
 
     Args:
         features (array-like): matrix with dimension (number samples, number features)
         cluster_method (str, optional): Select clustering method. Implemented so far are: 'kmeans', 'AP', 'mean_shift', 'spectral', 'Agg', 'DBSCAN', 'OPTICS', 'Birch'. Defaults to 'kmeans'.
-        dim_reduc (str, optional): Select dimension reduction method. Implemented so far are: 'PCA'. Defaults to 'PCA'.
+        dim_reduc (str, optional): Select dimension reduction method. (options: 'PCA', 'TSNE'). Defaults to 'PCA'.
 
     Return:
         sklearn_cls (sklearn.cluster class object): sklearn object (see documentation for sklearn.cluster)
@@ -66,7 +63,6 @@ def clustering_wrapper(features, cluster_method='kmeans', dim_reduc='PCA'):
 
     # perform selected dimension reduction
     if dim_reduc == 'PCA':
-        pca = PCA(n_components=2, random_state=0)
         reduced_features = pca.fit_transform(features)
         if centroid_method:
             reduced_cluster_centers = pca.transform(sklearn_cls.cluster_centers_)
