@@ -41,10 +41,7 @@ def download_TextComplexityDE19():
         # delete temp folder
         shutil.rmtree(join(download_to_path, "temp"))
     else:
-        print("Folder data already contains TextComplexityDE19. "
-              "Please delete the folder TextComplexityDE and remove from trash. "
-              "Rerun the code.")
-        exit()
+        print("Folder data already contains TextComplexityDE19. Skip download.")
 
 def download_Weebit():
 
