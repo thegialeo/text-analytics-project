@@ -105,7 +105,7 @@ def download_dw_set():
     if not exists(download_to_path):
         os.makedirs(download_to_path)
 
-    path_with_name = join(download_to_path, "dw.h5")
+    path_with_name = join(download_to_path, "DW", "dw.h5")
 
     # create folder for dataset (if it doesn't exist yet)
     r = requests.get(url)
