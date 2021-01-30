@@ -119,7 +119,3 @@ def download_dw_set():
         file.write(r.content)
 
 
-if __name__ == "__main__":
-    download_TextComplexityDE19()
-    download_Weebit()
-    download_dw_set()
