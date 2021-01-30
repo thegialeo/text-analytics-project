@@ -26,6 +26,12 @@ if __name__ == "__main__":
             downloader.download_TextComplexityDE19()
             downloader.download_Weebit()
             downloader.download_dw_set()
+        elif args.download == 'TextComplexityDE19':
+            downloader.download_TextComplexityDE19()
+        elif args.download == 'Weebit':
+            downloader.download_Weebit()
+        elif args.download == 'dw':
+            downloader.download_dw_set()
         else:
             print("Input {} for --download is invalid. Choose one of the following: 'all', 'TextComplexityDE19', 'Weebit', 'dw'".format(args.download))
             exit()
