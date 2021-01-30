@@ -1,10 +1,11 @@
 import os
 import shutil
+import zipfile
 from distutils.dir_util import copy_tree
 from os.path import abspath, dirname, exists, join
-from git import Repo
-import zipfile
+
 import requests
+from git import Repo
 
 
 def download_TextComplexityDE19():
@@ -20,7 +21,7 @@ def download_TextComplexityDE19():
     url = "https://github.com/babaknaderi/TextComplexityDE.git"
 
     # create folder for dataset (if it doesn't exist yet)
-    download_to_path = join(dirname(dirname(abspath(__file__))), "data")
+    download_to_path = join(dirname(dirname(dirname(abspath(__file__)))), "data")
     if not exists(download_to_path):
         os.makedirs(download_to_path)
 
@@ -59,7 +60,7 @@ def download_Weebit():
 
     #path to which the dataset will be saved
     download_to_path = join(
-        dirname(dirname(abspath(__file__))), "data")
+        dirname(dirname(dirname(abspath(__file__)))), "data")
 
     #create folder for dataset if it does not exist
     if not exists(download_to_path):
@@ -99,13 +100,17 @@ def download_dw_set():
 
     # path to which the dataset will be saved
     download_to_path = join(
-        dirname(dirname(abspath(__file__))), "data")
+        dirname(dirname(dirname(abspath(__file__)))), "data")
 
     # create folder for dataset if it does not exist
     if not exists(download_to_path):
         os.makedirs(download_to_path)
 
-    path_with_name = join(download_to_path, "DW", "dw.h5")
+    # create subfolder dw if it does not exist yet
+    if not exists(join(download_to_path, "dw")):
+        os.makedirs(join(download_to_path, "dw"))
+
+    path_with_name = join(download_to_path, "dw", "dw.h5")
 
     # create folder for dataset (if it doesn't exist yet)
     r = requests.get(url)
