@@ -5,9 +5,6 @@ from os.path import abspath, dirname, exists, join
 from gensim.models.word2vec import Word2Vec
 from gensim.models import KeyedVectors
 
-
-def word2vec()
-
 class word2vec:
 
     def __init__(self, corpus, epochs, lr, min_lr, num_features, window_size=5, min_count=5, algorithm="skip-gram"):
