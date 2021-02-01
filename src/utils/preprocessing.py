@@ -49,13 +49,15 @@ def tokenizer(df, method='nltk'):
     """
 
     if method == 'nltk':
-        data = df.to_list()
+        data = df.apply(lambda x: str(x).lower()).to_list()
         corpus = [nltk.word_tokenize(line, language="german") for line in data]
         return corpus
     elif method == 'spacy':
-        data = df.to_list()
+        data = df.apply(lambda x: str(x).lower()).to_list()
         nlp = spacy.load("de_core_news_sm", disable=["tagger", "parser","ner"])
         corpus = [[token.text for token in nlp(line)] for line in data]
         return corpus
     else:
         print("method {} is not implemented. Please select one of following options: 'ntlk', 'spacy'")
+
+
