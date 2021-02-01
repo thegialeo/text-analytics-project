@@ -10,7 +10,7 @@ def vectorizer_wrapper(data, vectorizer='tfidf', stopwords=None):
 
     Args:
         data (numpy array): 1d array containing sentences
-        vectorizer (str, optional): Select the vectorizer type. Implemented so far are: 'tfidf', 'count', 'hash'. Defaults to 'tfidf'.
+        vectorizer (str, optional): Select the vectorizer type. Implemented so far are: 'tfidf', 'count', 'hash', 'word2vec'. Defaults to 'tfidf'.
         stop_words (list, optional): List of stopwords. Defaults to None.
 
     Returns:
@@ -27,8 +27,10 @@ def vectorizer_wrapper(data, vectorizer='tfidf', stopwords=None):
     elif vectorizer == 'hash':
         hash_vec = HashingVectorizer(encoding='ISO-8859-1', stop_words=stopwords)
         features = hash_vec.fit_transform(data)
+    elif vectorizer == 'word2vec':
+        pass
     else:
-        print("Vectorizer {} is not implemented yet. Please select one of the following options: 'tfidf', 'count', 'hash'.".format(vectorizer))
+        print("Vectorizer {} is not implemented yet. Please select one of the following options: 'tfidf', 'count', 'hash', 'word2vec'.".format(vectorizer))
         exit()
 
     return features
