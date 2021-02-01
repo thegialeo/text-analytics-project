@@ -13,6 +13,8 @@ from nltk.corpus import stopwords
 def visualize_vectorizer(vec='tfidf', dim_reduc='PCA'):
     """Apply vectorizer on TextComplexityDE19 data and visualize the vectorization.
 
+    Written by Leo Nguyen. Contact Xenovortex, if problems arises.
+
     Args:
         vec (str, optional): vectorizer method to used (options: 'tfidf', 'count', 'hash'), default: 'tfidf'
         dim_reduc (str, optional): dimension reduction method to used (options: 'PCA', 'TSNE'), default: 'PCA'

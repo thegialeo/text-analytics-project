@@ -5,6 +5,8 @@ from sklearn.manifold import TSNE
 def reduce_dim(features, method='PCA'):
     """Dimension reduction to 2d space.
 
+    Written by Leo Nguyen. Contact Xenovortex, if problems arises.
+
     Args:
         features (array-like): matrix with dimension (number samples, number features)
         method (str, optional): Select dimension reduction method. (options: 'PCA', 'TSNE'). Defaults to 'PCA'.
