@@ -1,7 +1,9 @@
+import numpy as np
 import multiprocessing
 from os.path import abspath, dirname, exists, join
 
 from gensim.models.word2vec import Word2Vec
+from gensim.models import KeyedVectors
 
 
 def word2vec()
@@ -30,7 +32,8 @@ class word2vec:
         self.num_features = num_features
         self.window_size = window_size
         self.min_count = min_count
-        self.data_path = join(dirname(dirname(dirname(abspath(__file__)))), "model", "word2vec.model")
+        self.model_path = join(dirname(dirname(dirname(abspath(__file__)))), "model", "word2vec.model")
+        self.wv_path = join(dirname(dirname(dirname(abspath(__file__)))), "model", "word2vec.wordvectors")
 
         if algorithm == "skip-gram":
             self.algorithm = 1
@@ -42,6 +45,7 @@ class word2vec:
         
 
     def train(self):
+        """Train Word2Vec model on corpus."""
         self.model = Word2Vec(corpus,
                                 sg = 1,
                                 epochs = self.epochs,
@@ -51,17 +55,30 @@ class word2vec:
                                 window = self.window_size,
                                 min_count = semin_count,
                                 workers=multiprocessing.cpu_count())
+
+        self.wv = model.wv
         
         self.model.init_sims(replace=True)
         self.save_model()
 
+  
+    def vectorize(self):
+        """Vectorize the corpus with word2vec model"""
+        self.features = [np.mean([self.wv[word] for word in line if word in self.wv.vocab], axis=0) for line in corpus]
 
     def save_model(self):
+        """Save word2vec model and wordvectors"""
         if not exists(self.data_path):
             os.makedirs(self.data_path)
         
-        self.model.save(self.data_path)
+        self.model.save(self.model_path)
+        self.model.vw.save(self.wv_path)
 
 
     def load_model(self):
+        """Load word2vec model"""
         self.model = Word2Vec.load(self.data_path)
+
+    def load_wv(self):
+        """Load wordvectors"""
+        self.wv = KeyedVectors.load(self.wv_path, mmap='r') 
