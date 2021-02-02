@@ -3,11 +3,11 @@ from os.path import abspath, dirname, join
 import clustering
 import pandas as pd
 import vectorizer
-from nltk.corpus import stopwords
+import preprocessing
 from sklearn.metrics import homogeneity_score, silhouette_score
 
 
-def evaluate_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA'):
+def evaluate_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA', stopword='nltk'):
     """Perform clustering, dimension reduction on TextComplexityDE19 data.
        Evaluate clustering by homogeneity and silhouette score.
        
@@ -17,6 +17,7 @@ def evaluate_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA'):
         vec (str, optional): vectorizer method to used (options: 'tfidf', 'count', 'hash'), default: 'tfidf'
         cluster (str, optional): clustering method to used (options: 'kmeans', 'AP', 'mean_shift', 'spectral', 'Agg', 'DBSCAN', 'OPTICS', 'Birch'), default: 'kmeans'
         dim_reduc (str, optional): dimension reduction method to used (options: 'PCA', 'TSNE'), default: 'PCA'
+        stopword (str, optional): source to load stopwords from (options: "spacy", "nltk", "stop_words", "german_plain", "german_full"). Defaults to "nltk".
 
     Return:
         homo_score: homogeneity score
@@ -33,7 +34,7 @@ def evaluate_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA'):
      sep = ",", encoding = "ISO-8859-1")
      
     # feature extraction
-    german_stopwords = stopwords.words('german')
+    german_stopwords = preprocessing.get_stopwords(stopword)
     features = vectorizer.vectorizer_wrapper(df_ratings.Sentence.values, vec, german_stopwords)
     features = features.toarray()
   
@@ -53,13 +54,14 @@ def evaluate_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA'):
 
 
 
-def evaluate_baseline(method='linear'):
+def evaluate_baseline(vec='tfidf', method='linear'):
     """Perform baseline regression on TextComplexityDE19 data.
        Evaluate RMSE, MAE and R squares
 
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
 
     Args:
+        vec (str, optional): vectorizer method to used (options: 'tfidf', 'count', 'hash'), default: 'tfidf'
         method (str, optional): [description]. Defaults to 'linear'.
     """
 
@@ -67,4 +69,7 @@ def evaluate_baseline(method='linear'):
     data_path = join(dirname(dirname(dirname(abspath(__file__)))), "data", "TextComplexityDE19")
     df_ratings = pd.read_csv(join(data_path, "ratings.csv"), sep = ",", encoding = "ISO-8859-1")
 
-    # feature extration
+    # feature extraction
+    german_stopwords = preprocessing.get_stopwords(stopword)
+    features = vectorizer.vectorizer_wrapper(df_ratings.Sentence.values, vec, german_stopwords)
+    features = features.toarray()
