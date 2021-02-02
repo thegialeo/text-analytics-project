@@ -1,5 +1,5 @@
-from sklearn.linear_model import (ElasticNet, Lasso, LinearRegression,
-                                  RandomForestRegressor, Ridge)
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import ElasticNet, Lasso, LinearRegression, Ridge
 
 
 def baseline(data, labels, method='linear'):

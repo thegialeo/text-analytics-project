@@ -26,6 +26,8 @@ gitpython = "*"
 bz2file = "*"
 translate = "*"
 textstat = "*"
+gensim = "*"
+stop-words = "*"
 
 [scripts]
 test = "coverage run -m unittest discover -s ./tests -p *_test.py"

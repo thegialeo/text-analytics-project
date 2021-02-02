@@ -2,10 +2,11 @@ from os.path import abspath, dirname, join
 
 import clustering
 import pandas as pd
-import vectorizer
 import preprocessing
 import regression
-from sklearn.metrics import homogeneity_score, silhouette_score, r2_score, mean_squared_error, mean_absolute_error
+import vectorizer
+from sklearn.metrics import (homogeneity_score, mean_absolute_error, mean_squared_error,
+                             r2_score, silhouette_score)
 from sklearn.model_selection import train_test_split
 
 
@@ -56,7 +57,7 @@ def evaluate_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA', stopword
 
 
 
-def evaluate_baseline(vec='tfidf', method='linear'):
+def evaluate_baseline(vec='tfidf', method='linear', stopword='nltk'):
     """Perform baseline regression on TextComplexityDE19 data.
        Evaluate RMSE, MSE, MAE and R squares
 
@@ -65,6 +66,7 @@ def evaluate_baseline(vec='tfidf', method='linear'):
     Args:
         vec (str, optional): vectorizer method to used (options: 'tfidf', 'count', 'hash'), default: 'tfidf'
         method (str, optional): [description]. Defaults to 'linear'.
+        stopword (str, optional): source to load stopwords from (options: "spacy", "nltk", "stop_words", "german_plain", "german_full"). Defaults to "nltk".
 
     Return:
         MSE (double): Mean Square Error
@@ -101,3 +103,11 @@ def evaluate_baseline(vec='tfidf', method='linear'):
     MAE = mean_absolute_error(y_test, pred)
 
     return MSE, RMSE, MAE, r_square
+
+
+if __name__ == "__main__":
+    MSE, RMSE, MAE, r_square = evaluate_baseline()
+    print("MSE:", MSE)
+    print("RMSE:", RMSE)
+    print("MAE:", MAE)
+    print("R Square:", r_square)
