@@ -4,7 +4,9 @@ import clustering
 import pandas as pd
 import vectorizer
 import preprocessing
-from sklearn.metrics import homogeneity_score, silhouette_score
+import regression
+from sklearn.metrics import homogeneity_score, silhouette_score, r2_score, mean_squared_error, mean_absolute_error
+from sklearn.model_selection import train_test_split
 
 
 def evaluate_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA', stopword='nltk'):
@@ -56,13 +58,19 @@ def evaluate_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA', stopword
 
 def evaluate_baseline(vec='tfidf', method='linear'):
     """Perform baseline regression on TextComplexityDE19 data.
-       Evaluate RMSE, MAE and R squares
+       Evaluate RMSE, MSE, MAE and R squares
 
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
 
     Args:
         vec (str, optional): vectorizer method to used (options: 'tfidf', 'count', 'hash'), default: 'tfidf'
         method (str, optional): [description]. Defaults to 'linear'.
+
+    Return:
+        MSE (double): Mean Square Error
+        RMSE (double): Root Mean Square Error
+        MAE (double): Mean Absolute Error
+        r_square (double): R Square 
     """
 
     # read data
@@ -73,3 +81,23 @@ def evaluate_baseline(vec='tfidf', method='linear'):
     german_stopwords = preprocessing.get_stopwords(stopword)
     features = vectorizer.vectorizer_wrapper(df_ratings.Sentence.values, vec, german_stopwords)
     features = features.toarray()
+
+    # labels
+    labels = df_ratings.MOS_Complexity.values
+
+    # split into train- and testset
+    X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=0.2, random_state=0, shuffle=False)
+
+    # training
+    reg = regression.baseline(X_train, y_train, method)
+    
+    # testing
+    pred = reg.predict(X_test)
+
+    # evaluation
+    r_square = r2_score(y_test, pred)
+    MSE = mean_squared_error(y_test, pred)
+    RMSE = mean_squared_error(y_test, pred, squared = False)
+    MAE = mean_absolute_error(y_test, pred)
+
+    return MSE, RMSE, MAE, r_square
