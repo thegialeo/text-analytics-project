@@ -51,3 +51,20 @@ def evaluate_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA'):
 
     return homo_score, sil_score
 
+
+
+def evaluate_baseline(method='linear'):
+    """Perform baseline regression on TextComplexityDE19 data.
+       Evaluate RMSE, MAE and R squares
+
+       Written by Leo Nguyen. Contact Xenovortex, if problems arises.
+
+    Args:
+        method (str, optional): [description]. Defaults to 'linear'.
+    """
+
+    # read data
+    data_path = join(dirname(dirname(dirname(abspath(__file__)))), "data", "TextComplexityDE19")
+    df_ratings = pd.read_csv(join(data_path, "ratings.csv"), sep = ",", encoding = "ISO-8859-1")
+
+    # feature extration
