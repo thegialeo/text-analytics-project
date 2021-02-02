@@ -1,4 +1,4 @@
-from sklearn.linear_model import LinearRegression, Lasso, Ridge
+from sklearn.linear_model import LinearRegression, Lasso, Ridge, ElasticNet
 
 
 def baseline(data, labels, method='linear'):
@@ -16,6 +16,8 @@ def baseline(data, labels, method='linear'):
         reg = Lasso(random_state=0).fit(data, labels)
     elif method == 'ridge':
         reg = Ridge(random_state=0).fit(data, labels)
+    elif method == 'elasticNet':
+        reg = ElasticNet(random_state=0).fit(data, labels)
     else:
         print("Regression {} is unknown. Please choose: 'linear'".format(method))
         exit()
