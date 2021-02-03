@@ -17,8 +17,10 @@ if __name__ == "__main__":
                         help="Download specific or all datasets. Options: 'all', 'TextComplexityDE19', 'Weebit', 'dw'")
     parser.add_argument("--experiment", dest='experiment', action='store',
                         help="Select experiment to perform. Options: 'vectorizer'")
+    parser.add_argument("--hyperparameter", dest='hyperparameter', action='store',
+                        help="Perform linear search for given hyperparameter. Options: 'feature_dim'")
 
-    parser.set_defaults(download=None, experiment=None)
+    parser.set_defaults(download=None, experiment=None, hyperparameter=None)
     args = parser.parse_args()
 
 
@@ -37,6 +39,12 @@ if __name__ == "__main__":
         else:
             print("Input {} for --download is invalid. Choose one of the following: 'all', 'TextComplexityDE19', 'Weebit', 'dw'".format(args.download))
             exit()
+
+    # hyperparameter search
+    if args.hyperparameter is not None:
+        # feature dimension
+        if args.hyperparameter == 'feature_dim':
+            benchmark.traverser_feature_dim(50, 500, 10)
 
 
     # experiments
