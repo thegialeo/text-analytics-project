@@ -33,6 +33,7 @@ stop-words = "*"
 test = "coverage run -m unittest discover -s ./tests -p *_test.py"
 report = "coverage html"
 main = "python ./src/main.py"
+download_spacy_corpus = "python -m spacy download de_core_news_sm"
 
 [requires]
 python_version = "3.7"

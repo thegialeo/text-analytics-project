@@ -1,8 +1,13 @@
+import gc
+import os
 from os.path import abspath, dirname, exists, join
 
 import evaluater
 import numpy as np
 import pandas as pd
+import preprocessing
+import vectorizer
+from tqdm import tqdm
 
 
 def benchmark_baseline():
@@ -12,42 +17,41 @@ def benchmark_baseline():
     """
 
     # set all benchmark parameters
-    stopwords = ["spacy", "nltk", "stop_words", "german_plain", "german_full"]
-    vec_lst = ['tfidf', 'count', 'hash']
+    stopwords = ["nltk", "spacy", "stop_words", "german_plain", "german_full"] 
+    vec_lst = ['tfidf', 'count'] # hashing vectorizer omitted, because run out of memory
     reg_lst = ['linear', 'lasso', 'ridge', 'elastic-net', 'random-forest']
+ 
+    # run benchmark
+    for stopword in tqdm(stopwords):
+        for vec in vec_lst:
+            
+            # keep track of results
+            results = np.zeros((len(reg_lst), 4))
 
-    for stopword in stopwords:
+            # evaluation
+            for i, method in enumerate(reg_lst):
+                MSE, RMSE, MAE, r_square = evaluater.evaluate_baseline(vec, method, stopword)
+                results[i][0] = MSE
+                results[i][1] = RMSE
+                results[i][2] = MAE
+                results[i][3] = r_square
+                
+            # save results
+            df = pd.DataFrame(results, index=reg_lst, columns=['MSE', 'RMSE', 'MAE', 'r_square'])
 
-        # keep track of results
-        MSE_result = np.zeros((len(reg_lst), len(vec_lst)))
-        RMSE_result = np.zeros((len(reg_lst), len(vec_lst)))
-        MAE_result = np.zeros((len(reg_lst), len(vec_lst)))
-        R2_result = np.zeros((len(reg_lst), len(vec_lst)))
+            path = join(dirname(dirname(dirname(abspath(__file__)))), "result", "compare-vectorizer")
 
-        # run benchmark
-        for i, method in enumerate(reg_lst):
-            for j, vec in enumerate(vec_lst):
-                MSE, RMSE, MAE, r_square = evaluate_baseline(vec, method, stopword)
-                MSE_result[i][j] = MSE
-                RMSE_result[i][j] = RMSE
-                MAE_result[i][j] = MAE
-                R2_result[i][j] = r_square
+            if not exists(dirname(path)):
+                os.makedirs(dirname(path))
 
-        # save results
-        MSE_df = pd.DataFrame(MSE_result, index=reg_lst, columns=vec_lst)
-        RMSE_df = pd.DataFrame(RMSE_result, index=reg_lst, columns=vec_lst)
-        MAE_df = pd.DataFrame(MAE_result, index=reg_lst, columns=vec_lst)
-        R2_df = pd.DataFrame(R2_result, index=reg_lst, columns=vec_lst)
+            if not exists(path):
+                os.makedirs(path)
 
-        path = join(dirname(dirname(dirname(abspath(__file__)))), "result", "compare-vectorizer")
+            df.to_csv(join(path, "{}_{}.csv".format(vec, stopword)))
 
-        if not exists(dirname(path)):
-            os.makedirs(dirname(path))
+            # release memory
+            gc.collect()
 
-        if not exists(path):
-            os.makedirs(path)
 
-        MSE_df.to_csv(join(path, "MSE_{}.csv".format(stopword)))
-        RMSE_df.to_csv(join(path, "RMSE_{}.csv".format(stopword)))
-        MAE_df.to_csv(join(path, "MAE_{}.csv".format(stopword)))
-        R2_df.to_csv(join(path, "R2_{}.csv".format(stopword)))
+if __name__ == "__main__":
+    benchmark_baseline()

@@ -57,7 +57,7 @@ def evaluate_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA', stopword
 
 
 
-def evaluate_baseline(vec='tfidf', method='linear', stopword='nltk'):
+def evaluate_baseline(vec='tfidf', method='linear', stopword='nltk', features=None, labels=None):
     """Perform baseline regression on TextComplexityDE19 data.
        Evaluate RMSE, MSE, MAE and R squares
 
@@ -67,6 +67,8 @@ def evaluate_baseline(vec='tfidf', method='linear', stopword='nltk'):
         vec (str, optional): vectorizer method to used (options: 'tfidf', 'count', 'hash'), default: 'tfidf'
         method (str, optional): regression method to use (options: 'linear', 'lasso', 'ridge', 'elastic-net', 'random-forest'). Defaults to 'linear'.
         stopword (str, optional): source to load stopwords from (options: "spacy", "nltk", "stop_words", "german_plain", "german_full"). Defaults to "nltk".
+        features (array-like, optional): features on which the baseline should be evaluated. Defaults to 'None' 
+        labels (array-like, optional): labels on which the baseline should be evaluated. Defaults to 'None'
 
     Return:
         MSE (double): Mean Square Error
@@ -75,17 +77,18 @@ def evaluate_baseline(vec='tfidf', method='linear', stopword='nltk'):
         r_square (double): R Square 
     """
 
-    # read data
-    data_path = join(dirname(dirname(dirname(abspath(__file__)))), "data", "TextComplexityDE19")
-    df_ratings = pd.read_csv(join(data_path, "ratings.csv"), sep = ",", encoding = "ISO-8859-1")
+    if features is None and labels is None:
+        # read data
+        data_path = join(dirname(dirname(dirname(abspath(__file__)))), "data", "TextComplexityDE19")
+        df_ratings = pd.read_csv(join(data_path, "ratings.csv"), sep = ",", encoding = "ISO-8859-1")
 
-    # feature extraction
-    german_stopwords = preprocessing.get_stopwords(stopword)
-    features = vectorizer.vectorizer_wrapper(df_ratings.Sentence.values, vec, german_stopwords)
-    features = features.toarray()
+        # feature extraction
+        german_stopwords = preprocessing.get_stopwords(stopword)
+        features = vectorizer.vectorizer_wrapper(df_ratings.Sentence.values, vec, german_stopwords)
+        features = features.toarray()
 
-    # labels
-    labels = df_ratings.MOS_Complexity.values
+        # labels
+        labels = df_ratings.MOS_Complexity.values
 
     # split into train- and testset
     X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=0.2, random_state=0, shuffle=False)
