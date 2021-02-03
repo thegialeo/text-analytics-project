@@ -5,7 +5,7 @@ from os.path import abspath, dirname, exists, join
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
-from utils import evaluater, preprocessing, vectorizer
+from utils import evaluater, preprocessing, vectorizer, visualizer
 
 
 def benchmark_baseline():
@@ -37,7 +37,7 @@ def benchmark_baseline():
             # save results
             df = pd.DataFrame(results, index=reg_lst, columns=['MSE', 'RMSE', 'MAE', 'r_square'])
 
-            path = join(dirname(dirname(dirname(abspath(__file__)))), "result", "compare-vectorizer")
+            path = join(dirname(dirname(dirname(abspath(__file__)))), "result", "vectorizer")
 
             if not exists(dirname(path)):
                 os.makedirs(dirname(path))
@@ -46,6 +46,10 @@ def benchmark_baseline():
                 os.makedirs(path)
 
             df.to_csv(join(path, "{}_{}.csv".format(vec, stopword)))
+
+            # visualize vectorization
+            visualizer.visualize_vectorizer(vec, 'PCA', stopword)
+            visualizer.visualize_vectorizer(vec, 'TSNE', stopword)
 
             # release memory
             gc.collect()

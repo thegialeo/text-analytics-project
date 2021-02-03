@@ -1,11 +1,9 @@
-from os.path import abspath, dirname, join
+import os
+from os.path import abspath, dirname, exists, join
 
-import clustering
-import dimension_reduction
 import matplotlib.pyplot as plt
 import pandas as pd
-import vectorizer
-import preprocessing
+from utils import clustering, dimension_reduction, preprocessing, vectorizer
 
 #import to_dataframe
 
@@ -31,7 +29,7 @@ def visualize_vectorizer(vec='tfidf', dim_reduc='PCA', stopword='nltk'):
     features = features.toarray()
 
     # dimension reduction
-    reduced_features = dimension_reduction.reduce_dim(features, dim_reduc)
+    reduced_features = dimension_reduction.reduce_dim(features, dim_reduc) 
 
     # plotting
     fig, ax = plt.subplots(1, 1, figsize = (15, 10))
@@ -41,7 +39,17 @@ def visualize_vectorizer(vec='tfidf', dim_reduc='PCA', stopword='nltk'):
     ax.set_title("{} vectorizer (projection. {})".format(vec, dim_reduc))
     ax.grid(True)
     plt.tight_layout()
-    fig.savefig(join(dirname(dirname(dirname(abspath(__file__)))), "figures", "{}_{}.png".format(vec, dim_reduc)))
+
+    # save
+    save_path = join(dirname(dirname(dirname(abspath(__file__)))), "figures", "vectorizer", "{}_{}.png".format(vec, dim_reduc))
+
+    if not exists(dirname(dirname(save_path))):
+        os.makedirs(dirname(dirname(save_path)))
+
+    if not exists(dirname(save_path)):
+        os.makedirs(dirname(save_path))
+    
+    fig.savefig(save_path)
     
 
 
