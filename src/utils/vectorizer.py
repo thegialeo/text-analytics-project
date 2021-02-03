@@ -59,15 +59,15 @@ def NN_vectorizer_wrapper(corpus, epochs, lr, min_lr, num_features, window_size=
    
     # apply selected vectorizer
     if vectorizer == 'word2vec':
-        word2vec = word2vec.word2vec(corpus, epochs, lr, min_lr, num_features, window_size, min_count, algorithm)
+        model = word2vec.word2vec(corpus, epochs, lr, min_lr, num_features, window_size, min_count, algorithm)
         if mode == 'train':
-            word2vec.train()
+            model.train()
         elif mode == 'load':
-            word2vec.load_wv()
+            model.load_wv()
         else:
             print("mode {} unknown. Please choose 'train' or 'load'".format(mode))
-        word2vec.vectorize()
-        features = word2vec.features
+        model.vectorize()
+        features = model.features
     else:
         print("Vectorizer {} not implemented. Please one of the following options: 'word2vec'.".format(vectorizer))
         exit()

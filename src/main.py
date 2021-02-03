@@ -1,6 +1,6 @@
 import argparse
 
-from utils import benchmark, downloader
+from utils import benchmark, downloader, traverser
 from utils.sample import hello_world  # import of module from subfolder
 
 """
@@ -44,7 +44,7 @@ if __name__ == "__main__":
     if args.hyperparameter is not None:
         # feature dimension
         if args.hyperparameter == 'feature_dim':
-            benchmark.traverser_feature_dim(50, 500, 10)
+            traverser.traverser_feature_dim(50, 500, 10)
 
 
     # experiments

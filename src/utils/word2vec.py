@@ -1,9 +1,11 @@
-import numpy as np
 import multiprocessing
+import os
 from os.path import abspath, dirname, exists, join
 
-from gensim.models.word2vec import Word2Vec
+import numpy as np
 from gensim.models import KeyedVectors
+from gensim.models.word2vec import Word2Vec
+
 
 class word2vec:
 
@@ -43,17 +45,17 @@ class word2vec:
 
     def train(self):
         """Train Word2Vec model on corpus."""
-        self.model = Word2Vec(corpus,
+        self.model = Word2Vec(self.corpus,
                                 sg = 1,
-                                epochs = self.epochs,
+                                iter = self.epochs,
                                 alpha = self.lr,
                                 min_alpha = self.min_lr,
                                 size = self.num_features,
                                 window = self.window_size,
-                                min_count = semin_count,
+                                min_count = self.min_count,
                                 workers=multiprocessing.cpu_count())
 
-        self.wv = model.wv
+        self.wv = self.model.wv
         
         self.model.init_sims(replace=True)
         self.save_model()
@@ -61,15 +63,15 @@ class word2vec:
   
     def vectorize(self):
         """Vectorize the corpus with word2vec model"""
-        self.features = [np.mean([self.wv[word] for word in line if word in self.wv.vocab], axis=0) for line in corpus]
+        self.features = [np.mean([self.wv[word] for word in line if word in self.wv.vocab], axis=0) for line in self.corpus]
 
     def save_model(self):
         """Save word2vec model and wordvectors"""
-        if not exists(self.data_path):
-            os.makedirs(self.data_path)
+        if not exists(dirname(self.model_path)):
+            os.makedirs(dirname(self.model_path))
         
         self.model.save(self.model_path)
-        self.model.vw.save(self.wv_path)
+        self.model.wv.save(self.wv_path)
 
 
     def load_model(self):
