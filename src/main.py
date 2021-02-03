@@ -1,6 +1,6 @@
 import argparse
 
-from utils import downloader
+from utils import benchmark, downloader
 from utils.sample import hello_world  # import of module from subfolder
 
 """
@@ -15,8 +15,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--download", dest='download', action='store',
                         help="Download specific or all datasets. Options: 'all', 'TextComplexityDE19', 'Weebit', 'dw'")
+    parser.add_argument("--experiment", dest='experiment', action='store',
+                        help="Select experiment to perform. Options: 'vectorizer'")
 
-    parser.set_defaults(download=None)
+    parser.set_defaults(download=None, experiment=None)
     args = parser.parse_args()
 
 
@@ -36,5 +38,12 @@ if __name__ == "__main__":
             print("Input {} for --download is invalid. Choose one of the following: 'all', 'TextComplexityDE19', 'Weebit', 'dw'".format(args.download))
             exit()
 
+
+    # experiments
+    if args.experiment is not None:
+        
+        # vectorizer
+        if args.experiment == 'vectorizer':
+            benchmark.benchmark_baseline()
 
 

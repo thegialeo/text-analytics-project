@@ -1,6 +1,7 @@
 from sklearn.feature_extraction.text import (CountVectorizer, HashingVectorizer,
                                              TfidfVectorizer)
-import word2vec
+from utils import word2vec
+
 
 def vectorizer_wrapper(data, vectorizer='tfidf', stopwords=None):
     """Takes in a numpy array of sentences and perform the selected vectorizer on the data.

@@ -5,7 +5,7 @@ from distutils.dir_util import copy_tree
 from os.path import abspath, dirname, exists, join
 
 import requests
-from git import Repo
+#from git.repo.base import Repo
 
 
 def download_TextComplexityDE19():
@@ -31,7 +31,7 @@ def download_TextComplexityDE19():
         # create temp folder to download github repository
         if not exists(join(download_to_path, "temp")):
             os.makedirs(join(download_to_path, "temp"))
-        Repo.clone_from(url, join(download_to_path, "temp"))
+        os.system("git clone {} {}".format(url, join(download_to_path, "temp"))) #Repo.clone_from(url, join(download_to_path, "temp"))
         # clean up downloaded repository
         shutil.rmtree(join(download_to_path, "temp", ".git"))
         os.remove(join(download_to_path, "temp", ".gitignore"))
@@ -117,5 +117,3 @@ def download_dw_set():
 
     with open(path_with_name, "wb") as file:
         file.write(r.content)
-
-

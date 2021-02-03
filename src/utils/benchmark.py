@@ -2,12 +2,10 @@ import gc
 import os
 from os.path import abspath, dirname, exists, join
 
-import evaluater
 import numpy as np
 import pandas as pd
-import preprocessing
-import vectorizer
 from tqdm import tqdm
+from utils import evaluater, preprocessing, vectorizer
 
 
 def benchmark_baseline():
@@ -51,7 +49,3 @@ def benchmark_baseline():
 
             # release memory
             gc.collect()
-
-
-if __name__ == "__main__":
-    benchmark_baseline()

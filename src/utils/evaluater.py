@@ -1,13 +1,10 @@
 from os.path import abspath, dirname, join
 
-import clustering
 import pandas as pd
-import preprocessing
-import regression
-import vectorizer
 from sklearn.metrics import (homogeneity_score, mean_absolute_error, mean_squared_error,
                              r2_score, silhouette_score)
 from sklearn.model_selection import train_test_split
+from utils import clustering, preprocessing, regression, vectorizer
 
 
 def evaluate_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA', stopword='nltk'):

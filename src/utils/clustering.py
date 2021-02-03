@@ -1,4 +1,3 @@
-from dimension_reduction import reduce_dim
 from sklearn.cluster import (DBSCAN, OPTICS, AffinityPropagation,
                              AgglomerativeClustering, Birch, MeanShift, MiniBatchKMeans,
                              SpectralClustering)
