@@ -90,7 +90,7 @@ def traverser_feature_dim(start, end, step, model="word2vec"):
     MAE_CBOW = []
     R2_CBOW = []
 
-
+    # traversal
     for algorithm in ["skip-gram", "CBOW"]:
         for i in range(start, end, step):
 
@@ -102,10 +102,10 @@ def traverser_feature_dim(start, end, step, model="word2vec"):
                                                      num_features = i,
                                                      window_size = 5,
                                                      min_count = 5,
-                                                     algorithm = "skip-gram",
-                                                     vectorizer = 'word2vec',
-                                                     mode = 'train')
-
+                                                     algorithm = algorithm,
+                                                     vectorizer = model,
+                                                     mode='train')         
+                         
             # train model
             model.train()
 
@@ -123,10 +123,45 @@ def traverser_feature_dim(start, end, step, model="word2vec"):
             pred = reg.predict(X_test)
 
             # evaluation
-            r_square = r2_score(y_test, pred)
             MSE = mean_squared_error(y_test, pred)
             RMSE = mean_squared_error(y_test, pred, squared = False)
             MAE = mean_absolute_error(y_test, pred)
+            r_square = r2_score(y_test, pred)
 
             # track results
+            if algorithm == "skip-gram":
+                MSE_skip.append(MSE)
+                RMSE_skip.append(RMSE)
+                MAE_skip.append(MAE)
+                R2_skip.append(r_square)
 
+            if algorithm == "CBOW":
+                MSE_CBOW.append(MSE)
+                RMSE_CBOW.append(RMSE)
+                MAE_CBOW.append(MAE)
+                R2_CBOW.append(r_square)
+
+    # plot
+    fig, ax = plt.subplots(1, 1, figsize = (15, 10))
+    ax.plot([x for x in range(start, end, step)], MSE_skip, label="MSE skip-gram")
+    ax.plot([x for x in range(start, end, step)], RMSE_skip, label="RMSE skip-gram")
+    ax.plot([x for x in range(start, end, step)], MAE_skip, label="MAE skip-gram")
+    ax.plot([x for x in range(start, end, step)], R2_skip, label="R2 skip-gram")
+    ax.plot([x for x in range(start, end, step)], MSE_CBOW, label="MSE CBOW")
+    ax.plot([x for x in range(start, end, step)], RMSE_CBOW, label="RMSE CBOW")
+    ax.plot([x for x in range(start, end, step)], MAE_CBOW, label="MAE CBOW")
+    ax.plot([x for x in range(start, end, step)], R2_CBOW, label="R2 CBOW")
+    ax.set_xlabel("feature 1")
+    ax.set_ylabel("feature 2")
+    ax.set_title("{} vectorizer (projection. {})".format(vec, dim_reduc))
+    ax.grid(True)
+    plt.tight_layout()
+
+    # save
+    save_path = join(dirname(dirname(dirname(abspath(__file__)))), "figures", "hyperparameter", "{}_feature_dimension.png".format(model))
+    if not exists(dirname(dirname(save_path))):
+        os.makedirs(dirname(dirname(save_path)))
+    if not exists(dirname(save_path)):
+        os.makedirs(dirname(save_path))
+    
+    fig.savefig(save_path)
