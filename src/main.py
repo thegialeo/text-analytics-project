@@ -41,7 +41,6 @@ if __name__ == "__main__":
 
     # experiments
     if args.experiment is not None:
-        
         # vectorizer
         if args.experiment == 'vectorizer':
             benchmark.benchmark_baseline()

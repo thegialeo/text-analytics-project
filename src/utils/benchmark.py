@@ -16,7 +16,7 @@ def benchmark_baseline():
 
     # set all benchmark parameters
     stopwords = ["nltk", "spacy", "stop_words", "german_plain", "german_full"] 
-    vec_lst = ['tfidf', 'count'] # hashing vectorizer omitted, because run out of memory
+    vec_lst = ['tfidf', 'count'] # hashing vectorizer omitted, because out of memory
     reg_lst = ['linear', 'lasso', 'ridge', 'elastic-net', 'random-forest']
  
     # run benchmark
@@ -53,3 +53,59 @@ def benchmark_baseline():
 
             # release memory
             gc.collect()
+
+
+def traverser_feature_dim(range, model="word2vec"):
+    """Find optimal feature dimension
+
+    Args:
+        model (str, optional): vectorization model. Defaults to "word2vec".
+    """
+
+    # read data
+    data_path = join(dirname(dirname(dirname(abspath(__file__)))), "data", "TextComplexityDE19")
+    df_ratings = pd.read_csv(join(data_path, "ratings.csv"), sep = ",", encoding = "ISO-8859-1")
+
+    # labels
+    labels = df_ratings.MOS_Complexity.values
+
+    # tokenization
+    corpus = preprocessing.tokenizer(df_ratings.Sentence, method='spacy')
+ 
+    # hyperparameters
+    epochs = 10
+    lr = 0.25
+    min_lr = 0.0001
+
+    # train word2vec
+    model = vectorizer.NN_vectorizer_wrapper(corpus,
+                                             epochs,
+                                             lr,
+                                             min_lr,
+                                             num_features,
+                                             window_size = 5,
+                                             min_count = 5,
+                                             algorithm = "skip-gram",
+                                             vectorizer = 'word2vec',
+                                             mode = 'train')
+                                             
+    model.train()
+
+    # feature extraction
+    model.vectorize()
+    features = model.features
+
+    # split into train- and testset
+    X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=0.2, random_state=0, shuffle=False)
+    
+    # train linear regression
+    reg = regression.baseline(X_train, y_train, "linear")
+ 
+    # testing
+    pred = reg.predict(X_test)
+ 
+    # evaluation
+    r_square = r2_score(y_test, pred)
+    MSE = mean_squared_error(y_test, pred)
+    RMSE = mean_squared_error(y_test, pred, squared = False)
+    MAE = mean_absolute_error(y_test, pred)

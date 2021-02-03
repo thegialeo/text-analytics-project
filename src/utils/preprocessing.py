@@ -35,7 +35,7 @@ def get_stopwords(source="nltk"):
         exit()
 
 
-def tokenizer(df, method='nltk'):
+def tokenizer(df, method='spacy'):
     """Tokenizer that takes a dataframe of sentences and returns a 2d list containing token lists for each sentence.
 
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
