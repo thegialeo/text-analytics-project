@@ -55,10 +55,13 @@ def benchmark_baseline():
             gc.collect()
 
 
-def traverser_feature_dim(range, model="word2vec"):
+def traverser_feature_dim(start, end, step, model="word2vec"):
     """Find optimal feature dimension
 
     Args:
+        start (int): starting feature dimension
+        end (int): final feature dimension
+        step (int): step size to traverse from start to end
         model (str, optional): vectorization model. Defaults to "word2vec".
     """
 
@@ -77,35 +80,53 @@ def traverser_feature_dim(range, model="word2vec"):
     lr = 0.25
     min_lr = 0.0001
 
-    # train word2vec
-    model = vectorizer.NN_vectorizer_wrapper(corpus,
-                                             epochs,
-                                             lr,
-                                             min_lr,
-                                             num_features,
-                                             window_size = 5,
-                                             min_count = 5,
-                                             algorithm = "skip-gram",
-                                             vectorizer = 'word2vec',
-                                             mode = 'train')
-                                             
-    model.train()
+    # track performance
+    MSE_skip = []
+    RMSE_skip = []
+    MAE_skip = []
+    R2_skip = []
+    MSE_CBOW = []
+    RMSE_CBOW = []
+    MAE_CBOW = []
+    R2_CBOW = []
 
-    # feature extraction
-    model.vectorize()
-    features = model.features
 
-    # split into train- and testset
-    X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=0.2, random_state=0, shuffle=False)
-    
-    # train linear regression
-    reg = regression.baseline(X_train, y_train, "linear")
- 
-    # testing
-    pred = reg.predict(X_test)
- 
-    # evaluation
-    r_square = r2_score(y_test, pred)
-    MSE = mean_squared_error(y_test, pred)
-    RMSE = mean_squared_error(y_test, pred, squared = False)
-    MAE = mean_absolute_error(y_test, pred)
+    for algorithm in ["skip-gram", "CBOW"]:
+        for i in range(start, end, step):
+
+            # init model
+            model = vectorizer.NN_vectorizer_wrapper(corpus,
+                                                     epochs,
+                                                     lr,
+                                                     min_lr,
+                                                     num_features = i,
+                                                     window_size = 5,
+                                                     min_count = 5,
+                                                     algorithm = "skip-gram",
+                                                     vectorizer = 'word2vec',
+                                                     mode = 'train')
+
+            # train model
+            model.train()
+
+            # feature extraction
+            model.vectorize()
+            features = model.features
+
+            # split into train- and testset
+            X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=0.2, random_state=0, shuffle=False)
+
+            # train linear regression
+            reg = regression.baseline(X_train, y_train, "linear")
+
+            # testing
+            pred = reg.predict(X_test)
+
+            # evaluation
+            r_square = r2_score(y_test, pred)
+            MSE = mean_squared_error(y_test, pred)
+            RMSE = mean_squared_error(y_test, pred, squared = False)
+            MAE = mean_absolute_error(y_test, pred)
+
+            # track results
+
