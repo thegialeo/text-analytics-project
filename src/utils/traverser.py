@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
+from tqdm import tqdm
 from utils import preprocessing, regression, vectorizer
 
 
@@ -45,7 +46,8 @@ def traverser_feature_dim(start, end, step, model="word2vec"):
 
     # traversal
     for algorithm in ["skip-gram", "CBOW"]:
-        for i in range(start, end, step):
+        print("Feature Dimension Traversal for {}".format(algorithm))
+        for i in tqdm(range(start, end, step)):
 
             # train model + feature extraction
             features = vectorizer.NN_vectorizer_wrapper(corpus,
@@ -88,19 +90,21 @@ def traverser_feature_dim(start, end, step, model="word2vec"):
                 R2_CBOW.append(r_square)
 
     # plot
-    fig, ax = plt.subplots(1, 1, figsize = (15, 10))
-    ax.plot([x for x in range(start, end, step)], MSE_skip, label="MSE skip-gram")
-    ax.plot([x for x in range(start, end, step)], RMSE_skip, label="RMSE skip-gram")
-    ax.plot([x for x in range(start, end, step)], MAE_skip, label="MAE skip-gram")
-    ax.plot([x for x in range(start, end, step)], R2_skip, label="R2 skip-gram")
-    ax.plot([x for x in range(start, end, step)], MSE_CBOW, label="MSE CBOW")
-    ax.plot([x for x in range(start, end, step)], RMSE_CBOW, label="RMSE CBOW")
-    ax.plot([x for x in range(start, end, step)], MAE_CBOW, label="MAE CBOW")
-    ax.plot([x for x in range(start, end, step)], R2_CBOW, label="R2 CBOW")
-    ax.set_xlabel("feature 1")
-    ax.set_ylabel("feature 2")
-    ax.set_title("{} vectorizer (projection. {})".format(vec, dim_reduc))
-    ax.grid(True)
+    fig, ax = plt.subplots(2, 2, figsize = (15, 10))
+    ax[0, 0].plot([x for x in range(start, end, step)], MSE_skip, label="MSE skip-gram")
+    ax[0, 1].plot([x for x in range(start, end, step)], RMSE_skip, label="RMSE skip-gram")
+    ax[1, 0].plot([x for x in range(start, end, step)], MAE_skip, label="MAE skip-gram")
+    ax[1, 1].plot([x for x in range(start, end, step)], R2_skip, label="R2 skip-gram")
+    ax[0, 0].plot([x for x in range(start, end, step)], MSE_CBOW, label="MSE CBOW")
+    ax[0, 1].plot([x for x in range(start, end, step)], RMSE_CBOW, label="RMSE CBOW")
+    ax[1, 0].plot([x for x in range(start, end, step)], MAE_CBOW, label="MAE CBOW")
+    ax[1, 1].plot([x for x in range(start, end, step)], R2_CBOW, label="R2 CBOW")
+    for i in range(2):
+        for j in range(2):
+            ax[i, j].set_xlabel("feature dimension")
+            ax[i, j].set_ylabel("metric")
+            ax[i, j].grid(True)
+            ax[i, j].legend()
     plt.tight_layout()
 
     # save

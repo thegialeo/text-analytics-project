@@ -33,11 +33,17 @@ def visualize_vectorizer(vec='tfidf', dim_reduc='PCA', stopword='nltk'):
 
     # plotting
     fig, ax = plt.subplots(1, 1, figsize = (15, 10))
-    ax.scatter(reduced_features[:, 0], reduced_features[:, 1], c=df_ratings.MOS_Complexity.values.round(0), alpha=0.5)
+    data = pd.DataFrame({"X value": reduced_features[:, 0], "Y value": reduced_features[:, 1], "Label": df_ratings.MOS_Complexity.values.round(0)})
+    groups = data.groupby("Label")
+    classes = list(set(df_ratings.MOS_Complexity.values.round(0)))
+    colors = [plt.cm.jet(float(i)/max(classes)) for i in classes]
+    for i, (name, group) in enumerate(groups):
+        ax.plot(group["X value"], group["Y value"], marker='o', linestyle='', label=name, c=colors[i], alpha=0.5)
     ax.set_xlabel("feature 1")
     ax.set_ylabel("feature 2")
-    ax.set_title("{} vectorizer (projection. {})".format(vec, dim_reduc))
+    ax.set_title("{} vectorizer (projection: {})".format(vec, dim_reduc))
     ax.grid(True)
+    ax.legend()
     plt.tight_layout()
 
     # save
