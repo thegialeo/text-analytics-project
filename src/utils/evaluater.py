@@ -65,7 +65,7 @@ def evaluate_baseline(vec='tfidf', method='linear', stopword='nltk'):
 
     Args:
         vec (str, optional): vectorizer method to used (options: 'tfidf', 'count', 'hash'), default: 'tfidf'
-        method (str, optional): [description]. Defaults to 'linear'.
+        method (str, optional): regression method to use (options: 'linear', 'lasso', 'ridge', 'elastic-net', 'random-forest'). Defaults to 'linear'.
         stopword (str, optional): source to load stopwords from (options: "spacy", "nltk", "stop_words", "german_plain", "german_full"). Defaults to "nltk".
 
     Return:
@@ -103,11 +103,3 @@ def evaluate_baseline(vec='tfidf', method='linear', stopword='nltk'):
     MAE = mean_absolute_error(y_test, pred)
 
     return MSE, RMSE, MAE, r_square
-
-
-if __name__ == "__main__":
-    MSE, RMSE, MAE, r_square = evaluate_baseline()
-    print("MSE:", MSE)
-    print("RMSE:", RMSE)
-    print("MAE:", MAE)
-    print("R Square:", r_square)
