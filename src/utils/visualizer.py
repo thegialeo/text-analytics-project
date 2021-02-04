@@ -47,7 +47,7 @@ def visualize_vectorizer(vec='tfidf', dim_reduc='PCA', stopword='nltk'):
     plt.tight_layout()
 
     # save
-    save_path = join(dirname(dirname(dirname(abspath(__file__)))), "figures", "vectorizer", "{}_{}.png".format(vec, dim_reduc))
+    save_path = join(dirname(dirname(dirname(abspath(__file__)))), "figures", "vectorizer", "{}_{}_{}.png".format(vec, dim_reduc, stopword))
 
     if not exists(dirname(dirname(save_path))):
         os.makedirs(dirname(dirname(save_path)))
