@@ -3,8 +3,11 @@
 import re
 from os import path
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import scipy.stats
+
+import word_rarity
 
 
 def remove_numbers(string):
@@ -154,6 +157,23 @@ def count_monosyllables(sentence):
         if word_syllables == 1:
             monosyllables += 1
     return monosyllables
+
+
+def count_infrequent_words(sentence, size=100):
+    if size == 100:
+        wordlist = word_rarity.uni_leipzig_top100de()
+    elif size == 1000:
+        wordlist = word_rarity.uni_leipzig_top1000de()
+    else:
+        print(
+            "count_infreduent_words was called with an unsupported wordlist size. (Implemented so far: 100, 1000)"
+        )
+        return None
+    number_of_words = 0
+    for word in sentence.split():
+        if word not in wordlist:
+            number_of_words += 1
+    return number_of_words
 
 
 def count_pronouns(sentence):
@@ -374,6 +394,46 @@ def gulpease_index(character_count, word_count):
     return 89 - 10.0 * character_count / word_count + 300.0 / word_count
 
 
+def construct_features(sentence, normalize=False):
+    """constructs a #sentences × #features numpy array, rows are sentences, columns
+    are features. use by passing a dataframe column containing (normalized) sentences
+    and optionally, set normalize to true.
+
+    feature count at time of writing this: 9 features
+
+    Kwargs:
+    sentence -- a dataframe column containing normalized sentences.
+    normalize (optional) -- normalize feature columns to the same range (default off)
+    when normalized, all values are between 0 and 100, otherwise theyre integer counts
+    """
+    my_df = pd.DataFrame()
+    my_df[["words", "letters"]] = count_words_and_letters(sentence)
+    my_df["words_not_pronouns_articles"] = (
+        my_df["words"]
+        - sentence.apply(count_pronouns)
+        - sentence.apply(count_definite_articles)
+    )
+    my_df["syllables"] = sentence.str.split().apply(count_syllables)
+    my_df["monosyllables"] = sentence.apply(count_monosyllables)
+    my_df["ge3syllables"] = sentence.apply(count_polysyllables, args=(3,))
+    my_df["long_words"] = sentence.apply(count_long_words, args=(6,))
+    my_df["infrequent100"] = sentence.apply(count_infrequent_words, args=(100,))
+    my_df["infrequent1000"] = sentence.apply(count_infrequent_words, args=(1000,))
+
+    matrix = my_df.to_numpy()
+    if normalize:
+        matrix = scale_linear_bycolumn(matrix)
+    return matrix
+
+
+def scale_linear_bycolumn(rawpoints, high=100.0, low=0.0):
+    # Source: https://gist.github.com/perrygeo/4512375
+    mins = np.min(rawpoints, axis=0)
+    maxs = np.max(rawpoints, axis=0)
+    rng = maxs - mins
+    return high - (((high - low) * (maxs - rawpoints)) / rng)
+
+
 if __name__ == "__main__":
     # load TextComplexityDE dataset
     df_all = pd.read_excel(
@@ -385,6 +445,7 @@ if __name__ == "__main__":
     df_all.columns = df_all.columns.str.lower()
 
     df_all["normalized_sentence"] = normalize_sentence(df_all["sentence"])
+    # print(type(df_all["normalized_sentence"]))
     df_all["normalized_sentence_with_commas"] = normalize_sentence(
         df_all["sentence"], keep_commas=True
     )
@@ -398,6 +459,10 @@ if __name__ == "__main__":
     )
     df_all["def_arti_count"] = df_all["normalized_sentence_with_commas"].apply(
         count_definite_articles
+    )
+
+    df_all["words_wo_pronouns"] = (
+        df_all["word_count"] - df_all["pronouns_count"] - df_all["def_arti_count"]
     )
 
     df_all["syllable_count"] = (
@@ -414,6 +479,13 @@ if __name__ == "__main__":
     )
     df_all["long_words_count"] = df_all["normalized_sentence"].apply(
         count_long_words, args=(6,)
+    )
+
+    df_all["infrequent_words100"] = df_all["normalized_sentence"].apply(
+        count_infrequent_words, args=(100,)
+    )
+    df_all["infrequent_words1000"] = df_all["normalized_sentence"].apply(
+        count_infrequent_words, args=(1000,)
     )
 
     df_all["fre"] = flesch_reading_ease(
@@ -458,6 +530,18 @@ if __name__ == "__main__":
     stringo = "über brunnen etwa jahre ist es her seit die sumerer das"
     print("pronouns in string:", count_pronouns(stringo))
     print("definite articles in string:", count_definite_articles(stringo))
+
+    print("-------")
+    features = construct_features(df_all["normalized_sentence"])
+    print(features)
+    print(features.shape)
+    print("-------")
+    features = construct_features(df_all["normalized_sentence"], normalize=True)
+    print(features)
+    print(features.shape)
+    print("-------")
+
+    # print(df_all['words_wo_pronouns'].sort_values())
 
     # for word in string.split():
     # print(word, count_syllables([word]))
@@ -552,6 +636,8 @@ if __name__ == "__main__":
             "word_count",
             "syllable_count",
             "letter_count",
+            "infrequent_words100",
+            "infrequent_words1000",
             "fre",
             "fre_deutsch",
             "fkgl",
@@ -564,6 +650,7 @@ if __name__ == "__main__":
             "gi",
             "pronouns_count",
             "def_arti_count",
+            "words_wo_pronouns",
         ]
 
         for i in range(len(feature_list)):
@@ -571,7 +658,13 @@ if __name__ == "__main__":
                 df_all[feature_list[i]], df_all["mos_r"]
             )
             print(
-                "correlation of", feature_list[i], "with complexity ratings has r:", r
+                "correlation of ",
+                feature_list[i],
+                " with complexity ratings has r: ",
+                r,
+                ", R-squared: ",
+                r ** 2,
+                sep="",
             )
 
     if False:
