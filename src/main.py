@@ -1,5 +1,6 @@
-import os
+import argparse
 
+from utils import benchmark, downloader, traverser
 from utils.sample import hello_world  # import of module from subfolder
 
 """
@@ -10,12 +11,46 @@ as script).
 """
 
 if __name__ == "__main__":
-    # run example function
-    hello_world_success = hello_world()
-    print("Hello World completed successfully!") if hello_world_success else print(
-        "Hello Wold failed!"
-    )
+    # parser
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--download", dest='download', action='store',
+                        help="Download specific or all datasets. Options: 'all', 'TextComplexityDE19', 'Weebit', 'dw'")
+    parser.add_argument("--experiment", dest='experiment', action='store',
+                        help="Select experiment to perform. Options: 'vectorizer'")
+    parser.add_argument("--hyperparameter", dest='hyperparameter', action='store',
+                        help="Perform linear search for given hyperparameter. Options: 'feature_dim'")
 
-    # exemplify how to access environment variables
-    print("\nEnvironment variable: {}".format(os.environ["TEST_PW"]))
-    print("In production never print password to console! :)\n")
+    parser.set_defaults(download=None, experiment=None, hyperparameter=None)
+    args = parser.parse_args()
+
+
+    # load datasets
+    if args.download is not None:
+        if args.download == 'all':
+            downloader.download_TextComplexityDE19()
+            downloader.download_Weebit()
+            downloader.download_dw_set()
+        elif args.download == 'TextComplexityDE19':
+            downloader.download_TextComplexityDE19()
+        elif args.download == 'Weebit':
+            downloader.download_Weebit()
+        elif args.download == 'dw':
+            downloader.download_dw_set()
+        else:
+            print("Input {} for --download is invalid. Choose one of the following: 'all', 'TextComplexityDE19', 'Weebit', 'dw'".format(args.download))
+            exit()
+
+    # hyperparameter search
+    if args.hyperparameter is not None:
+        # feature dimension
+        if args.hyperparameter == 'feature_dim':
+            traverser.traverser_feature_dim(50, 500, 10)
+
+
+    # experiments
+    if args.experiment is not None:
+        # vectorizer
+        if args.experiment == 'vectorizer':
+            benchmark.benchmark_baseline()
+
+

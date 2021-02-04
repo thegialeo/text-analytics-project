@@ -1,10 +1,11 @@
 import os
 import shutil
+import zipfile
 from distutils.dir_util import copy_tree
 from os.path import abspath, dirname, exists, join
-from git import Repo
-import zipfile
+
 import requests
+#from git.repo.base import Repo
 
 
 def download_TextComplexityDE19():
@@ -20,7 +21,7 @@ def download_TextComplexityDE19():
     url = "https://github.com/babaknaderi/TextComplexityDE.git"
 
     # create folder for dataset (if it doesn't exist yet)
-    download_to_path = join(dirname(dirname(abspath(__file__))), "data")
+    download_to_path = join(dirname(dirname(dirname(abspath(__file__)))), "data")
     if not exists(download_to_path):
         os.makedirs(download_to_path)
 
@@ -30,7 +31,7 @@ def download_TextComplexityDE19():
         # create temp folder to download github repository
         if not exists(join(download_to_path, "temp")):
             os.makedirs(join(download_to_path, "temp"))
-        Repo.clone_from(url, join(download_to_path, "temp"))
+        os.system("git clone {} {}".format(url, join(download_to_path, "temp"))) #Repo.clone_from(url, join(download_to_path, "temp"))
         # clean up downloaded repository
         shutil.rmtree(join(download_to_path, "temp", ".git"))
         os.remove(join(download_to_path, "temp", ".gitignore"))
@@ -41,10 +42,7 @@ def download_TextComplexityDE19():
         # delete temp folder
         shutil.rmtree(join(download_to_path, "temp"))
     else:
-        print("Folder data already contains TextComplexityDE19. "
-              "Please delete the folder TextComplexityDE and remove from trash. "
-              "Rerun the code.")
-        exit()
+        print("Folder data already contains TextComplexityDE19. Skip download.")
 
 def download_Weebit():
 
@@ -62,7 +60,7 @@ def download_Weebit():
 
     #path to which the dataset will be saved
     download_to_path = join(
-        dirname(dirname(abspath(__file__))), "data")
+        dirname(dirname(dirname(abspath(__file__)))), "data")
 
     #create folder for dataset if it does not exist
     if not exists(download_to_path):
@@ -102,22 +100,20 @@ def download_dw_set():
 
     # path to which the dataset will be saved
     download_to_path = join(
-        dirname(dirname(abspath(__file__))), "data")
+        dirname(dirname(dirname(abspath(__file__)))), "data")
 
     # create folder for dataset if it does not exist
     if not exists(download_to_path):
         os.makedirs(download_to_path)
 
-    path_with_name = join(download_to_path, "dw.h5")
+    # create subfolder dw if it does not exist yet
+    if not exists(join(download_to_path, "dw")):
+        os.makedirs(join(download_to_path, "dw"))
+
+    path_with_name = join(download_to_path, "dw", "dw.h5")
 
     # create folder for dataset (if it doesn't exist yet)
     r = requests.get(url)
 
     with open(path_with_name, "wb") as file:
         file.write(r.content)
-
-
-if __name__ == "__main__":
-    download_TextComplexityDE19()
-    download_Weebit()
-    download_dw_set()
