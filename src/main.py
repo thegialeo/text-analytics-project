@@ -2,6 +2,7 @@ import argparse
 
 from utils import benchmark, downloader, traverser
 from utils.sample import hello_world  # import of module from subfolder
+import to_dataframe
 
 """
 This script should serve as entrypoint to your program.
@@ -19,8 +20,10 @@ if __name__ == "__main__":
                         help="Select experiment to perform. Options: 'vectorizer'")
     parser.add_argument("--hyperparameter", dest='hyperparameter', action='store',
                         help="Perform linear search for given hyperparameter. Options: 'feature_dim'")
+    parser.add_argument("--augmentation", dest="augmentation", action='store_true',
+                        help="")
 
-    parser.set_defaults(download=None, experiment=None, hyperparameter=None)
+    parser.set_defaults(download=None, experiment=None, hyperparameter=None, augmentation=False)
     args = parser.parse_args()
 
 
@@ -40,11 +43,15 @@ if __name__ == "__main__":
             print("Input {} for --download is invalid. Choose one of the following: 'all', 'TextComplexityDE19', 'Weebit', 'dw'".format(args.download))
             exit()
 
+    # augmentation
+    if args.augmentation:
+        to_dataframe.store_augmented_h5()
+
     # hyperparameter search
     if args.hyperparameter is not None:
         # feature dimension
         if args.hyperparameter == 'feature_dim':
-            traverser.traverser_feature_dim(50, 500, 10)
+            traverser.traverser_feature_dim(50, 200, 10)
 
 
     # experiments

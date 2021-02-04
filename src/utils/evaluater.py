@@ -5,6 +5,7 @@ from sklearn.metrics import (homogeneity_score, mean_absolute_error, mean_square
                              r2_score, silhouette_score)
 from sklearn.model_selection import train_test_split
 from utils import clustering, preprocessing, regression, vectorizer
+import to_dataframe
 
 
 def evaluate_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA', stopword='nltk'):
@@ -76,16 +77,15 @@ def evaluate_baseline(vec='tfidf', method='linear', stopword='nltk', features=No
 
     if features is None and labels is None:
         # read data
-        data_path = join(dirname(dirname(dirname(abspath(__file__)))), "data", "TextComplexityDE19")
-        df_ratings = pd.read_csv(join(data_path, "ratings.csv"), sep = ",", encoding = "ISO-8859-1")
+        df_data = to_dataframe.read_augmented_h5()
 
         # feature extraction
         german_stopwords = preprocessing.get_stopwords(stopword)
-        features = vectorizer.vectorizer_wrapper(df_ratings.Sentence.values, vec, german_stopwords)
+        features = vectorizer.vectorizer_wrapper(df_data.raw_text.values, vec, german_stopwords)
         features = features.toarray()
 
         # labels
-        labels = df_ratings.MOS_Complexity.values
+        labels = df_data.rating.values
 
     # split into train- and testset
     X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=0.2, random_state=0, shuffle=False)

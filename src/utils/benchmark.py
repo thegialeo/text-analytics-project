@@ -8,7 +8,7 @@ from tqdm import tqdm
 from utils import evaluater, preprocessing, vectorizer, visualizer
 
 
-def benchmark_baseline():
+def benchmark_vectorizer():
     """Run benchmark on all baseline regressions.
 
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.

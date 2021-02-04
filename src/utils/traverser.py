@@ -9,7 +9,7 @@ from tqdm import tqdm
 from utils import preprocessing, regression, vectorizer
 
 
-def traverser_feature_dim(start, end, step, model="word2vec"):
+def traverser(hyperparameter, start, end, step, model="word2vec"):
     """Find optimal feature dimension
 
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
@@ -52,16 +52,42 @@ def traverser_feature_dim(start, end, step, model="word2vec"):
         for i in tqdm(range(start, end, step)):
 
             # train model + feature extraction
-            features = vectorizer.NN_vectorizer_wrapper(corpus,
-                                                     epochs,
-                                                     lr,
-                                                     min_lr,
-                                                     num_features = i,
-                                                     window_size = 5,
-                                                     min_count = 5,
-                                                     algorithm = algorithm,
-                                                     vectorizer = model,
-                                                     mode='train')
+            if hyperparameter == 'feature':
+                features = vectorizer.NN_vectorizer_wrapper(corpus,
+                                                            epochs,
+                                                            lr,
+                                                            min_lr,
+                                                            num_features = i,
+                                                            window_size = 5,
+                                                            min_count = 5,
+                                                            algorithm = algorithm,
+                                                            vectorizer = model,
+                                                            mode='train')
+            elif hyperparameter == 'window':    
+                features = vectorizer.NN_vectorizer_wrapper(corpus,
+                                                            epochs,
+                                                            lr,
+                                                            min_lr,
+                                                            num_features = 120,
+                                                            window_size = i,
+                                                            min_count = 5,
+                                                            algorithm = algorithm,
+                                                            vectorizer = model,
+                                                            mode='train')
+            elif hyperparameter == 'count':
+                features = vectorizer.NN_vectorizer_wrapper(corpus,
+                                                            epochs,
+                                                            lr,
+                                                            min_lr,
+                                                            num_features = 120,
+                                                            window_size = 5,
+                                                            min_count = i,
+                                                            algorithm = algorithm,
+                                                            vectorizer = model,
+                                                            mode='train')
+            else:
+                print("hyperparameter {} unknown. Options: 'feature', 'window', 'count'".format(hyperparameter))
+                exit()
 
             # split into train- and testset
             X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=0.2, random_state=0, shuffle=False)        
@@ -117,3 +143,5 @@ def traverser_feature_dim(start, end, step, model="word2vec"):
         os.makedirs(dirname(save_path))
     
     fig.savefig(save_path)
+
+
