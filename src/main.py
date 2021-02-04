@@ -49,9 +49,7 @@ if __name__ == "__main__":
 
     # hyperparameter search
     if args.hyperparameter is not None:
-        # feature dimension
-        if args.hyperparameter == 'feature_dim':
-            traverser.traverser_feature_dim(50, 200, 10)
+            traverser.traverser(args.hyperparameter, 50, 200, 10)
 
 
     # experiments
