@@ -12,6 +12,8 @@ from utils import preprocessing, regression, vectorizer
 def traverser_feature_dim(start, end, step, model="word2vec"):
     """Find optimal feature dimension
 
+       Written by Leo Nguyen. Contact Xenovortex, if problems arises.
+
     Args:
         start (int): starting feature dimension
         end (int): final feature dimension
