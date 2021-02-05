@@ -1,6 +1,6 @@
 import argparse
 
-from utils import benchmark, downloader, traverser
+from utils import benchmark, downloader, traverser, evaluater
 from utils.sample import hello_world  # import of module from subfolder
 import to_dataframe
 
@@ -57,5 +57,8 @@ if __name__ == "__main__":
         # vectorizer
         if args.experiment == 'vectorizer':
             benchmark.benchmark_baseline()
+        if args.experiment == 'test':
+            MSE, RMSE, MAE, r_square = evaluater.evaluate_baseline()
+            print(r_square)
 
 

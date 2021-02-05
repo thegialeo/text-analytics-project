@@ -3,7 +3,7 @@ from sklearn.feature_extraction.text import (CountVectorizer, HashingVectorizer,
 from utils import word2vec
 
 
-def vectorizer_wrapper(data, vectorizer='tfidf', stopwords=None):
+def vectorizer_wrapper(data, vectorizer='tfidf', stopwords=None, return_vectorizer=False):
     """Takes in a numpy array of sentences and perform the selected vectorizer on the data.
        Returns a numpy array of sentence features represented by number vectors.
 
@@ -20,19 +20,22 @@ def vectorizer_wrapper(data, vectorizer='tfidf', stopwords=None):
 
     # apply selected vectorizer
     if vectorizer == 'tfidf':
-        tfidf = TfidfVectorizer(encoding='ISO-8859-1', stop_words=stopwords)
-        features = tfidf.fit_transform(data)
+        vec = TfidfVectorizer(encoding='ISO-8859-1', stop_words=stopwords)
+        features = vec.fit_transform(data)
     elif vectorizer == 'count':
-        count = CountVectorizer(encoding='ISO-8859-1', stop_words=stopwords)
-        features = count.fit_transform(data)
+        vec = CountVectorizer(encoding='ISO-8859-1', stop_words=stopwords)
+        features = vec.fit_transform(data)
     elif vectorizer == 'hash':
-        hash_vec = HashingVectorizer(encoding='ISO-8859-1', stop_words=stopwords)
-        features = hash_vec.fit_transform(data)
+        vec = HashingVectorizer(encoding='ISO-8859-1', stop_words=stopwords)
+        features = vec.fit_transform(data)
     else:
         print("Vectorizer {} not implemented. Please select one of the following options: 'tfidf', 'count', 'hash'.".format(vectorizer))
         exit()
 
-    return features
+    if return_vectorizer:
+        return features, vec
+    else:
+        return features
 
 
 def NN_vectorizer_wrapper(corpus, epochs, lr, min_lr, num_features, window_size=5, min_count=5, algorithm="skip-gram", vectorizer='word2vec', mode='train'):

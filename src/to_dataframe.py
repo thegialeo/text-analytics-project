@@ -148,12 +148,12 @@ def all_data():
 
     # load all datasets into dataframes and store them in variables
     text_comp19 = text_comp19_to_df()
-    weebit = weebit_to_df()
+    #weebit = weebit_to_df()
     dw = dw_to_df()
 
     # append all dataframes to one dataframe
-    all_dataset = text_comp19.append(weebit, ignore_index = True)
-    all_dataset = all_dataset.append(dw, ignore_index = True)
+    all_dataset = text_comp19.append(dw, ignore_index = True)
+    #all_dataset = all_dataset.append(dw, ignore_index = True)
 
     # delete "\n" and other special symbols
     print("removing newline command")
@@ -207,17 +207,17 @@ def augmented_all(backtrans = False, lemmatization = False,
     text_comp_train, text_comp_test = train_test_split(
         all_dataset[all_dataset["source"] == "text_comp19"], test_size=test_size)
 
-    weebit_train, weebit_test = train_test_split(all_dataset[all_dataset["source"] == "Weebit"],
-                                                 test_size=test_size)
+    #weebit_train, weebit_test = train_test_split(all_dataset[all_dataset["source"] == "Weebit"],
+     #                                            test_size=test_size)
 
     dw_train, dw_test = train_test_split(all_dataset[all_dataset["source"] == "text_comp19"],
                                          test_size=test_size)
 
-    all_dataset_train = text_comp_train.append(weebit_train, ignore_index=True)
-    all_dataset_train = all_dataset_train.append(dw_train, ignore_index=True)
+    all_dataset_train = text_comp_train.append(dw_train, ignore_index=True)
+    #all_dataset_train = all_dataset_train.append(dw_train, ignore_index=True)
 
-    all_dataset_test = text_comp_test.append(weebit_train, ignore_index=True)
-    all_dataset_test = all_dataset_test.append(dw_train, ignore_index=True)
+    all_dataset_test = text_comp_test.append(dw_train, ignore_index=True)
+    #all_dataset_test = all_dataset_test.append(dw_train, ignore_index=True)
 
     ## Augmentation of data
     print("Start augmenting Data...")

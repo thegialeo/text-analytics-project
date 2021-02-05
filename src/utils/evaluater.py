@@ -4,7 +4,7 @@ import pandas as pd
 from sklearn.metrics import (homogeneity_score, mean_absolute_error, mean_squared_error,
                              r2_score, silhouette_score)
 from sklearn.model_selection import train_test_split
-from utils import clustering, preprocessing, regression, vectorizer
+from utils import clustering, preprocessing, regression, vectorizer 
 import to_dataframe
 
 
@@ -77,17 +77,24 @@ def evaluate_baseline(vec='tfidf', method='linear', stopword='nltk', features=No
 
     if features is None and labels is None:
         # read data
-        df_data = to_dataframe.read_augmented_h5()
+        df_train, df_test = to_dataframe.read_augmented_h5("all_data.h5")
+        df_train = df_train[df_train["source"] == "text_comp19"]
+        df_test = df_test[df_test["source"] == "text_comp19"]
 
         # feature extraction
-        features = vectorizer.vectorizer_wrapper(df_data.raw_text.values, vec, None)
-        features = features.toarray()
+        train_features, vec_object = vectorizer.vectorizer_wrapper(df_train.raw_text.values, vec, None, True)
+        test_features = vec_object.transform(df_test.raw_text.values)
+        #features = features.toarray()
 
         # labels
-        labels = df_data.rating.values
+        train_labels = df_train.rating.values
+        test_labels = df_test.rating.values
 
     # split into train- and testset
-    X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=0.2, random_state=0, shuffle=False)
+    X_train = train_features
+    X_test = test_features
+    y_train = train_labels
+    y_test = test_labels
 
     # training
     reg = regression.baseline(X_train, y_train, method)
@@ -104,4 +111,6 @@ def evaluate_baseline(vec='tfidf', method='linear', stopword='nltk', features=No
     return MSE, RMSE, MAE, r_square
 
 
-
+if __name__ == "__main__":
+    MSE, RMSE, MAE, r_square = evaluate_baseline()
+    print(MSE)
