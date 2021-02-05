@@ -6,6 +6,8 @@ from google_trans_new import google_translator
 import exploration
 from sklearn.model_selection import train_test_split
 import nlpaug.augmenter.word as naw
+import spacy
+from nltk.stem import SnowballStemmer
 
 def text_comp19_to_df():
 
@@ -93,8 +95,8 @@ def weebit_to_df():
     #translate weebit dataset to german
     print("Translating Weebit dataset to german...")
     trans = google_translator()
-    #weebit_data["raw_text"] = weebit_data["raw_text"].\
-     #   apply(lambda x: trans.translate(x, lang_tgt="de"))
+    weebit_data["raw_text"] = weebit_data["raw_text"].\
+        apply(lambda x: trans.translate(x, lang_tgt="de"))
 
     return weebit_data
 
@@ -180,27 +182,36 @@ def all_data():
     return all_dataset
 
 
-def augmented_all():
+def augmented_all(backtrans = False, lemmatization = False,
+                  stemming = False, randword_swap = False,
+                  randword_del = False, test_size = 0.1, stopwords = False):
 
     """
     Returns the augmented training dataset
     and the test dataset of all the data.
+
+    backtrans : enables back and forth translation of the data
+    lemmatization self explanatory
+    stemming self explanatory
+    randword_swap : enables randomly swapping words around sentences
+    randword_del : enalbles randomly deleting words from sentences
+    test_size : gives the ratio of test to train set
 
     train_set, test_set = augmented_all()
 
     """
 
     # Perform a Train-Test Split keeping dataset proportions the same
-    print("perform train-test split keeping dataset proportions the same (with 10% test data, not final percentage)")
+    print("perform train-test split keeping dataset proportions the same")
     all_dataset = all_data()
     text_comp_train, text_comp_test = train_test_split(
-        all_dataset[all_dataset["source"] == "text_comp19"], test_size=0.1)
+        all_dataset[all_dataset["source"] == "text_comp19"], test_size=test_size)
 
     weebit_train, weebit_test = train_test_split(all_dataset[all_dataset["source"] == "Weebit"],
-                                                 test_size=0.1)
+                                                 test_size=test_size)
 
     dw_train, dw_test = train_test_split(all_dataset[all_dataset["source"] == "text_comp19"],
-                                         test_size=0.1)
+                                         test_size=test_size)
 
     all_dataset_train = text_comp_train.append(weebit_train, ignore_index=True)
     all_dataset_train = all_dataset_train.append(dw_train, ignore_index=True)
@@ -212,64 +223,112 @@ def augmented_all():
     print("Start augmenting Data...")
 
     # Back and forth translation of data
-    print("Back and forth translation...")
-    forth_translation = all_dataset_train
-    forth_translation["raw_text"] = forth_translation["raw_text"] \
-        .apply(lambda x: trans.translate(x, lang_tgt="en"))
-    back_translation["raw_text"] = forth_translated["raw_text"] \
-        .apply(lambda x: trans.translate(x, lang_tgt="de"))
+    if backtrans == True:
 
-    all_dataset_train = all_dataset_train.append(back_translation, ignore_index=True)
+        print("Back and forth translation...")
+        back_translation_aug = naw.BackTranslationAug(
+            from_model_name='transformer.wmt19.de-en',
+            to_model_name='transformer.wmt19.en-de')
+
+        translated = all_dataset_train
+        translated["raw_text"] = translated["raw_text"] \
+            .apply(lambda x: back_translation_aug.augment(x))
+
+        all_dataset_train = all_dataset_train.append(translated, ignore_index=True)
 
     # Random word swap
-    print("Random word swap")
-    aug1 = naw.RandomWordAug(action="swap")
-    swapped_data = all_dataset_train
-    swapped_data["raw_text"] = all_dataset_train["raw_text"].apply(lambda x: aug1.augment(x))
+    if randword_swap == True:
+        print("Random word swap")
+        aug1 = naw.RandomWordAug(action="swap")
+        swapped_data = all_dataset_train
+        swapped_data["raw_text"] = all_dataset_train["raw_text"].apply(lambda x: aug1.augment(x))
+        all_dataset_train = all_dataset_train.append(swapped_data, ignore_index=True)
 
     # Random word deletion
-    print("Random word deletion")
-    aug2 = naw.RandomWordAug()
-    rand_deleted_data = all_dataset_train
-    rand_deleted_data["raw_text"] = all_dataset_train["raw_text"].apply(lambda x: aug2.augment(x))
+    if randword_del == True:
 
-    all_dataset_train = all_dataset_train.append(swapped_data, ignore_index=True)
-    all_dataset_train = all_dataset_train.append(rand_deleted_data, ignore_index=True)
+        print("Random word deletion")
+        aug2 = naw.RandomWordAug()
+        rand_deleted_data = all_dataset_train
+        rand_deleted_data["raw_text"] = all_dataset_train["raw_text"].apply(lambda x: aug2.augment(x))
+        all_dataset_train = all_dataset_train.append(rand_deleted_data, ignore_index=True)
+
+    # Remove Stopwords
+    if stopwords == True:
+        print("removing stopwords...")
+        pass
+
+    # Lemmatization using spacy
+    if lemmatization == True:
+
+        print("lemmatizing")
+        nlp = spacy.load('de_core_news_sm')
+        all_dataset_train["raw_text"] = all_dataset_train["raw_text"]\
+            .apply(lambda x: ' '.join([y.lemma_ for y in nlp(x)]) )
+
+    # Stemming using
+    if stemming == True:
+
+        print("stemming")
+        stemmer = SnowballStemmer("german")
+        all_dataset_train["raw_text"] = all_dataset_train["raw_text"] \
+            .apply(lambda x: stemmer.stem(x))
 
     return all_dataset_train, all_dataset_test
 
-def store_augmented_h5():
+
+def store_augmented_h5(backtrans = False, lemmatization = False,
+                  stemming = False, randword_swap = False,
+                  randword_del = False, test_size = 0.1):
 
     """
     Since the augmented dataset is a large file and
     all the preprocessing steps require a long time
     to finish it is reasonable to save this data once completed.
 
+    Args:
+    backtrans : enables back and forth translation of the data
+    lemmatization : self explanatory
+    stemming : self explanatory
+    randword_swap : enables randomly swapping words around sentences
+    randword_del : enalbles randomly deleting words from sentences
+    test_size : gives the ratio of test to train set
+
     The file is saved in the same data folder where the original data also resides.
-    filename = "all_data.h5", keys ="train","test"
+    filename = "filename.h5", keys ="train","test"
     """
+    # Ask user for filename
+    filename = input("Please enter filename with .h5 at the end")
+
     # define path of .HDF5 file
     h5_path = join(dirname(dirname(abspath(__file__))),
-                   "data", "all_data.h5")
+                   "data", filename)
 
     # Load augmented data into variables
-    all_dataset_train, all_dataset_test = augmented_all()
+    all_dataset_train, all_dataset_test = augmented_all(backtrans, lemmatization,
+                  stemming, randword_swap, randword_del, test_size)
 
     # Write augmented data to h5 file at the above path "h5_path"
     all_dataset_train.to_hdf(h5_path, key="train")
     all_dataset_test.to_hdf(h5_path, key="test")
 
-def read_augmented_h5():
+def read_augmented_h5(filename = ""):
     """
+    Args: filename (default empty, but will be prompted to enter name)
+
     Returns the augmented data from the stored .HDF5 file.
     Similar to augmented_all() with the difference that the
     data is not generated but read instead.
 
     train_set, test_set = read_augmented_h5().
     """
+    # Ask user for
+    if filename == "":
+        filename = input("Please enter filename with .h5 at the end")
+
     # define path of .HDF5 file
     h5_path = join(dirname(dirname(abspath(__file__))),
-                   "data", "all_data.h5")
+                   "data", filename)
 
     # read in .HDF5 file
     data = pd.HDFStore(h5_path)
