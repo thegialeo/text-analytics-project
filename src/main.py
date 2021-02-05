@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
     # augmentation
     if args.augmentation:
-        to_dataframe.store_augmented_h5()
+        to_dataframe.store_augmented_h5("all_data.h5", test_size=0.2)
 
     # hyperparameter search
     if args.hyperparameter is not None:
