@@ -80,8 +80,7 @@ def evaluate_baseline(vec='tfidf', method='linear', stopword='nltk', features=No
         df_data = to_dataframe.read_augmented_h5()
 
         # feature extraction
-        german_stopwords = preprocessing.get_stopwords(stopword)
-        features = vectorizer.vectorizer_wrapper(df_data.raw_text.values, vec, german_stopwords)
+        features = vectorizer.vectorizer_wrapper(df_data.raw_text.values, vec, None)
         features = features.toarray()
 
         # labels
@@ -103,3 +102,6 @@ def evaluate_baseline(vec='tfidf', method='linear', stopword='nltk', features=No
     MAE = mean_absolute_error(y_test, pred)
 
     return MSE, RMSE, MAE, r_square
+
+
+
