@@ -277,7 +277,7 @@ def augmented_all(backtrans = False, lemmatization = False,
     return all_dataset_train, all_dataset_test
 
 
-def store_augmented_h5(backtrans = False, lemmatization = False,
+def store_augmented_h5(filename = "",backtrans = False, lemmatization = False,
                   stemming = False, randword_swap = False,
                   randword_del = False, test_size = 0.1):
 
@@ -298,7 +298,8 @@ def store_augmented_h5(backtrans = False, lemmatization = False,
     filename = "filename.h5", keys ="train","test"
     """
     # Ask user for filename
-    filename = input("Please enter filename with .h5 at the end")
+    if filename == "":
+        filename = input("Please enter filename with .h5 at the end")
 
     # define path of .HDF5 file
     h5_path = join(dirname(dirname(abspath(__file__))),
