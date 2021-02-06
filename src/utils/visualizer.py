@@ -8,7 +8,7 @@ from utils import clustering, dimension_reduction, preprocessing, vectorizer
 #import to_dataframe
 
 
-def visualize_vectorizer(vec='tfidf', dim_reduc='PCA', stopword='nltk'):
+def visualize_vectorizer(vec='tfidf', dim_reduc='PCA', stopword=None):
     """Apply vectorizer on TextComplexityDE19 data and visualize the vectorization.
 
     Written by Leo Nguyen. Contact Xenovortex, if problems arises.
@@ -16,7 +16,7 @@ def visualize_vectorizer(vec='tfidf', dim_reduc='PCA', stopword='nltk'):
     Args:
         vec (str, optional): vectorizer method to used (options: 'tfidf', 'count', 'hash'), default: 'tfidf'
         dim_reduc (str, optional): dimension reduction method to used (options: 'PCA', 'TSNE'), default: 'PCA'
-        stopword (str, optional): source to load stopwords from (options: "spacy", "nltk", "stop_words", "german_plain", "german_full"). Defaults to "nltk".
+        stopword (str, optional): source to load stopwords from (options: "spacy", "nltk", "stop_words", "german_plain", "german_full"). Defaults to None.
     """
     
     # read data
@@ -24,7 +24,10 @@ def visualize_vectorizer(vec='tfidf', dim_reduc='PCA', stopword='nltk'):
     df_ratings = pd.read_csv(join(data_path, "ratings.csv"), sep = ",", encoding = "ISO-8859-1")
     
     # feature extraction
-    german_stopwords = preprocessing.get_stopwords(stopword)
+    if stopword is not None:
+        german_stopwords = preprocessing.get_stopwords(stopword)
+    else: 
+        german_stopwords = None
     features = vectorizer.vectorizer_wrapper(df_ratings.Sentence.values, vec, german_stopwords)
     features = features.toarray()
 

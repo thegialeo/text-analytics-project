@@ -55,7 +55,7 @@ def evaluate_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA', stopword
 
 
 
-def evaluate_baseline(vec='tfidf', method='linear', features=None, labels=None):
+def evaluate_baseline(vec='tfidf', method='linear', X_train=None, X_test=None, y_train=None, y_test=None):
     """Perform baseline regression on TextComplexityDE19 data.
        Evaluate RMSE, MSE, MAE and R squares
 
@@ -64,8 +64,11 @@ def evaluate_baseline(vec='tfidf', method='linear', features=None, labels=None):
     Args:
         vec (str, optional): vectorizer method to used (options: 'tfidf', 'count', 'hash'), default: 'tfidf'
         method (str, optional): regression method to use (options: 'linear', 'lasso', 'ridge', 'elastic-net', 'random-forest'). Defaults to 'linear'.
-        features (array-like, optional): features on which the baseline should be evaluated. Defaults to 'None' 
-        labels (array-like, optional): labels on which the baseline should be evaluated. Defaults to 'None'
+        X_train (array-like, optional): vectorized features on which the baseline should be trained. Defaults to 'None' 
+        X_test (array-like, optional): vectorized features on which the baseline should be evaluated. Defaults to 'None'
+        y_train (array-like, optional): labels used for training. Defaults to 'None'
+        y_test (array-like, optional): labels used for evaluation. Defaults to 'None' 
+
 
     Return:
         MSE (double): Mean Square Error
@@ -74,26 +77,26 @@ def evaluate_baseline(vec='tfidf', method='linear', features=None, labels=None):
         r_square (double): R Square 
     """
 
-    if features is None and labels is None:
+    if X_train is None or X_test is None or y_train is None or y_test is None:
+        if not (X_train is None and X_test is None and y_train is None and y_test is None):
+            names = ["X_train", "X_test", "y_train", "y_test"]
+            for i, args in enumerate([X_train, X_test, y_train, y_test]):
+                if args is None:
+                    print("Argument {} not provided.".format(names[i]))
+                print("Provided Data for training and evaluation not complete. Load all_data.h5 file instead.")
+        
         # read data
         df_train, df_test = to_dataframe.read_augmented_h5("all_data.h5")
         df_train = df_train[df_train["source"] == "text_comp19"]
         df_test = df_test[df_test["source"] == "text_comp19"]
 
         # feature extraction
-        train_features, vec_object = vectorizer.vectorizer_wrapper(df_train.raw_text.values, vec, None, True)
-        test_features = vec_object.transform(df_test.raw_text.values)
-        #features = features.toarray()
+        X_train, vec_object = vectorizer.vectorizer_wrapper(df_train.raw_text.values, vec, None, True)
+        X_test = vec_object.transform(df_test.raw_text.values)
 
         # labels
-        train_labels = df_train.rating.values
-        test_labels = df_test.rating.values
-
-    # split into train- and testset
-    X_train = train_features
-    X_test = test_features
-    y_train = train_labels
-    y_test = test_labels
+        y_train = df_train.rating.values
+        y_test = df_test.rating.values
 
     # training
     reg = regression.baseline(X_train, y_train, method)

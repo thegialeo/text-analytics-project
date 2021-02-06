@@ -57,9 +57,9 @@ def clustering_wrapper(features, cluster_method='kmeans', dim_reduc='PCA'):
         sklearn_cls.predict(features)
         centroid_method = False
     else:
-        print("Clustering method {} is not implemented yet. Please select one of the following options: 'kmeans', 'AP', 'mean_shift', 'spectral', 'Agg', 'DBSCAN', 'OPTICS', 'Birch'".format(
-            cluster_method))
-        exit()
+        except ValueError:
+            print("Clustering method {} is not implemented yet. Please select one of the following options: 'kmeans', 'AP', 'mean_shift', 'spectral', 'Agg', 'DBSCAN', 'OPTICS', 'Birch'".format(
+                cluster_method))
 
 
     # perform selected dimension reduction

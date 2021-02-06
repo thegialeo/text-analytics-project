@@ -86,8 +86,8 @@ def traverser(hyperparameter, start, end, step, model="word2vec"):
                                                             vectorizer = model,
                                                             mode='train')
             else:
-                print("hyperparameter {} unknown. Options: 'feature', 'window', 'count'".format(hyperparameter))
-                exit()
+                except ValueError:
+                    print("hyperparameter {} unknown. Options: 'feature', 'window', 'count'".format(hyperparameter))
 
             # split into train- and testset
             X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=0.2, random_state=0, shuffle=False)        

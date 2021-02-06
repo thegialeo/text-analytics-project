@@ -29,8 +29,8 @@ def vectorizer_wrapper(data, vectorizer='tfidf', stopwords=None, return_vectoriz
         vec = HashingVectorizer(encoding='ISO-8859-1', stop_words=stopwords)
         features = vec.fit_transform(data)
     else:
-        print("Vectorizer {} not implemented. Please select one of the following options: 'tfidf', 'count', 'hash'.".format(vectorizer))
-        exit()
+        except ValueError:
+            print("Vectorizer {} not implemented. Please select one of the following options: 'tfidf', 'count', 'hash'.".format(vectorizer))
 
     if return_vectorizer:
         return features, vec

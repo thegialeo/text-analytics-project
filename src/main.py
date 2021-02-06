@@ -56,7 +56,7 @@ if __name__ == "__main__":
     if args.experiment is not None:
         # vectorizer
         if args.experiment == 'vectorizer':
-            benchmark.benchmark_baseline()
+            benchmark.benchmark_vectorizer()
         if args.experiment == 'test':
             MSE, RMSE, MAE, r_square = evaluater.evaluate_baseline()
             print(r_square)

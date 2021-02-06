@@ -31,8 +31,8 @@ def get_stopwords(source="nltk"):
         path = join(dirname(dirname(dirname(abspath(__file__)))), "corpus", "stopwords", "german_stopwords_full.txt")
         return [line.rstrip('\n') for line in open(path)][9:]
     else:
-        print("stopword source {} is not implemented. Please select one of the following options: 'spacy', 'nltk', 'stop_words', 'german_plain', 'german_full'".format(source))
-        exit()
+        except ValueError:
+            print("stopword source {} is not implemented. Please select one of the following options: 'spacy', 'nltk', 'stop_words', 'german_plain', 'german_full'".format(source))
 
 
 def tokenizer(df, method='spacy'):
