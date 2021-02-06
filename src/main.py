@@ -1,7 +1,8 @@
 import argparse
 
-from utils import benchmark, downloader, traverser, evaluater
+from utils import benchmark, downloader, evaluater, traverser
 from utils.sample import hello_world  # import of module from subfolder
+
 import to_dataframe
 
 """
@@ -40,8 +41,7 @@ if __name__ == "__main__":
         elif args.download == 'dw':
             downloader.download_dw_set()
         else:
-            print("Input {} for --download is invalid. Choose one of the following: 'all', 'TextComplexityDE19', 'Weebit', 'dw'".format(args.download))
-            exit()
+            raise ValueError("Input {} for --download is invalid. Choose one of the following: 'all', 'TextComplexityDE19', 'Weebit', 'dw'".format(args.download))
 
     # augmentation
     if args.augmentation:

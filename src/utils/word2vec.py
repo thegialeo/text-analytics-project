@@ -39,8 +39,8 @@ class word2vec:
         elif algorithm == "CBOW":
             self.algorithm = 0
         else:
-            print("algorithm {} unknown. Please choose 'skip-gram' or 'CBOW'".format(algorithm))
-            exit()
+            raise ValueError("algorithm {} unknown. Please choose 'skip-gram' or 'CBOW'".format(algorithm))
+            
         
 
     def train(self):
