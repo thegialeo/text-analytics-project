@@ -19,6 +19,8 @@ def visualize_vectorizer(vec='tfidf', dim_reduc='PCA', stopword=None):
         stopword (str, optional): source to load stopwords from (options: "spacy", "nltk", "stop_words", "german_plain", "german_full"). Defaults to None.
     """
     
+    print("Visualize {} vectorizer with {} projection".format(vec, dim_reduc))
+    
     # read data
     data_path = join(dirname(dirname(dirname(abspath(__file__)))), "data", "TextComplexityDE19")
     df_ratings = pd.read_csv(join(data_path, "ratings.csv"), sep = ",", encoding = "ISO-8859-1")
@@ -50,7 +52,10 @@ def visualize_vectorizer(vec='tfidf', dim_reduc='PCA', stopword=None):
     plt.tight_layout()
 
     # save
-    save_path = join(dirname(dirname(dirname(abspath(__file__)))), "figures", "vectorizer", "{}_{}_{}.png".format(vec, dim_reduc, stopword))
+    if stopword is None:
+        save_path = join(dirname(dirname(dirname(abspath(__file__)))), "figures", "vectorizer", "{}_{}.png".format(vec, dim_reduc))
+    else:
+        save_path = join(dirname(dirname(dirname(abspath(__file__)))), "figures", "vectorizer", "{}_{}_{}.png".format(vec, dim_reduc, stopword))
 
     if not exists(dirname(dirname(save_path))):
         os.makedirs(dirname(dirname(save_path)))
@@ -59,6 +64,7 @@ def visualize_vectorizer(vec='tfidf', dim_reduc='PCA', stopword=None):
         os.makedirs(dirname(save_path))
     
     fig.savefig(save_path)
+    print("Save results to: {}".format(save_path))
     
 
 

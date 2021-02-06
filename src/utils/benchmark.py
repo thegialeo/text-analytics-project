@@ -26,7 +26,7 @@ def benchmark_vectorizer():
         results = np.zeros((len(reg_lst), 4))
         
         # evaluation
-        for i, method in tqdm(enumerate(reg_lst)):
+        for i, method in enumerate(tqdm(reg_lst)):
             MSE, RMSE, MAE, r_square = evaluater.evaluate_baseline(vec, method)
             results[i][0] = MSE
             results[i][1] = RMSE
@@ -41,6 +41,7 @@ def benchmark_vectorizer():
         if not exists(path):
             os.makedirs(path)
         df.to_csv(join(path, "{}.csv".format(vec)))
+        print("Save results to: {}".format(join(path, "{}.csv".format(vec))))
         
         # visualize vectorization
         visualizer.visualize_vectorizer(vec, 'PCA')
