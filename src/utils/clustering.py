@@ -57,9 +57,7 @@ def clustering_wrapper(features, cluster_method='kmeans', dim_reduc='PCA'):
         sklearn_cls.predict(features)
         centroid_method = False
     else:
-        except ValueError:
-            print("Clustering method {} is not implemented yet. Please select one of the following options: 'kmeans', 'AP', 'mean_shift', 'spectral', 'Agg', 'DBSCAN', 'OPTICS', 'Birch'".format(
-                cluster_method))
+        raise ValueError("Clustering method {} is not implemented yet. Please select one of the following options: 'kmeans', 'AP', 'mean_shift', 'spectral', 'Agg', 'DBSCAN', 'OPTICS', 'Birch'".format(cluster_method))
 
 
     # perform selected dimension reduction
@@ -72,9 +70,8 @@ def clustering_wrapper(features, cluster_method='kmeans', dim_reduc='PCA'):
         reduced_features = tsne.fit_transform(features)
         if centroid_method:
             reduced_cluster_centers = tsne.transform(sklearn_cls.cluster_centers_)
-    else:
-        print("Dimension Reduction method {} is not implemented yet. Please select one the folling options: 'PCA', 'TSNE'".format(method))
-        exit()
+    else:       
+        raise ValueError("Dimension Reduction method {} is not implemented yet. Please select one the folling options: 'PCA', 'TSNE'".format(method))
    
 
     if centroid_method:

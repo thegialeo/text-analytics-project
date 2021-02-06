@@ -29,8 +29,7 @@ def vectorizer_wrapper(data, vectorizer='tfidf', stopwords=None, return_vectoriz
         vec = HashingVectorizer(encoding='ISO-8859-1', stop_words=stopwords)
         features = vec.fit_transform(data)
     else:
-        except ValueError:
-            print("Vectorizer {} not implemented. Please select one of the following options: 'tfidf', 'count', 'hash'.".format(vectorizer))
+        raise ValueError("Vectorizer {} not implemented. Please select one of the following options: 'tfidf', 'count', 'hash'.".format(vectorizer))
 
     if return_vectorizer:
         return features, vec
@@ -68,11 +67,10 @@ def NN_vectorizer_wrapper(corpus, epochs, lr, min_lr, num_features, window_size=
         elif mode == 'load':
             model.load_wv()
         else:
-            print("mode {} unknown. Please choose 'train' or 'load'".format(mode))
+            raise ValueError("mode {} unknown. Please choose 'train' or 'load'".format(mode))
         model.vectorize()
         features = model.features
     else:
-        print("Vectorizer {} not implemented. Please one of the following options: 'word2vec'.".format(vectorizer))
-        exit()
+        raise ValueError("Vectorizer {} not implemented. Please one of the following options: 'word2vec'.".format(vectorizer))
 
     return features

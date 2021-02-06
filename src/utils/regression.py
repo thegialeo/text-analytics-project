@@ -27,7 +27,6 @@ def baseline(data, labels, method='linear'):
     elif method == 'random-forest':
         reg = RandomForestRegressor(random_state=0).fit(data, labels)
     else:
-        except ValueError:
-            print("Regression {} is unknown. Please choose: 'linear', 'lasso', 'ridge', 'elastic-net', 'random-forest'".format(method))
+        raise ValueError("Regression {} is unknown. Please choose: 'linear', 'lasso', 'ridge', 'elastic-net', 'random-forest'".format(method))
     
     return reg
