@@ -55,7 +55,7 @@ def evaluate_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA', stopword
 
 
 
-def evaluate_baseline(vec='tfidf', method='linear', stopword='nltk', features=None, labels=None):
+def evaluate_baseline(vec='tfidf', method='linear', features=None, labels=None):
     """Perform baseline regression on TextComplexityDE19 data.
        Evaluate RMSE, MSE, MAE and R squares
 
@@ -64,7 +64,6 @@ def evaluate_baseline(vec='tfidf', method='linear', stopword='nltk', features=No
     Args:
         vec (str, optional): vectorizer method to used (options: 'tfidf', 'count', 'hash'), default: 'tfidf'
         method (str, optional): regression method to use (options: 'linear', 'lasso', 'ridge', 'elastic-net', 'random-forest'). Defaults to 'linear'.
-        stopword (str, optional): source to load stopwords from (options: "spacy", "nltk", "stop_words", "german_plain", "german_full"). Defaults to "nltk".
         features (array-like, optional): features on which the baseline should be evaluated. Defaults to 'None' 
         labels (array-like, optional): labels on which the baseline should be evaluated. Defaults to 'None'
 
@@ -109,8 +108,3 @@ def evaluate_baseline(vec='tfidf', method='linear', stopword='nltk', features=No
     MAE = mean_absolute_error(y_test, pred)
 
     return MSE, RMSE, MAE, r_square
-
-
-if __name__ == "__main__":
-    MSE, RMSE, MAE, r_square = evaluate_baseline()
-    print(MSE)
