@@ -3,12 +3,10 @@ from os.path import abspath, dirname, exists, join
 
 import matplotlib.pyplot as plt
 import pandas as pd
-from utils import clustering, dimension_reduction, preprocessing, vectorizer
-
-#import to_dataframe
+from utils import clustering, dimension_reduction, preprocessing, vectorizer, to_dataframe
 
 
-def visualize_vectorizer(vec='tfidf', dim_reduc='PCA', stopword=None):
+def visualize_vectorizer(vec='tfidf', dim_reduc='PCA', stopword=None, filename="all_data.h5"):
     """Apply vectorizer on TextComplexityDE19 data and visualize the vectorization.
 
     Written by Leo Nguyen. Contact Xenovortex, if problems arises.
@@ -17,20 +15,21 @@ def visualize_vectorizer(vec='tfidf', dim_reduc='PCA', stopword=None):
         vec (str, optional): vectorizer method to used (options: 'tfidf', 'count', 'hash'), default: 'tfidf'
         dim_reduc (str, optional): dimension reduction method to used (options: 'PCA', 'TSNE'), default: 'PCA'
         stopword (str, optional): source to load stopwords from (options: "spacy", "nltk", "stop_words", "german_plain", "german_full"). Defaults to None.
+        filename (str, optional): name of h5 file to load (run augmentation first)
     """
     
     print("Visualize {} vectorizer with {} projection".format(vec, dim_reduc))
     
     # read data
-    data_path = join(dirname(dirname(dirname(abspath(__file__)))), "data", "TextComplexityDE19")
-    df_ratings = pd.read_csv(join(data_path, "ratings.csv"), sep = ",", encoding = "ISO-8859-1")
+    df_train, df_test = to_dataframe.read_augmented_h5(filename)
+    df_train = df_train[df_train["source"] == "text_comp19"] # TODO: remove once Raoul fixes his dataloader
     
     # feature extraction
     if stopword is not None:
         german_stopwords = preprocessing.get_stopwords(stopword)
     else: 
         german_stopwords = None
-    features = vectorizer.vectorizer_wrapper(df_ratings.Sentence.values, vec, german_stopwords)
+    features = vectorizer.vectorizer_wrapper(df_train.raw_text.values, vec, german_stopwords)
     features = features.toarray()
 
     # dimension reduction
@@ -38,9 +37,9 @@ def visualize_vectorizer(vec='tfidf', dim_reduc='PCA', stopword=None):
 
     # plotting
     fig, ax = plt.subplots(1, 1, figsize = (15, 10))
-    data = pd.DataFrame({"X value": reduced_features[:, 0], "Y value": reduced_features[:, 1], "Label": df_ratings.MOS_Complexity.values.round(0)})
+    data = pd.DataFrame({"X value": reduced_features[:, 0], "Y value": reduced_features[:, 1], "Label": df_train.rating.values.round(0)})
     groups = data.groupby("Label")
-    classes = list(set(df_ratings.MOS_Complexity.values.round(0)))
+    classes = list(set(df_train.rating.values.round(0)))
     colors = [plt.cm.jet(float(i)/max(classes)) for i in classes]
     for i, (name, group) in enumerate(groups):
         ax.plot(group["X value"], group["Y value"], marker='o', linestyle='', label=name, c=colors[i], alpha=0.5)
@@ -83,12 +82,12 @@ def visualize_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA'):
     centroid_methods = ['kmeans', 'AP', 'mean_shift']
 
     # read data
-    data_path = join(dirname(dirname(dirname(abspath(__file__)))), "data", "TextComplexityDE19")
-    df_ratings = pd.read_csv(join(data_path, "ratings.csv"), sep=",", encoding="ISO-8859-1")
+    df_train, df_test = to_dataframe.read_augmented_h5(filename)
+    df_train = df_train[df_train["source"] == "text_comp19"] # TODO: remove once Raoul fixes his dataloader
 
     # feature extraction
     german_stopwords = stopwords.words('german')
-    features = vectorizer.vectorizer_wrapper(df_ratings.Sentence.values, vec, german_stopwords)
+    features = vectorizer.vectorizer_wrapper(df_train.raw_text.values, vec, german_stopwords)
     features = features.toarray()
 
     # Clustering and Dimension Reduction
@@ -107,7 +106,7 @@ def visualize_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA'):
     ax[1].scatter(
         reduced_features[:, 0],
         reduced_features[:, 1],
-        c=df_ratings.MOS_Complexity.values.round(0),
+        c=df_train.rating.values.round(0),
         alpha=0.5)
 
     if cluster in centroid_methods:

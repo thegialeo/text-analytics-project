@@ -4,8 +4,7 @@ import pandas as pd
 from sklearn.metrics import (homogeneity_score, mean_absolute_error, mean_squared_error,
                              r2_score, silhouette_score)
 from sklearn.model_selection import train_test_split
-from utils import clustering, preprocessing, regression, vectorizer 
-import to_dataframe
+from utils import clustering, preprocessing, regression, vectorizer, to_dataframe
 
 
 def evaluate_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA', stopword='nltk'):
@@ -75,8 +74,8 @@ def evaluate_baseline(vec='tfidf', method='linear', filename="all_data.h5"):
 
     # read data
     df_train, df_test = to_dataframe.read_augmented_h5(filename)
-    df_train = df_train[df_train["source"] == "text_comp19"]
-    df_test = df_test[df_test["source"] == "text_comp19"]
+    df_train = df_train[df_train["source"] == "text_comp19"] # TODO: remove once Raoul fixes his dataloader
+    df_test = df_test[df_test["source"] == "text_comp19"]  # TODO: remove once Raoul fixes his dataloader
     
     # feature extraction
     X_train, vec_object = vectorizer.vectorizer_wrapper(df_train.raw_text.values, vec, None, True)

@@ -6,35 +6,39 @@ import pandas as pd
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
 from tqdm import tqdm
-from utils import preprocessing, regression, vectorizer
+from utils import preprocessing, regression, vectorizer, to_dataframe
 
 
-def traverser(hyperparameter, start, end, step, model="word2vec"):
-    """Find optimal feature dimension
+def traverser(hyperparameter, start, end, step, model="word2vec", filename="all_data.h5"):
+    """Traverse along a hyperparameter
 
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
 
     Args:
+        hyperparameter (str): choose hyperparameter to traverse. Options: 'feature', 'window', 'count', 'epochs', 'lr', 'min_lr'
         start (int): starting feature dimension
         end (int): final feature dimension
         step (int): step size to traverse from start to end
-        model (str, optional): vectorization model. Defaults to "word2vec".
+        model (str, optional): vectorization model. Defaults to "word2vec"
+        filename (str, optional): name of h5 file to load (run augmentation first)
     """
 
+    print(hyperparameter)
+    print(start)
+    print(end)
+    print(step)
+    print(model)
+    print(filename)
+
     # read data
-    data_path = join(dirname(dirname(dirname(abspath(__file__)))), "data", "TextComplexityDE19")
-    df_ratings = pd.read_csv(join(data_path, "ratings.csv"), sep = ",", encoding = "ISO-8859-1")
+    df_train, df_test = to_dataframe.read_augmented_h5(filename)
+    df_train = df_train[df_train["source"] == "text_comp19"]  # TODO: remove once Raoul fixes his dataloader
 
     # labels
-    labels = df_ratings.MOS_Complexity.values
+    labels = df_train.rating.values
 
     # tokenization
-    corpus = preprocessing.tokenizer(df_ratings.Sentence, method='spacy')
- 
-    # hyperparameters
-    epochs = 10
-    lr = 0.25
-    min_lr = 0.0001
+    corpus = preprocessing.tokenizer(df_train.raw_text, method='spacy')
 
     # track performance
     MSE_skip = []
@@ -46,17 +50,22 @@ def traverser(hyperparameter, start, end, step, model="word2vec"):
     MAE_CBOW = []
     R2_CBOW = []
 
+    # type cast
+    start = int(start)
+    end = int(end)
+    step = int(step)
+
     # traversal
     for algorithm in ["skip-gram", "CBOW"]:
         print("Feature Dimension Traversal for {}".format(algorithm))
-        for i in tqdm(range(start, end, step)):
+        for i in tqdm(range(int(start), int(end), int(step))):
 
             # train model + feature extraction
             if hyperparameter == 'feature':
                 features = vectorizer.NN_vectorizer_wrapper(corpus,
-                                                            epochs,
-                                                            lr,
-                                                            min_lr,
+                                                            epochs = 10,
+                                                            lr = 0.25,
+                                                            min_lr = 0.0001,
                                                             num_features = i,
                                                             window_size = 5,
                                                             min_count = 5,
@@ -65,9 +74,9 @@ def traverser(hyperparameter, start, end, step, model="word2vec"):
                                                             mode='train')
             elif hyperparameter == 'window':    
                 features = vectorizer.NN_vectorizer_wrapper(corpus,
-                                                            epochs,
-                                                            lr,
-                                                            min_lr,
+                                                            epochs = 10,
+                                                            lr = 0.25,
+                                                            min_lr = 0.0001,
                                                             num_features = 120,
                                                             window_size = i,
                                                             min_count = 5,
@@ -76,15 +85,49 @@ def traverser(hyperparameter, start, end, step, model="word2vec"):
                                                             mode='train')
             elif hyperparameter == 'count':
                 features = vectorizer.NN_vectorizer_wrapper(corpus,
-                                                            epochs,
-                                                            lr,
-                                                            min_lr,
+                                                            epochs = 10,
+                                                            lr = 0.25,
+                                                            min_lr = 0.0001,
                                                             num_features = 120,
                                                             window_size = 5,
                                                             min_count = i,
                                                             algorithm = algorithm,
                                                             vectorizer = model,
                                                             mode='train')
+            elif hyperparameter == 'epochs':
+                features = vectorizer.NN_vectorizer_wrapper(corpus,
+                                                            epochs = 10,
+                                                            lr = 0.25,
+                                                            min_lr = 0.0001,
+                                                            num_features = 120,
+                                                            window_size = 5,
+                                                            min_count = 5,
+                                                            algorithm = algorithm,
+                                                            vectorizer = model,
+                                                            mode='train')
+            elif hyperparameter == 'lr':
+                features = vectorizer.NN_vectorizer_wrapper(corpus,
+                                                            epochs = 10,
+                                                            lr = i,
+                                                            min_lr = 0.0001,
+                                                            num_features = 120,
+                                                            window_size = 5,
+                                                            min_count = 5,
+                                                            algorithm = algorithm,
+                                                            vectorizer = model,
+                                                            mode='train')                
+            elif hyperparameter == 'min_lr':
+                features = vectorizer.NN_vectorizer_wrapper(corpus,
+                                                            epochs = 10,
+                                                            lr = 0.25,
+                                                            min_lr = i,
+                                                            num_features = 120,
+                                                            window_size = 5,
+                                                            min_count = 5,
+                                                            algorithm = algorithm,
+                                                            vectorizer = model,
+                                                            mode='train')                
+
             else:
                 raise ValueError("hyperparameter {} unknown. Options: 'feature', 'window', 'count'".format(hyperparameter))
 
@@ -135,12 +178,13 @@ def traverser(hyperparameter, start, end, step, model="word2vec"):
     plt.tight_layout()
 
     # save
-    save_path = join(dirname(dirname(dirname(abspath(__file__)))), "figures", "hyperparameter", "{}_feature_dimension.png".format(model))
+    save_path = join(dirname(dirname(dirname(abspath(__file__)))), "figures", "hyperparameter", "{}_{}_{}_{}.png".format(model, hyperparameter, start, end))
     if not exists(dirname(dirname(save_path))):
         os.makedirs(dirname(dirname(save_path)))
     if not exists(dirname(save_path)):
         os.makedirs(dirname(save_path))
     
     fig.savefig(save_path)
+    print("Save results to: {}".format(save_path))
 
 
