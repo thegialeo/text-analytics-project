@@ -10,11 +10,12 @@ from utils import preprocessing, regression, vectorizer
 
 
 def traverser(hyperparameter, start, end, step, model="word2vec"):
-    """Find optimal feature dimension
+    """Traverse along a hyperparameter
 
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
 
     Args:
+        hyperparameter (str): choose hyperparameter to traverse. Options: 'feature', 'window', 'count'
         start (int): starting feature dimension
         end (int): final feature dimension
         step (int): step size to traverse from start to end
@@ -54,7 +55,7 @@ def traverser(hyperparameter, start, end, step, model="word2vec"):
             # train model + feature extraction
             if hyperparameter == 'feature':
                 features = vectorizer.NN_vectorizer_wrapper(corpus,
-                                                            epochs,
+                                                            epochs = 10,
                                                             lr,
                                                             min_lr,
                                                             num_features = i,
@@ -65,7 +66,7 @@ def traverser(hyperparameter, start, end, step, model="word2vec"):
                                                             mode='train')
             elif hyperparameter == 'window':    
                 features = vectorizer.NN_vectorizer_wrapper(corpus,
-                                                            epochs,
+                                                            epochs = 10,
                                                             lr,
                                                             min_lr,
                                                             num_features = 120,
@@ -76,7 +77,7 @@ def traverser(hyperparameter, start, end, step, model="word2vec"):
                                                             mode='train')
             elif hyperparameter == 'count':
                 features = vectorizer.NN_vectorizer_wrapper(corpus,
-                                                            epochs,
+                                                            epochs = 10,
                                                             lr,
                                                             min_lr,
                                                             num_features = 120,
@@ -85,6 +86,18 @@ def traverser(hyperparameter, start, end, step, model="word2vec"):
                                                             algorithm = algorithm,
                                                             vectorizer = model,
                                                             mode='train')
+            elif hyperparameter == 'epochs':
+                features = vectorizer.NN_vectorizer_wrapper(corpus,
+                                                            epochs = 10,
+                                                            lr,
+                                                            min_lr,
+                                                            num_features = 120,
+                                                            window_size = 5,
+                                                            min_count = 5,
+                                                            algorithm = algorithm,
+                                                            vectorizer = model,
+                                                            mode='train')
+
             else:
                 raise ValueError("hyperparameter {} unknown. Options: 'feature', 'window', 'count'".format(hyperparameter))
 

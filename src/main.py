@@ -11,6 +11,18 @@ The code that is actually executed is the one below 'if __name__ ...' (if run
 as script).
 """
 
+class CustomFormatter(argparse.HelpFormatter):
+    """Apply argparse HelpFormatter, if string starts with '::'.
+
+       Written by Leo Nguyen. Contact Xenovortex, if problems arises.
+    """
+    def remove_indicator(self, text, width):
+        if text.startswith('::'):
+            return text[2:].splitlines()
+        else:
+            return argparse.HelpFormatter.re
+
+
 if __name__ == "__main__":
     # parser
     parser = argparse.ArgumentParser()
@@ -18,8 +30,8 @@ if __name__ == "__main__":
                         help="Download specific or all datasets. Options: 'all', 'TextComplexityDE19', 'Weebit', 'dw'")
     parser.add_argument("--experiment", dest='experiment', action='store',
                         help="Select experiment to perform. Options: 'vectorizer'")
-    parser.add_argument("--hyperparameter", dest='hyperparameter', action='store',
-                        help="Perform linear search for given hyperparameter. Options: 'feature_dim'")
+    parser.add_argument("--hyperparameter", dest='hyperparameter', action='store', nargs=5,
+                        help="Perform linear search for given parameters [type, start, end, step, model]. Options: type []")
     parser.add_argument("--augmentation", dest="augmentation", action='store_true',
                         help="")
 
