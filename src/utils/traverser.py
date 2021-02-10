@@ -49,6 +49,12 @@ def traverser(hyperparameter, start, end, step, model="word2vec", filename="all_
     end = int(end)
     step = int(step)
 
+    # lr and lr_min use 10e5 factor warning
+    if hyperparameter == 'lr' or hyperparameter == 'lr_min':
+        start *= 10e10
+        end *= 10e10
+        step *= 10e10
+
     # traversal
     for algorithm in ["skip-gram", "CBOW"]:
         print("{} Traversal for hyperparameter: {}".format(algorithm, hyperparameter))
@@ -58,11 +64,11 @@ def traverser(hyperparameter, start, end, step, model="word2vec", filename="all_
             if hyperparameter == 'feature':
                 features, vec_object = vectorizer.NN_vectorizer_wrapper(corpus,
                                                                         epochs = 10,
-                                                                        lr = 0.25,
+                                                                        lr = 0.05,
                                                                         min_lr = 0.0001,
                                                                         num_features = i,
-                                                                        window_size = 5,
-                                                                        min_count = 5,
+                                                                        window_size = 10,
+                                                                        min_count = 7,
                                                                         algorithm = algorithm,
                                                                         vectorizer = model,
                                                                         mode='train',
@@ -70,11 +76,11 @@ def traverser(hyperparameter, start, end, step, model="word2vec", filename="all_
             elif hyperparameter == 'window':    
                 features, vec_object = vectorizer.NN_vectorizer_wrapper(corpus,
                                                                         epochs = 10,
-                                                                        lr = 0.25,
+                                                                        lr = 0.05,
                                                                         min_lr = 0.0001,
-                                                                        num_features = 120,
+                                                                        num_features = 100,
                                                                         window_size = i,
-                                                                        min_count = 5,
+                                                                        min_count = 7,
                                                                         algorithm = algorithm,
                                                                         vectorizer = model,
                                                                         mode='train',
@@ -82,10 +88,10 @@ def traverser(hyperparameter, start, end, step, model="word2vec", filename="all_
             elif hyperparameter == 'count':         
                 features, vec_object = vectorizer.NN_vectorizer_wrapper(corpus,
                                                                         epochs = 10,
-                                                                        lr = 0.25,
+                                                                        lr = 0.05,
                                                                         min_lr = 0.0001,
-                                                                        num_features = 120,
-                                                                        window_size = 5,
+                                                                        num_features = 100,
+                                                                        window_size = 10,
                                                                         min_count = i,
                                                                         algorithm = algorithm,
                                                                         vectorizer = model,
@@ -93,12 +99,12 @@ def traverser(hyperparameter, start, end, step, model="word2vec", filename="all_
                                                                         return_vectorizer=True)
             elif hyperparameter == 'epochs':
                 features, vec_object = vectorizer.NN_vectorizer_wrapper(corpus,
-                                                                        epochs = 10,
-                                                                        lr = 0.25,
+                                                                        epochs = i,
+                                                                        lr = 0.05,
                                                                         min_lr = 0.0001,
-                                                                        num_features = 120,
-                                                                        window_size = 5,
-                                                                        min_count = 5,
+                                                                        num_features = 100,
+                                                                        window_size = 10,
+                                                                        min_count = 7,
                                                                         algorithm = algorithm,
                                                                         vectorizer = model,
                                                                         mode='train',
@@ -106,11 +112,11 @@ def traverser(hyperparameter, start, end, step, model="word2vec", filename="all_
             elif hyperparameter == 'lr':
                 features, vec_object = vectorizer.NN_vectorizer_wrapper(corpus,
                                                                         epochs = 10,
-                                                                        lr = i,
+                                                                        lr = i*10e-10,
                                                                         min_lr = 0.0001,
-                                                                        num_features = 120,
-                                                                        window_size = 5,
-                                                                        min_count = 5,
+                                                                        num_features = 100,
+                                                                        window_size = 10,
+                                                                        min_count = 7,
                                                                         algorithm = algorithm,
                                                                         vectorizer = model,
                                                                         mode='train',
@@ -118,11 +124,11 @@ def traverser(hyperparameter, start, end, step, model="word2vec", filename="all_
             elif hyperparameter == 'min_lr':
                 features, vec_object = vectorizer.NN_vectorizer_wrapper(corpus,
                                                                         epochs = 10,
-                                                                        lr = 0.25,
-                                                                        min_lr = i,
-                                                                        num_features = 120,
-                                                                        window_size = 5,
-                                                                        min_count = 5,
+                                                                        lr = 0.05,
+                                                                        min_lr = i*10e-10,
+                                                                        num_features = 100,
+                                                                        window_size = 10,
+                                                                        min_count = 7,
                                                                         algorithm = algorithm,
                                                                         vectorizer = model,
                                                                         mode='train',
