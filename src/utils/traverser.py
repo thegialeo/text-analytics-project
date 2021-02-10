@@ -15,7 +15,7 @@ def traverser(hyperparameter, start, end, step, model="word2vec"):
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
 
     Args:
-        hyperparameter (str): choose hyperparameter to traverse. Options: 'feature', 'window', 'count'
+        hyperparameter (str): choose hyperparameter to traverse. Options: 'feature', 'window', 'count', 'epochs', 'lr', 'min_lr'
         start (int): starting feature dimension
         end (int): final feature dimension
         step (int): step size to traverse from start to end
@@ -31,10 +31,6 @@ def traverser(hyperparameter, start, end, step, model="word2vec"):
 
     # tokenization
     corpus = preprocessing.tokenizer(df_ratings.Sentence, method='spacy')
- 
-    # hyperparameters
-    lr = 0.25
-    min_lr = 0.0001
 
     # track performance
     MSE_skip = []
