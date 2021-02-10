@@ -9,7 +9,7 @@ from tqdm import tqdm
 from utils import preprocessing, regression, vectorizer
 
 
-def traverser(hyperparameter, start, end, step, model="word2vec"):
+def traverser(hyperparameter, start, end, step, model="word2vec", filename="all_data.h5"):
     """Traverse along a hyperparameter
 
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
@@ -19,18 +19,19 @@ def traverser(hyperparameter, start, end, step, model="word2vec"):
         start (int): starting feature dimension
         end (int): final feature dimension
         step (int): step size to traverse from start to end
-        model (str, optional): vectorization model. Defaults to "word2vec".
+        model (str, optional): vectorization model. Defaults to "word2vec"
+        filename (str, optional): name of h5 file to load (run augmentation first)
     """
 
     # read data
-    data_path = join(dirname(dirname(dirname(abspath(__file__)))), "data", "TextComplexityDE19")
-    df_ratings = pd.read_csv(join(data_path, "ratings.csv"), sep = ",", encoding = "ISO-8859-1")
+    df_train, df_test = to_dataframe.read_augmented_h5(filename)
+    df_train = df_train[df_train["source"] == "text_comp19"]  # TODO: remove once Raoul fixes his dataloader
 
     # labels
-    labels = df_ratings.MOS_Complexity.values
+    labels = df_train.rating.values
 
     # tokenization
-    corpus = preprocessing.tokenizer(df_ratings.Sentence, method='spacy')
+    corpus = preprocessing.tokenizer(df_train.raw_text, method='spacy')
 
     # track performance
     MSE_skip = []
