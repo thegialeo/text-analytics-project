@@ -11,17 +11,6 @@ The code that is actually executed is the one below 'if __name__ ...' (if run
 as script).
 """
 
-class CustomFormatter(argparse.HelpFormatter):
-    """Apply argparse HelpFormatter, if string starts with '::'.
-
-       Written by Leo Nguyen. Contact Xenovortex, if problems arises.
-    """
-    def remove_indicator(self, text, width):
-        if text.startswith('::'):
-            return text[2:].splitlines()
-        else:
-            return argparse.HelpFormatter.re
-
 
 if __name__ == "__main__":
     # parser
