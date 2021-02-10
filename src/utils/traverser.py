@@ -42,10 +42,13 @@ def traverser(hyperparameter, start, end, step, model="word2vec"):
     MAE_CBOW = []
     R2_CBOW = []
 
+    # type cast
+    start = int(start)
+
     # traversal
     for algorithm in ["skip-gram", "CBOW"]:
         print("Feature Dimension Traversal for {}".format(algorithm))
-        for i in tqdm(range(start, end, step)):
+        for i in tqdm(range(int(start), int(end), int(step))):
 
             # train model + feature extraction
             if hyperparameter == 'feature':
@@ -172,5 +175,6 @@ def traverser(hyperparameter, start, end, step, model="word2vec"):
         os.makedirs(dirname(save_path))
     
     fig.savefig(save_path)
+    print("Save results to: {}".format(save_path))
 
 

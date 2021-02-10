@@ -71,7 +71,9 @@ class word2vec:
             os.makedirs(dirname(self.model_path))
         
         self.model.save(self.model_path)
+        print("Save trained word2vec model to: {}".format(self.model_path))
         self.model.wv.save(self.wv_path)
+        print("Save wordvectors of word2vec model to: {}".format(self.wv_path))
 
 
     def load_model(self):
