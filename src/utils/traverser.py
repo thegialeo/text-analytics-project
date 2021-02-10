@@ -6,7 +6,7 @@ import pandas as pd
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
 from tqdm import tqdm
-from utils import preprocessing, regression, vectorizer
+from utils import preprocessing, regression, vectorizer, to_dataframe
 
 
 def traverser(hyperparameter, start, end, step, model="word2vec", filename="all_data.h5"):
@@ -22,6 +22,13 @@ def traverser(hyperparameter, start, end, step, model="word2vec", filename="all_
         model (str, optional): vectorization model. Defaults to "word2vec"
         filename (str, optional): name of h5 file to load (run augmentation first)
     """
+
+    print(hyperparameter)
+    print(start)
+    print(end)
+    print(step)
+    print(model)
+    print(filename)
 
     # read data
     df_train, df_test = to_dataframe.read_augmented_h5(filename)

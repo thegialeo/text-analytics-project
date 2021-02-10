@@ -3,9 +3,7 @@ from os.path import abspath, dirname, exists, join
 
 import matplotlib.pyplot as plt
 import pandas as pd
-from utils import clustering, dimension_reduction, preprocessing, vectorizer
-
-#import to_dataframe
+from utils import clustering, dimension_reduction, preprocessing, vectorizer, to_dataframe
 
 
 def visualize_vectorizer(vec='tfidf', dim_reduc='PCA', stopword=None, filename="all_data.h5"):

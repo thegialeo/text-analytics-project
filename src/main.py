@@ -1,8 +1,8 @@
 import argparse
 
-from utils import benchmark, downloader, traverser, evaluater
+from utils import benchmark, downloader, traverser, evaluater, to_dataframe
 from utils.sample import hello_world  # import of module from subfolder
-import to_dataframe
+
 
 """
 This script should serve as entrypoint to your program.

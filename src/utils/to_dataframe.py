@@ -51,11 +51,11 @@ def weebit_to_df():
 
     # List paths of all .txt files
     print("Reading in Weebit Ele-Txt, Int-Txt, Adv-Txt")
-    elementary_path = join(dirname(dirname(abspath(__file__))),
+    elementary_path = join(dirname(dirname(dirname(abspath(__file__)))),
                            "data","WeebitDataset","Texts-SeparatedByReadingLevel","Ele-Txt")
-    advanced_path = join(dirname(dirname(abspath(__file__))),
+    advanced_path = join(dirname(dirname(dirname(abspath(__file__)))),
                            "data","WeebitDataset","Texts-SeparatedByReadingLevel","Adv-Txt")
-    intermediate_path = join(dirname(dirname(abspath(__file__))),
+    intermediate_path = join(dirname(dirname(dirname(abspath(__file__)))),
                            "data","WeebitDataset","Texts-SeparatedByReadingLevel","Int-Txt")
 
     path_list = [elementary_path, advanced_path, intermediate_path]
@@ -108,8 +108,8 @@ def dw_to_df():
     """
 
     #.h5 file path
-    h5_path = join(dirname(dirname(abspath(__file__))),
-                           "data","dw.h5")
+    h5_path = join(dirname(dirname(dirname(abspath(__file__)))),
+                           "data", "dw", "dw.h5")
 
     #read in h5 file
     print("Reading in dw.h5")
@@ -302,7 +302,7 @@ def store_augmented_h5(filename = "",backtrans = False, lemmatization = False,
         filename = input("Please enter filename with .h5 at the end")
 
     # define path of .HDF5 file
-    h5_path = join(dirname(dirname(abspath(__file__))),
+    h5_path = join(dirname(dirname(dirname(abspath(__file__)))),
                    "data", filename)
 
     # Load augmented data into variables
@@ -328,7 +328,7 @@ def read_augmented_h5(filename = ""):
         filename = input("Please enter filename with .h5 at the end")
 
     # define path of .HDF5 file
-    h5_path = join(dirname(dirname(abspath(__file__))),
+    h5_path = join(dirname(dirname(dirname(abspath(__file__)))),
                    "data", filename)
 
     # read in .HDF5 file
