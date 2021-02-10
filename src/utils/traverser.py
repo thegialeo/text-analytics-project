@@ -165,7 +165,7 @@ def traverser(hyperparameter, start, end, step, model="word2vec"):
     plt.tight_layout()
 
     # save
-    save_path = join(dirname(dirname(dirname(abspath(__file__)))), "figures", "hyperparameter", "{}_feature_dimension.png".format(model))
+    save_path = join(dirname(dirname(dirname(abspath(__file__)))), "figures", "hyperparameter", "{}_{}_{}_{}.png".format(model, hyperparameter, start, end))
     if not exists(dirname(dirname(save_path))):
         os.makedirs(dirname(dirname(save_path)))
     if not exists(dirname(save_path)):
