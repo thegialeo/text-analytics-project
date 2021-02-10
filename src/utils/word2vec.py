@@ -61,9 +61,12 @@ class word2vec:
         self.save_model(False)
 
   
-    def vectorize(self):
+    def vectorize(self, corpus=None):
         """Vectorize the corpus with word2vec model"""
-        self.features = [np.mean([self.wv[word] for word in line if word in self.wv.vocab], axis=0) for line in self.corpus]
+        if corpus is None:
+            self.features = [np.mean([self.wv[word] for word in line if word in self.wv.vocab], axis=0) for line in self.corpus]
+        else:
+            return [np.mean([self.wv[word] for word in line if word in self.wv.vocab], axis=0) for line in corpus]
 
     def save_model(self, print_path=True):
         """Save word2vec model and wordvectors"""
