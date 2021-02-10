@@ -58,22 +58,23 @@ class word2vec:
         self.wv = self.model.wv
         
         self.model.init_sims(replace=True)
-        self.save_model()
+        self.save_model(False)
 
   
     def vectorize(self):
         """Vectorize the corpus with word2vec model"""
         self.features = [np.mean([self.wv[word] for word in line if word in self.wv.vocab], axis=0) for line in self.corpus]
 
-    def save_model(self):
+    def save_model(self, print_path=True):
         """Save word2vec model and wordvectors"""
         if not exists(dirname(self.model_path)):
             os.makedirs(dirname(self.model_path))
         
         self.model.save(self.model_path)
-        print("Save trained word2vec model to: {}".format(self.model_path))
         self.model.wv.save(self.wv_path)
-        print("Save wordvectors of word2vec model to: {}".format(self.wv_path))
+        if print_path:
+            print("Save trained word2vec model to: {}".format(self.model_path))
+            print("Save wordvectors of word2vec model to: {}".format(self.wv_path))
 
 
     def load_model(self):

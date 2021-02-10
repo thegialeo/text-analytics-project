@@ -22,15 +22,15 @@ def visualize_vectorizer(vec='tfidf', dim_reduc='PCA', stopword=None):
     print("Visualize {} vectorizer with {} projection".format(vec, dim_reduc))
     
     # read data
-    data_path = join(dirname(dirname(dirname(abspath(__file__)))), "data", "TextComplexityDE19")
-    df_ratings = pd.read_csv(join(data_path, "ratings.csv"), sep = ",", encoding = "ISO-8859-1")
+    df_train, df_test = to_dataframe.read_augmented_h5(filename)
+    df_train = df_train[df_train["source"] == "text_comp19"] # TODO: remove once Raoul fixes his dataloader
     
     # feature extraction
     if stopword is not None:
         german_stopwords = preprocessing.get_stopwords(stopword)
     else: 
         german_stopwords = None
-    features = vectorizer.vectorizer_wrapper(df_ratings.Sentence.values, vec, german_stopwords)
+    features = vectorizer.vectorizer_wrapper(df_train.Sentence.values, vec, german_stopwords)
     features = features.toarray()
 
     # dimension reduction

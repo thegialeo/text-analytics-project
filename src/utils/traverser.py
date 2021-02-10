@@ -44,6 +44,8 @@ def traverser(hyperparameter, start, end, step, model="word2vec"):
 
     # type cast
     start = int(start)
+    end = int(end)
+    step = int(step)
 
     # traversal
     for algorithm in ["skip-gram", "CBOW"]:
