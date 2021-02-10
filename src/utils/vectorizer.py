@@ -37,7 +37,7 @@ def vectorizer_wrapper(data, vectorizer='tfidf', stopwords=None, return_vectoriz
         return features
 
 
-def NN_vectorizer_wrapper(corpus, epochs, lr, min_lr, num_features, window_size=5, min_count=5, algorithm="skip-gram", vectorizer='word2vec', mode='train'):
+def NN_vectorizer_wrapper(corpus, epochs, lr, min_lr, num_features, window_size=5, min_count=5, algorithm="skip-gram", vectorizer='word2vec', mode='train', return_vectorizer=False):
     """Takes in a 2d list of sentences and perform the selected vectorizer on the data.
        Returns an array of sentence features represented by number vectors.
 
@@ -73,4 +73,4 @@ def NN_vectorizer_wrapper(corpus, epochs, lr, min_lr, num_features, window_size=
     else:
         raise ValueError("Vectorizer {} not implemented. Please one of the following options: 'word2vec'.".format(vectorizer))
 
-    return features
+    return features, model

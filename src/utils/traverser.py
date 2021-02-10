@@ -26,10 +26,11 @@ def traverser(hyperparameter, start, end, step, model="word2vec", filename="all_
     # read data
     df_train, df_test = to_dataframe.read_augmented_h5(filename)
     df_train = df_train[df_train["source"] == "text_comp19"]  # TODO: remove once Raoul fixes his dataloader
-
+    
     # labels
-    labels = df_train.rating.values
-
+    y_train = df_train.rating.values
+    y_test = df_test.rating.values
+    
     # tokenization
     corpus = preprocessing.tokenizer(df_train.raw_text, method='spacy')
 
@@ -50,85 +51,91 @@ def traverser(hyperparameter, start, end, step, model="word2vec", filename="all_
 
     # traversal
     for algorithm in ["skip-gram", "CBOW"]:
-        print("Feature Dimension Traversal for {}".format(algorithm))
+        print("{} Traversal for hyperparameter: {}".format(algorithm, hyperparameter))
         for i in tqdm(range(int(start), int(end), int(step))):
 
             # train model + feature extraction
             if hyperparameter == 'feature':
-                features = vectorizer.NN_vectorizer_wrapper(corpus,
-                                                            epochs = 10,
-                                                            lr = 0.25,
-                                                            min_lr = 0.0001,
-                                                            num_features = i,
-                                                            window_size = 5,
-                                                            min_count = 5,
-                                                            algorithm = algorithm,
-                                                            vectorizer = model,
-                                                            mode='train')
+                features, vec_object = vectorizer.NN_vectorizer_wrapper(corpus,
+                                                                        epochs = 10,
+                                                                        lr = 0.25,
+                                                                        min_lr = 0.0001,
+                                                                        num_features = i,
+                                                                        window_size = 5,
+                                                                        min_count = 5,
+                                                                        algorithm = algorithm,
+                                                                        vectorizer = model,
+                                                                        mode='train',
+                                                                        return_vectorizer=True)
             elif hyperparameter == 'window':    
-                features = vectorizer.NN_vectorizer_wrapper(corpus,
-                                                            epochs = 10,
-                                                            lr = 0.25,
-                                                            min_lr = 0.0001,
-                                                            num_features = 120,
-                                                            window_size = i,
-                                                            min_count = 5,
-                                                            algorithm = algorithm,
-                                                            vectorizer = model,
-                                                            mode='train')
-            elif hyperparameter == 'count':
-                features = vectorizer.NN_vectorizer_wrapper(corpus,
-                                                            epochs = 10,
-                                                            lr = 0.25,
-                                                            min_lr = 0.0001,
-                                                            num_features = 120,
-                                                            window_size = 5,
-                                                            min_count = i,
-                                                            algorithm = algorithm,
-                                                            vectorizer = model,
-                                                            mode='train')
+                features, vec_object = vectorizer.NN_vectorizer_wrapper(corpus,
+                                                                        epochs = 10,
+                                                                        lr = 0.25,
+                                                                        min_lr = 0.0001,
+                                                                        num_features = 120,
+                                                                        window_size = i,
+                                                                        min_count = 5,
+                                                                        algorithm = algorithm,
+                                                                        vectorizer = model,
+                                                                        mode='train',
+                                                                        return_vectorizer=True)
+            elif hyperparameter == 'count':         
+                features, vec_object = vectorizer.NN_vectorizer_wrapper(corpus,
+                                                                        epochs = 10,
+                                                                        lr = 0.25,
+                                                                        min_lr = 0.0001,
+                                                                        num_features = 120,
+                                                                        window_size = 5,
+                                                                        min_count = i,
+                                                                        algorithm = algorithm,
+                                                                        vectorizer = model,
+                                                                        mode='train',
+                                                                        return_vectorizer=True)
             elif hyperparameter == 'epochs':
-                features = vectorizer.NN_vectorizer_wrapper(corpus,
-                                                            epochs = 10,
-                                                            lr = 0.25,
-                                                            min_lr = 0.0001,
-                                                            num_features = 120,
-                                                            window_size = 5,
-                                                            min_count = 5,
-                                                            algorithm = algorithm,
-                                                            vectorizer = model,
-                                                            mode='train')
+                features, vec_object = vectorizer.NN_vectorizer_wrapper(corpus,
+                                                                        epochs = 10,
+                                                                        lr = 0.25,
+                                                                        min_lr = 0.0001,
+                                                                        num_features = 120,
+                                                                        window_size = 5,
+                                                                        min_count = 5,
+                                                                        algorithm = algorithm,
+                                                                        vectorizer = model,
+                                                                        mode='train',
+                                                                        return_vectorizer=True)
             elif hyperparameter == 'lr':
-                features = vectorizer.NN_vectorizer_wrapper(corpus,
-                                                            epochs = 10,
-                                                            lr = i,
-                                                            min_lr = 0.0001,
-                                                            num_features = 120,
-                                                            window_size = 5,
-                                                            min_count = 5,
-                                                            algorithm = algorithm,
-                                                            vectorizer = model,
-                                                            mode='train')                
+                features, vec_object = vectorizer.NN_vectorizer_wrapper(corpus,
+                                                                        epochs = 10,
+                                                                        lr = i,
+                                                                        min_lr = 0.0001,
+                                                                        num_features = 120,
+                                                                        window_size = 5,
+                                                                        min_count = 5,
+                                                                        algorithm = algorithm,
+                                                                        vectorizer = model,
+                                                                        mode='train',
+                                                                        return_vectorizer=True)                
             elif hyperparameter == 'min_lr':
-                features = vectorizer.NN_vectorizer_wrapper(corpus,
-                                                            epochs = 10,
-                                                            lr = 0.25,
-                                                            min_lr = i,
-                                                            num_features = 120,
-                                                            window_size = 5,
-                                                            min_count = 5,
-                                                            algorithm = algorithm,
-                                                            vectorizer = model,
-                                                            mode='train')                
+                features, vec_object = vectorizer.NN_vectorizer_wrapper(corpus,
+                                                                        epochs = 10,
+                                                                        lr = 0.25,
+                                                                        min_lr = i,
+                                                                        num_features = 120,
+                                                                        window_size = 5,
+                                                                        min_count = 5,
+                                                                        algorithm = algorithm,
+                                                                        vectorizer = model,
+                                                                        mode='train',
+                                                                        return_vectorizer=True)                
 
             else:
                 raise ValueError("hyperparameter {} unknown. Options: 'feature', 'window', 'count'".format(hyperparameter))
 
-            # split into train- and testset
-            X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=0.2, random_state=0, shuffle=False)        
+            # apply trained word2vec on testset
+            X_test = vec_object.vectorize(df_test.raw_text.values)
 
             # train linear regression
-            reg = regression.baseline(X_train, y_train, "linear")
+            reg = regression.baseline(features, y_train, "linear")
 
             # testing
             pred = reg.predict(X_test)
@@ -171,7 +178,9 @@ def traverser(hyperparameter, start, end, step, model="word2vec", filename="all_
     plt.tight_layout()
 
     # save
-    save_path = join(dirname(dirname(dirname(abspath(__file__)))), "figures", "hyperparameter", "{}_{}_{}_{}.png".format(model, hyperparameter, start, end))
+    save_path = join(dirname(dirname(dirname(abspath(__file__)))), "figures", "hyperparameter", model, "{} ({} to {}).png".format(hyperparameter, start, end))
+    if not exists(dirname(dirname(dirname(save_path)))):
+        os.makedirs(dirname(dirname(dirname(save_path))))
     if not exists(dirname(dirname(save_path))):
         os.makedirs(dirname(dirname(save_path)))
     if not exists(dirname(save_path)):
