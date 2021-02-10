@@ -33,7 +33,6 @@ def traverser(hyperparameter, start, end, step, model="word2vec"):
     corpus = preprocessing.tokenizer(df_ratings.Sentence, method='spacy')
  
     # hyperparameters
-    epochs = 10
     lr = 0.25
     min_lr = 0.0001
 
@@ -56,8 +55,8 @@ def traverser(hyperparameter, start, end, step, model="word2vec"):
             if hyperparameter == 'feature':
                 features = vectorizer.NN_vectorizer_wrapper(corpus,
                                                             epochs = 10,
-                                                            lr,
-                                                            min_lr,
+                                                            lr = 0.25,
+                                                            min_lr = 0.0001,
                                                             num_features = i,
                                                             window_size = 5,
                                                             min_count = 5,
@@ -67,8 +66,8 @@ def traverser(hyperparameter, start, end, step, model="word2vec"):
             elif hyperparameter == 'window':    
                 features = vectorizer.NN_vectorizer_wrapper(corpus,
                                                             epochs = 10,
-                                                            lr,
-                                                            min_lr,
+                                                            lr = 0.25,
+                                                            min_lr = 0.0001,
                                                             num_features = 120,
                                                             window_size = i,
                                                             min_count = 5,
@@ -78,8 +77,8 @@ def traverser(hyperparameter, start, end, step, model="word2vec"):
             elif hyperparameter == 'count':
                 features = vectorizer.NN_vectorizer_wrapper(corpus,
                                                             epochs = 10,
-                                                            lr,
-                                                            min_lr,
+                                                            lr = 0.25,
+                                                            min_lr = 0.0001,
                                                             num_features = 120,
                                                             window_size = 5,
                                                             min_count = i,
@@ -89,14 +88,36 @@ def traverser(hyperparameter, start, end, step, model="word2vec"):
             elif hyperparameter == 'epochs':
                 features = vectorizer.NN_vectorizer_wrapper(corpus,
                                                             epochs = 10,
-                                                            lr,
-                                                            min_lr,
+                                                            lr = 0.25,
+                                                            min_lr = 0.0001,
                                                             num_features = 120,
                                                             window_size = 5,
                                                             min_count = 5,
                                                             algorithm = algorithm,
                                                             vectorizer = model,
                                                             mode='train')
+            elif hyperparameter == 'lr':
+                features = vectorizer.NN_vectorizer_wrapper(corpus,
+                                                            epochs = 10,
+                                                            lr = i,
+                                                            min_lr = 0.0001,
+                                                            num_features = 120,
+                                                            window_size = 5,
+                                                            min_count = 5,
+                                                            algorithm = algorithm,
+                                                            vectorizer = model,
+                                                            mode='train')                
+            elif hyperparameter == 'min_lr':
+                features = vectorizer.NN_vectorizer_wrapper(corpus,
+                                                            epochs = 10,
+                                                            lr = 0.25,
+                                                            min_lr = i,
+                                                            num_features = 120,
+                                                            window_size = 5,
+                                                            min_count = 5,
+                                                            algorithm = algorithm,
+                                                            vectorizer = model,
+                                                            mode='train')                
 
             else:
                 raise ValueError("hyperparameter {} unknown. Options: 'feature', 'window', 'count'".format(hyperparameter))
