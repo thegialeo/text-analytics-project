@@ -23,13 +23,6 @@ def traverser(hyperparameter, start, end, step, model="word2vec", filename="all_
         filename (str, optional): name of h5 file to load (run augmentation first)
     """
 
-    print(hyperparameter)
-    print(start)
-    print(end)
-    print(step)
-    print(model)
-    print(filename)
-
     # read data
     df_train, df_test = to_dataframe.read_augmented_h5(filename)
     df_train = df_train[df_train["source"] == "text_comp19"]  # TODO: remove once Raoul fixes his dataloader
