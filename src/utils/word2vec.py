@@ -31,8 +31,8 @@ class word2vec:
         self.num_features = num_features
         self.window_size = window_size
         self.min_count = min_count
-        self.model_path = join(dirname(dirname(dirname(abspath(__file__)))), "model", "word2vec.model")
-        self.wv_path = join(dirname(dirname(dirname(abspath(__file__)))), "model", "word2vec.wordvectors")
+        self.model_path = join(dirname(dirname(dirname(abspath(__file__)))), "model", "word2vec", "word2vec.model")
+        self.wv_path = join(dirname(dirname(dirname(abspath(__file__)))), "model", "word2vec", "word2vec.wordvectors")
 
         if algorithm == "skip-gram":
             self.algorithm = 1
@@ -70,6 +70,8 @@ class word2vec:
 
     def save_model(self, print_path=True):
         """Save word2vec model and wordvectors"""
+        if not exists(dirname(dirname(self.model_path))):
+            os.makedirs((dirname(self.model_path)))
         if not exists(dirname(self.model_path)):
             os.makedirs(dirname(self.model_path))
         
