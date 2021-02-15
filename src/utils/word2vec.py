@@ -9,7 +9,7 @@ from gensim.models.word2vec import Word2Vec
 
 class word2vec:
 
-    def __init__(self, corpus, epochs, lr, min_lr, num_features, window_size=5, min_count=5, algorithm="skip-gram"):
+    def __init__(self, corpus, epochs, lr, min_lr, num_features, window_size=5, min_count=5, algorithm="skip-gram", pretrained=False):
         """Gensim Word2Vec wrapper class
 
         Written by Leo Nguyen. Contact Xenovortex, if problems arises.
@@ -23,6 +23,7 @@ class word2vec:
             window_size (int, optional): window size of word2vec. Defaults to 5.
             min_count (int, optional): ignore words that occur less than min_count. Defaults to 5.
             algorithm (str, optional): choose between "CBOW" and "skip-gram". Defaults to "skip-gram".
+            pretrained(bool, optional): will finetune a pretrained model instead from training from scratch
         """
         self.corpus = corpus
         self.epochs = epochs
@@ -31,8 +32,10 @@ class word2vec:
         self.num_features = num_features
         self.window_size = window_size
         self.min_count = min_count
+        self.pretrained = pretrained
         self.model_path = join(dirname(dirname(dirname(abspath(__file__)))), "model", "word2vec", "word2vec.model")
         self.wv_path = join(dirname(dirname(dirname(abspath(__file__)))), "model", "word2vec", "word2vec.wordvectors")
+        self.pretrained_model = join(dirname(dirname(dirname(abspath(__file__)))), "model", "word2vec", "pretrained", "german.model")
 
         if algorithm == "skip-gram":
             self.algorithm = 1
@@ -45,20 +48,23 @@ class word2vec:
 
     def train(self):
         """Train Word2Vec model on corpus."""
-        self.model = Word2Vec(self.corpus,
-                                sg = 1,
-                                iter = self.epochs,
-                                alpha = self.lr,
-                                min_alpha = self.min_lr,
-                                size = self.num_features,
-                                window = self.window_size,
-                                min_count = self.min_count,
-                                workers=multiprocessing.cpu_count())
+        if self.pretrained:
+            pass #TODO: implement finetuning
+        else:
+            self.model = Word2Vec(self.corpus,
+                                    sg = self.algorithm,
+                                    iter = self.epochs,
+                                    alpha = self.lr,
+                                    min_alpha = self.min_lr,
+                                    size = self.num_features,
+                                    window = self.window_size,
+                                    min_count = self.min_count,
+                                    workers=multiprocessing.cpu_count())
 
-        self.wv = self.model.wv
-        
-        self.model.init_sims(replace=True)
-        self.save_model(False)
+            self.wv = self.model.wv
+            
+            self.model.init_sims(replace=True)
+            self.save_model(False)
 
   
     def vectorize(self, corpus=None):
@@ -82,10 +88,16 @@ class word2vec:
             print("Save wordvectors of word2vec model to: {}".format(self.wv_path))
 
 
-    def load_model(self):
+    def load_model(self, pretrained=False):
         """Load word2vec model"""
-        self.model = Word2Vec.load(self.data_path)
+        if pretrained:
+            self.model = Word2Vec.load(self.pretrained_model)
+            print("Load pretrained word2vec model from: {}".format(self.pretrained_model))
+        else:
+            self.model = Word2Vec.load(self.model_path)
+            print("Load word2vec model from: {}".format(self.model_path))
 
     def load_wv(self):
         """Load wordvectors"""
         self.wv = KeyedVectors.load(self.wv_path, mmap='r') 
+        print("Load wordvectors from: {}".format(self.wv_path))
