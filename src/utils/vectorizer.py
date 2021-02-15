@@ -4,6 +4,24 @@ from utils import word2vec
 
 
 def vectorizer_wrapper(data, vectorizer='tfidf', stopwords=None, return_vectorizer=False):
+    """Wrapper to combine word2vec wrapper with the count/tfidf/hashing vectorizer wrapper.
+    
+       Written by Leo Nguyen. Contact Xenovortex, if problems arises.
+
+    Args:
+        data (numpy array): 1d array containing sentences
+        vectorizer (str, optional): Select the vectorizer type. Implemented so far are: 'tfidf', 'count', 'hash'. Defaults to 'tfidf'.
+        stop_words (list, optional): List of stopwords. Defaults to None.
+        return_vectorizer (bool, optional): Return vectorizer model if true. Defaults to False.
+    """
+
+    if vectorizer == "word2vec":
+        pass
+    else:
+        ML_vectorizer_wrapper(data, vectorizer, stopwords, return_vectorizer)
+
+
+def ML_vectorizer_wrapper(data, vectorizer='tfidf', stopwords=None, return_vectorizer=False):
     """Takes in a numpy array of sentences and perform the selected vectorizer on the data.
        Returns a numpy array of sentence features represented by number vectors.
 
@@ -13,6 +31,7 @@ def vectorizer_wrapper(data, vectorizer='tfidf', stopwords=None, return_vectoriz
         data (numpy array): 1d array containing sentences
         vectorizer (str, optional): Select the vectorizer type. Implemented so far are: 'tfidf', 'count', 'hash'. Defaults to 'tfidf'.
         stop_words (list, optional): List of stopwords. Defaults to None.
+        return_vectorizer (bool, optional): Return vectorizer model if true. Defaults to False.
 
     Returns:
         features [scipy sparse matrix (csr)]: document-term matrix with dimension (number of sentences, features per sentence)
