@@ -16,9 +16,21 @@ def vectorizer_wrapper(data, vectorizer='tfidf', stopwords=None, return_vectoriz
     """
 
     if vectorizer == "word2vec":
-        pass
+         # read data
+        df_train, df_test = to_dataframe.read_augmented_h5(filename)
+        df_train = df_train[df_train["source"] == "text_comp19"]  # TODO: remove once Raoul fixes his dataloader
+    
+        # labels
+        y_train = df_train.rating.values
+        y_test = df_test.rating.values
+    
+        # tokenization
+        corpus = preprocessing.tokenizer(df_train.raw_text, method='spacy')
+
+        # vectorization
+        return NN_vectorizer_wrapper(corpus, 10, 0.05, 0.0001, 120, 10, 7, "skip-gram", vectorizer, 'train', return_vectorizer)
     else:
-        ML_vectorizer_wrapper(data, vectorizer, stopwords, return_vectorizer)
+        return ML_vectorizer_wrapper(data, vectorizer, stopwords, return_vectorizer)
 
 
 def ML_vectorizer_wrapper(data, vectorizer='tfidf', stopwords=None, return_vectorizer=False):
