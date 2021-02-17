@@ -49,7 +49,7 @@ class word2vec:
     def train(self):
         """Train Word2Vec model on corpus."""
         if self.pretrained:
-            pass #TODO: implement finetuning
+            pass
         else:
             self.model = Word2Vec(self.corpus,
                                     sg = self.algorithm,
