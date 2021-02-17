@@ -49,7 +49,7 @@ class word2vec:
     def train(self, print_path=True):
         """Train Word2Vec model on corpus."""
         if self.pretrained:
-            self.load_model(True)
+            self.load_model(pretrained=True)
             self.model.train(self.corpus,
                              total_examples=len(self.corpus),
                              iter = self.epochs,

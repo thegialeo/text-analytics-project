@@ -9,7 +9,7 @@ from tqdm import tqdm
 from utils import preprocessing, regression, vectorizer, to_dataframe
 
 
-def traverser(hyperparameter, start, end, step, model="word2vec", filename="all_data.h5"):
+def traverser(hyperparameter, start, end, step, model="word2vec", filename="all_data.h5", pretrained=False):
     """Traverse along a hyperparameter
 
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
@@ -21,6 +21,7 @@ def traverser(hyperparameter, start, end, step, model="word2vec", filename="all_
         step (int): step size to traverse from start to end
         model (str, optional): vectorization model. Defaults to "word2vec"
         filename (str, optional): name of h5 file to load (run augmentation first)
+        pretrained (bool, optional): if True, finetune the pretrained model instead of training from scratch
     """
 
     # read data
