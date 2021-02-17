@@ -73,7 +73,8 @@ def traverser(hyperparameter, start, end, step, model="word2vec", filename="all_
                                                                         algorithm = algorithm,
                                                                         vectorizer = model,
                                                                         mode='train',
-                                                                        return_vectorizer=True)
+                                                                        return_vectorizer=True,
+                                                                        pretrained=pretrained)
             elif hyperparameter == 'window':    
                 features, vec_object = vectorizer.NN_vectorizer_wrapper(corpus,
                                                                         epochs = 10,
@@ -85,7 +86,8 @@ def traverser(hyperparameter, start, end, step, model="word2vec", filename="all_
                                                                         algorithm = algorithm,
                                                                         vectorizer = model,
                                                                         mode='train',
-                                                                        return_vectorizer=True)
+                                                                        return_vectorizer=True,
+                                                                        pretrained=pretrained)
             elif hyperparameter == 'count':         
                 features, vec_object = vectorizer.NN_vectorizer_wrapper(corpus,
                                                                         epochs = 10,
@@ -97,7 +99,8 @@ def traverser(hyperparameter, start, end, step, model="word2vec", filename="all_
                                                                         algorithm = algorithm,
                                                                         vectorizer = model,
                                                                         mode='train',
-                                                                        return_vectorizer=True)
+                                                                        return_vectorizer=True,
+                                                                        pretrained=pretrained)
             elif hyperparameter == 'epochs':
                 features, vec_object = vectorizer.NN_vectorizer_wrapper(corpus,
                                                                         epochs = i,
@@ -109,7 +112,8 @@ def traverser(hyperparameter, start, end, step, model="word2vec", filename="all_
                                                                         algorithm = algorithm,
                                                                         vectorizer = model,
                                                                         mode='train',
-                                                                        return_vectorizer=True)
+                                                                        return_vectorizer=True,
+                                                                        pretrained=pretrained)
             elif hyperparameter == 'lr':
                 features, vec_object = vectorizer.NN_vectorizer_wrapper(corpus,
                                                                         epochs = 10,
@@ -121,7 +125,8 @@ def traverser(hyperparameter, start, end, step, model="word2vec", filename="all_
                                                                         algorithm = algorithm,
                                                                         vectorizer = model,
                                                                         mode='train',
-                                                                        return_vectorizer=True)                
+                                                                        return_vectorizer=True,
+                                                                        pretrained=pretrained)                
             elif hyperparameter == 'min_lr':
                 features, vec_object = vectorizer.NN_vectorizer_wrapper(corpus,
                                                                         epochs = 10,
@@ -133,7 +138,8 @@ def traverser(hyperparameter, start, end, step, model="word2vec", filename="all_
                                                                         algorithm = algorithm,
                                                                         vectorizer = model,
                                                                         mode='train',
-                                                                        return_vectorizer=True)                
+                                                                        return_vectorizer=True,
+                                                                        pretrained=pretrained)                
 
             else:
                 raise ValueError("hyperparameter {} unknown. Options: 'feature', 'window', 'count'".format(hyperparameter))
