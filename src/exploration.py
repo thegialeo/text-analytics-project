@@ -2,12 +2,12 @@
 
 import re
 from os import path
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import scipy.stats
-
-import word_rarity
+from utils import wordlists
 
 
 def remove_numbers(string):
@@ -161,9 +161,9 @@ def count_monosyllables(sentence):
 
 def count_infrequent_words(sentence, size=100):
     if size == 100:
-        wordlist = word_rarity.uni_leipzig_top100de()
+        wordlist = wordlists.uni_leipzig_top100de()
     elif size == 1000:
-        wordlist = word_rarity.uni_leipzig_top1000de()
+        wordlist = wordlists.uni_leipzig_top1000de()
     else:
         print(
             "count_infreduent_words was called with an unsupported wordlist size. (Implemented so far: 100, 1000)"

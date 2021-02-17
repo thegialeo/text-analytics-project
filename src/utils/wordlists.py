@@ -1,4 +1,3 @@
-import numexpr
 import numpy as np
 
 
@@ -130,12 +129,3 @@ def uni_leipzig_top1000de():
     words = np.array(words)
     words = np.unique(words)
     return words
-
-
-if __name__ == "__main__":
-    numexpr.print_versions()
-
-    top100 = uni_leipzig_top100de()
-    top1000 = uni_leipzig_top1000de()
-    print(top100.size)
-    print(top1000.size)
