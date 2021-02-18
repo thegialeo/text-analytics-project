@@ -2,7 +2,9 @@ import re
 
 import numpy as np
 import pandas as pd
-from utils import wordlists
+import spacy
+import to_dataframe
+import wordlists
 
 
 def construct_features(sentence, normalize=False):
@@ -241,3 +243,10 @@ def count_long_words(sentence, length):
         if len(word) >= length:
             long_words += 1
     return long_words
+
+
+if __name__ == "__main__":
+    # load TextComplexityDE dataset
+    df_all = to_dataframe.text_comp19_to_df()
+    df_all.columns = df_all.columns.str.lower()
+    df_all.head()
