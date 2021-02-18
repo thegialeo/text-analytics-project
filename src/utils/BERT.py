@@ -4,19 +4,22 @@ from utils import gpu
 
 class BERT:
     
-    def __init__(self, epoch, lr, trainloader, testloader):
+    def __init__(self, sentences, labels, epoch, lr):
         """BERT wrapper class
 
            Written by Leo Nguyen. Contact Xenovortex, if problems arises.
         """
+        self.sentences = sentences
+        self.labels = labels
         self.epoch = epoch
         self.lr = lr
-        self.trainloader = trainloader
-        self.testloader = testloader
         self.device = gpu.check_gpu()
 
         # Load BERT tokenizer
         self.tokenizer = BertTokenizer.from_pretrained('bert-base-german-cased')
+
+        # feature extraction
+        self.features = self.tokenizer.encode(self.sentences)
 
         # Load pretrained BERT and move to GPU (if available)
         self.model = BertForSequenceClassification.from_pretrained('bert-base-german-cased', num_labels=6, output_attentions=False, output_hidden_states=False)
