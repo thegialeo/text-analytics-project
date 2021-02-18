@@ -49,7 +49,7 @@ class word2vec:
     def train(self, print_path=True):
         """Train Word2Vec model on corpus."""
         if self.pretrained:
-            self.load_model(pretrained=True)
+            self.load_wv(pretrained=True)
             self.model.train(self.corpus,
                              total_examples=len(self.corpus),
                              iter = self.epochs,
@@ -100,7 +100,7 @@ class word2vec:
     def load_model(self, pretrained=False, print_path=True):
         """Load word2vec model"""
         if pretrained:
-            self.model = Word2Vec.load(self.pretrained_model)
+            self.model = Word2Vec.load(self.pretrained_path)
             if print_path:
                 print("Load pretrained word2vec model from: {}".format(self.pretrained_model))
         else:
@@ -108,8 +108,11 @@ class word2vec:
             if print_path:
                 print("Load word2vec model from: {}".format(self.model_path))
 
-    def load_wv(self, print_path=True):
+    def load_wv(self, pretrained=False, print_path=True):
         """Load wordvectors"""
-        self.wv = KeyedVectors.load(self.wv_path, mmap='r') 
-        if print_path:
-            print("Load wordvectors from: {}".format(self.wv_path))
+        if pretrained:
+            self.wv = KeyedVectors.load(self.pretrained_path)
+        else:
+            self.wv = KeyedVectors.load(self.wv_path, mmap='r') 
+            if print_path:
+                print("Load wordvectors from: {}".format(self.wv_path))
