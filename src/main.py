@@ -1,9 +1,8 @@
 import argparse
 
-from utils import benchmark, downloader, evaluater, traverser
+from utils import benchmark, downloader, evaluater, traverser, to_dataframe
 from utils.sample import hello_world  # import of module from subfolder
 
-import to_dataframe
 
 """
 This script should serve as entrypoint to your program.
@@ -24,8 +23,10 @@ if __name__ == "__main__":
                         help="Perform linear search for [hyperparameter, start, end, step, model, filename]. Options: hyperparameter ['feature', 'window', 'count', 'epochs', 'lr', 'min_lr'], model ['word2vec']")
     parser.add_argument("--augmentation", dest="augmentation", action='store_true',
                         help="Augmentate the downloaded datasets and save the result in a h5 file")
+    parser.add_argument("--pretrained", dest='pretrained', action='store_true',
+                        help="Finetune pretrained model instead of training from scratch")
 
-    parser.set_defaults(download=None, experiment=None, search=None, augmentation=False)
+    parser.set_defaults(download=None, experiment=None, search=None, augmentation=False, pretrained=False)
     args = parser.parse_args()
 
 
@@ -50,7 +51,7 @@ if __name__ == "__main__":
 
     # hyperparameter search
     if args.search is not None:
-            traverser.traverser(*args.search)
+            traverser.traverser(*args.search, args.pretrained)
 
 
     # experiments
