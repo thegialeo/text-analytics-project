@@ -1,5 +1,5 @@
 from transformers import BertTokenizer, BertModel, AdamW, BertConfig, get_linear_schedule_with_warmup
-#from utils import gpu
+from utils import gpu
 
 
 class BERT:
@@ -19,6 +19,7 @@ class BERT:
         self.model = self.model.to(self.device)
         self.model.eval()
 
+
     def preprocessing(self, sentences):
         """Prepare sentences for to conform with BERT input (tokenize, add special tokens, create Segment ID)
 
@@ -26,8 +27,18 @@ class BERT:
             sentences (array-like): sentences to prepare for BERT input
         
         Return:
-            tokens (pytorch tensor): token tensor of sentences conforming with BERT input
+            input_id (pytorch tensor): BERT vocabulary indices of sentences 
             segments (pytorch tensor): segment IDs of sentences (needed as BERT input)
         """
-        pass
+        
+        token_lst = []
+
+        for sentence in sentences:
+            
+            # add special tokens
+            sentence = "[CLS]" + sentence + "[SEP]"
+            
+            # tokenize
+            tokens = self.tokenizer.tokenize(sentence)
+            
 
