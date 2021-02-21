@@ -27,11 +27,12 @@ class BERT:
             sentences (array-like): sentences to prepare for BERT input
         
         Return:
-            input_ids (pytorch tensor): BERT vocabulary indices of sentences 
-            segments (pytorch tensor): segment IDs of sentences (needed as BERT input)
+            input_tensor (pytorch tensor): BERT vocabulary indices of sentences 
+            segment_tensor (pytorch tensor): segment IDs of sentences (needed as BERT input)
         """
         
-        token_lst = []
+        input_lst = []
+        segment_lst = []
 
         for sentence in sentences:
             
@@ -43,11 +44,17 @@ class BERT:
 
             # vocabulary indices as pytorch tensor
             input_ids = self.tokenizer.convert_tokens_to_ids(tokens)
-            input_ids = torch.tensor([input_ids])
+            input_lst.append(input_ids)
 
             # segment ID as pytorch tensor
             segments = [1] * len(tokens)
-            segments = torch.tensor([segments])
+            segment_lst.append(segments)
+
+        # type cast to pytorch tensor
+        input_tensor = torch.tensor(input_lst)
+        segment_tensor = torch.tensor(segment_lst)
+        
+        return input_tensor, segment_tensor
 
 
 
