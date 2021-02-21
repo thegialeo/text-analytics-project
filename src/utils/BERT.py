@@ -56,6 +56,18 @@ class BERT:
         
         return input_tensor, segment_tensor
 
+    
+    def get_features(self, sentences):
+        """Get features of sentences using BERT
+
+        Args:
+            sentences (array-like): sentences from which to get the features
+        
+        Return:
+            features (array-like): feature array (num_sentence, num_features)
+        """
+        pass
+
 
 
 
