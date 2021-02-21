@@ -1,4 +1,5 @@
 import torch
+from torch.utils.data import TensorDataset
 from utils import to_dataframe, BERT, regression, gpu
 
 
@@ -30,7 +31,7 @@ def train_model(filename, num_epoch, batch_size, lr, save_name):
     test_sentences = df_test.raw_text.values
     train_input_tensor, train_segment_tensor = bert_model.preprocessing(train_sentences)
     test_input_tensor, test_segment_tensor = bert_model.preprocessing(test_sentences)
-    
+
     # extract labels and cast to PyTorch tensor
     train_labels = torch.tensor(list(df_train.rating.values))
     test_labels = torch.tensor(list(df.test.rating.values))
@@ -43,4 +44,5 @@ def train_model(filename, num_epoch, batch_size, lr, save_name):
     # optimizer
     optimizer = torch.optim.Adam(reg_model.parameters(), lr = lr)
     
-    
+    # criterion
+    criterion = torch.nn.MSELoss()
