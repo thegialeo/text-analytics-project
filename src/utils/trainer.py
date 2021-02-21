@@ -40,6 +40,10 @@ def train_model(filename, num_epoch, batch_size, lr, save_name):
     train_labels = torch.tensor(list(df_train.rating.values))
     test_labels = torch.tensor(list(df.test.rating.values))
 
+    # prepare dataset
+    trainset = TensorDataset(train_features, train_labels)
+    testset = TensorDataset(test_features, test_labels)
+
     # prepare regression model
     reg_model = regression.Net()
     reg_model = reg_model.to(device)
