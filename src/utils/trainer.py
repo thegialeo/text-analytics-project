@@ -2,6 +2,7 @@ import multiprocessing
 import torch
 import time
 from torch.utils.data import TensorDataset, DataLoader
+from sklearn.metrics import r2_score
 from utils import to_dataframe, BERT, regression, gpu
 
 
@@ -72,11 +73,12 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
     train_r2_log = []
     test_r2_log = []
 
-    # training
+
     for epoch in range(num_epoch):
         start = time.time()
         reg_model.train()
 
+        # training
         for i, (feature, label) in enumerate(trainloader):
             # move batch to device
             feature = feature.to(device)
@@ -101,6 +103,11 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
 
         # update training schedule
         scheduler.step()
+
+        # evaluation
+        reg_model.eval()
+        running_loss /= len(trainloader)
+        loss_log.append(running_loss)
 
 
 
