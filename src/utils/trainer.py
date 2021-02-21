@@ -1,9 +1,9 @@
 import torch
-from utils import to_dataframe
+from utils import to_dataframe, BERT
 
 
 
-def train_model(filename, model, optimizer, criterion, num_epoch, batch_size, save_name, use_BERT=False):
+def train_model(filename, model, optimizer, criterion, num_epoch, batch_size, save_name):
     """Train a model on the given dataset
 
     Args:
@@ -14,7 +14,6 @@ def train_model(filename, model, optimizer, criterion, num_epoch, batch_size, sa
         num_epoch (int): number of epochs
         batch_size (int): batch size 
         save_name (string): name under which to save trained model and results
-        use_BERT (bool): use pretrained BERT for feature extraction
     """
     
     # read data
@@ -22,6 +21,15 @@ def train_model(filename, model, optimizer, criterion, num_epoch, batch_size, sa
     df_train = df_train[df_train["source"] == "text_comp19"] # TODO: remove once Raoul fixes his dataloader
     df_test = df_test[df_test["source"] == "text_comp19"]  # TODO: remove once Raoul fixes his dataloader
 
+    # setup BERT model
+    bert_model = BERT.BERT()
+
+    # prepare BERT input
+    train_sentences = df_train.raw_text.values
+    test_sentences = df_test.raw_text.values
+    train_input_tensor, train_segment_tensor = bert_model.preprocessing(train_sentences)
+    test_input_tensor, test_segment_tensor = bert_model.preprocessing(test_sentences)
+    
     # extract labels and cast to PyTorch tensor
     train_labels = torch.tensor(list(df_train.rating.values))
     test_labels = torch.tensor(list(df.test.rating.values))
