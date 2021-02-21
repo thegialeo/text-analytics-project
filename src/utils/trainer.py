@@ -31,6 +31,10 @@ def train_model(filename, num_epoch, batch_size, lr, save_name):
     test_sentences = df_test.raw_text.values
     train_input_tensor, train_segment_tensor = bert_model.preprocessing(train_sentences)
     test_input_tensor, test_segment_tensor = bert_model.preprocessing(test_sentences)
+        
+    # feature extraction
+    train_features = bert_model.get_features(train_input_tensor, train_segment_tensor)
+    test_features = bert_model.get_features(test_input_tensor, test_segment_tensor)
 
     # extract labels and cast to PyTorch tensor
     train_labels = torch.tensor(list(df_train.rating.values))
