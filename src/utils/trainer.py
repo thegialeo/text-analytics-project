@@ -6,12 +6,13 @@ from utils import to_dataframe, BERT, regression, gpu
 
 
 
-def train_model(filename, num_epoch, batch_size, lr, save_name):
+def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
     """Train a model on the given dataset
 
     Args:
         filename (string): name of h5 file containing dataset
         num_epoch (int): number of epochs
+        step_epochs (list): list of epoch number, where learning rate will be reduce by a factor of 10
         batch_size (int): batch size 
         lr (float): learning rate
         save_name (string): name under which to save trained model and results
@@ -63,6 +64,9 @@ def train_model(filename, num_epoch, batch_size, lr, save_name):
     # criterion
     criterion = torch.nn.MSELoss()
 
+    # scheduler
+    scheduler = opt.lr_scheduler.MultiStepLR(optimizer, steps_epochs, 0.1)
+
     # log
     loss_log = []
     train_r2_log = []
@@ -90,6 +94,13 @@ def train_model(filename, num_epoch, batch_size, lr, save_name):
 
             # backpropagation
             optimizer.step()
+
+            # record loss
+            curr_loss = torch.mean(loss).item()
+            running_loss = (curr_loss if ((i==0) and (epoch==0)) else running_loss + curr_loss)
+
+        # update training schedule
+        scheduler.step()
 
 
 
