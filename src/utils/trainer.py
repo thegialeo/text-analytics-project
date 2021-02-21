@@ -60,3 +60,10 @@ def train_model(filename, num_epoch, batch_size, lr, save_name):
     
     # criterion
     criterion = torch.nn.MSELoss()
+
+    # log
+    loss_log = []
+    train_r2_log = []
+    test_r2_log = []
+
+
