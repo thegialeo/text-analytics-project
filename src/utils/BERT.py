@@ -15,5 +15,6 @@ class BERT:
         self.tokenizer = BertTokenizer.from_pretrained('bert-base-german-cased', do_lower_case=True)
 
         # Load pretrained BERT and move to GPU (if available)
-        self.model = BertForSequenceClassification.from_pretrained('bert-base-german-cased', num_labels=6, output_attentions=False, output_hidden_states=False)
+        self.model = BertModel.from_pretrained('bert-base-german-cased', output_hidden_states=True)
         self.model = self.model.to(self.device)
+        self.model.eval()
