@@ -67,7 +67,8 @@ class BERT:
         Return:
             features (array-like): feature array (num_sentence, num_features=768)
         """
-        outputs = self.model(input_tensor, segment_tensor)
+        with torch.no_grad():
+            outputs = self.model(input_tensor, segment_tensor)
 
         # last hidden layer 
         last_hidden_states = outputs.last_hidden_state
