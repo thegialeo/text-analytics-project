@@ -18,3 +18,16 @@ class BERT:
         self.model = BertModel.from_pretrained('bert-base-german-cased', output_hidden_states=True)
         self.model = self.model.to(self.device)
         self.model.eval()
+
+    def preprocessing(self, sentences):
+        """Prepare sentences for to conform with BERT input (tokenize, add special tokens, create Segment ID)
+
+        Args:
+            sentences (array-like): sentences to prepare for BERT input
+        
+        Return:
+            tokens (pytorch tensor): token tensor of sentences conforming with BERT input
+            segments (pytorch tensor): segment IDs of sentences (needed as BERT input)
+        """
+        pass
+
