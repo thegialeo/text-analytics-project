@@ -44,3 +44,6 @@ def baseline(data, labels, method='linear'):
                 nn.Linear(num_hidden, num_hidden),
                 nn.ReLU(True),
                 nn.Linear(num_hidden, num_output))
+
+        def forward(self, x):
+            return self.model(x)
