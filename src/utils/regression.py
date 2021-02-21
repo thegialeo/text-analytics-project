@@ -1,5 +1,6 @@
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import ElasticNet, Lasso, LinearRegression, Ridge
+import torch import nn
 
 
 def baseline(data, labels, method='linear'):
@@ -30,3 +31,16 @@ def baseline(data, labels, method='linear'):
         raise ValueError("Regression {} is unknown. Please choose: 'linear', 'lasso', 'ridge', 'elastic-net', 'random-forest'".format(method))
     
     return reg
+
+
+
+    class Net(nn.Module):
+        """3-layer Neural Network"""
+        def __init__(self, num_features, num_hidden, num_output):
+            super(Net, self).__init__()
+            self.model = nn.Sequential(
+                nn.Linear(num_features, num_hidden),
+                nn.ReLU(True),
+                nn.Linear(num_hidden, num_hidden),
+                nn.ReLU(True),
+                nn.Linear(num_hidden, num_output))

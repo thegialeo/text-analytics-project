@@ -1,5 +1,5 @@
 from transformers import BertTokenizer, BertForSequenceClassification, AdamW, BertConfig, get_linear_schedule_with_warmup
-from utils import gpu
+#from utils import gpu
 
 
 class BERT:
@@ -16,7 +16,7 @@ class BERT:
         self.device = gpu.check_gpu()
 
         # Load BERT tokenizer
-        self.tokenizer = BertTokenizer.from_pretrained('bert-base-german-cased')
+        self.tokenizer = BertTokenizer.from_pretrained('bert-base-german-cased', do_lower_case=True)
 
         # feature extraction
         self.features = self.tokenizer.encode(self.sentences)
@@ -29,4 +29,5 @@ class BERT:
         self.optimizer = AdamW(self.model.parameters(), lr=self.lr, eps=1e-8)
 
         # init scheduler
-        self.scheduler = get_linear_schedule_with_warmup(self.optimizer, num_warmup_steps=0, num_training_steps=len(trainloader)*self.epoch)
+        self.scheduler=get_linear_schedule_with_warmup(self.optimizer, num_warmup_steps=0, num_training_steps=len(trainloader) * self.epoch)
+        
