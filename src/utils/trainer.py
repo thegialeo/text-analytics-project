@@ -40,4 +40,7 @@ def train_model(filename, num_epoch, batch_size, lr, save_name):
     reg_model = reg_model.to(device)
     reg_model.train()
 
-
+    # optimizer
+    optimizer = torch.optim.Adam(reg_model.parameters(), lr = lr)
+    
+    
