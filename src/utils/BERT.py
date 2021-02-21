@@ -15,7 +15,7 @@ class BERT:
         self.tokenizer = BertTokenizer.from_pretrained('bert-base-german-cased', do_lower_case=True)
 
         # Load pretrained BERT and move to GPU (if available)
-        self.model = BertModel.from_pretrained('bert-base-german-cased', output_hidden_states=True)
+        self.model = BertModel.from_pretrained('bert-base-german-cased')
         self.model = self.model.to(self.device)
         self.model.eval()
 
@@ -57,16 +57,25 @@ class BERT:
         return input_tensor, segment_tensor
 
     
-    def get_features(self, sentences):
-        """Get features of sentences using BERT
+    def get_features(self, input_tensor, segment_tensor):
+        """Get features from input and segment tensor using BERT
 
         Args:
-            sentences (array-like): sentences from which to get the features
+            input_tensor (array-like): BERT vocabulary indices of sentences
+            segment_tensor (array-like): segment IDs of sentences (needed as BERT input)
         
         Return:
-            features (array-like): feature array (num_sentence, num_features)
+            features (array-like): feature array (num_sentence, num_features=768)
         """
-        pass
+        outputs = self.model(input_tensor, segment_tensor)
+
+        # last hidden layer 
+        last_hidden_states = outputs.last_hidden_state
+
+        # average over all tokens
+        features = torch.mean(last_hidden_states, dim = 1)
+        
+        return features
 
 
 
