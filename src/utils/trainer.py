@@ -1,5 +1,6 @@
 import multiprocessing
 import torch
+import time
 from torch.utils.data import TensorDataset, DataLoader
 from utils import to_dataframe, BERT, regression, gpu
 
@@ -19,6 +20,8 @@ def train_model(filename, num_epoch, batch_size, lr, save_name):
     # set device
     device = gpu.check_gpu()
     num_workers = multiprocessing.cpu_count()
+    print("Training on:", device)
+    print("Number of CPUs detected:", num_workers)
     
     # read data
     df_train, df_test = to_dataframe.read_augmented_h5("all_data.h5")
@@ -53,7 +56,6 @@ def train_model(filename, num_epoch, batch_size, lr, save_name):
     # prepare regression model
     reg_model = regression.Net()
     reg_model = reg_model.to(device)
-    reg_model.train()
 
     # optimizer
     optimizer = torch.optim.Adam(reg_model.parameters(), lr = lr)
@@ -65,5 +67,29 @@ def train_model(filename, num_epoch, batch_size, lr, save_name):
     loss_log = []
     train_r2_log = []
     test_r2_log = []
+
+    # training
+    for epoch in range(num_epoch):
+        start = time.time()
+        reg_model.train()
+
+        for i, (feature, label) in enumerate(trainloader):
+            # move batch to device
+            feature = feature.to(device)
+            label = label.to(device)
+
+            # clear gradients
+            optimizer.zero_grad()
+
+            # prediction
+            output = reg_model(feature)
+
+            # loss evaluation
+            loss = criterion(output, label)
+            loss.backward()
+
+            # backpropagation
+            optimizer.step()
+
 
 
