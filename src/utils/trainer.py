@@ -1,5 +1,6 @@
+import multiprocessing
 import torch
-from torch.utils.data import TensorDataset
+from torch.utils.data import TensorDataset, DataLoader
 from utils import to_dataframe, BERT, regression, gpu
 
 
@@ -17,6 +18,7 @@ def train_model(filename, num_epoch, batch_size, lr, save_name):
 
     # set device
     device = gpu.check_gpu()
+    num_workers = multiprocessing.cpu_count()
     
     # read data
     df_train, df_test = to_dataframe.read_augmented_h5("all_data.h5")
@@ -43,6 +45,10 @@ def train_model(filename, num_epoch, batch_size, lr, save_name):
     # prepare dataset
     trainset = TensorDataset(train_features, train_labels)
     testset = TensorDataset(test_features, test_labels)
+
+    # dataloader
+    trainloader = DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=num_workers, pin_memory=True)
+    testloader = DataLoader(testset, batch_size=batch_size, shuffle=False, num_workers=num_workers, pin_memory=True)
 
     # prepare regression model
     reg_model = regression.Net()
