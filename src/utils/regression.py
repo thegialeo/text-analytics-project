@@ -2,7 +2,6 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import ElasticNet, Lasso, LinearRegression, Ridge
 import torch import nn
 
-
 def baseline(data, labels, method='linear'):
     """Various ML baseline regressions.
 

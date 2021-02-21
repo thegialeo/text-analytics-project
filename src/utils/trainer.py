@@ -1,20 +1,21 @@
 import torch
-from utils import to_dataframe, BERT
+from utils import to_dataframe, BERT, regression, gpu
 
 
 
-def train_model(filename, model, optimizer, criterion, num_epoch, batch_size, save_name):
+def train_model(filename, num_epoch, batch_size, lr, save_name):
     """Train a model on the given dataset
 
     Args:
         filename (string): name of h5 file containing dataset
-        model (PyTorch nn.Module): PyTorch neural network architecture
-        optimizer (PyTorch optimizer): optimization method
-        criterion (function): loss function
         num_epoch (int): number of epochs
         batch_size (int): batch size 
+        lr (float): learning rate
         save_name (string): name under which to save trained model and results
     """
+
+    # set device
+    device = gpu.check_gpu()
     
     # read data
     df_train, df_test = to_dataframe.read_augmented_h5("all_data.h5")
@@ -33,3 +34,10 @@ def train_model(filename, model, optimizer, criterion, num_epoch, batch_size, sa
     # extract labels and cast to PyTorch tensor
     train_labels = torch.tensor(list(df_train.rating.values))
     test_labels = torch.tensor(list(df.test.rating.values))
+
+    # prepare regression model
+    reg_model = regression.Net()
+    reg_model = reg_model.to(device)
+    reg_model.train()
+
+
