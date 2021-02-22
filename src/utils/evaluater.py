@@ -127,4 +127,11 @@ def evaluate(label, pred):
         MAE (double): Mean Absolute Error
         r_square (double): R Square 
     """
-    pass
+    
+    r_square = r2_score(label, pred)
+    MSE = mean_squared_error(label, pred)
+    RMSE = mean_squared_error(label, pred, squared = False)
+    MAE = mean_absolute_error(label, pred)
+
+    return MSE, RMSE, MAE, r_square
+
