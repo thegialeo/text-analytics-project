@@ -183,10 +183,10 @@ def evaluate_model(model, dataloader):
         dataloader (PyTorch dataloader): PyTorch dataloader of dataset
 
     Return:
-        MSE (double): Mean Square Error
-        RMSE (double): Root Mean Square Error
-        MAE (double): Mean Absolute Error
-        r_square (double): R Square
+        MSE_mean (double): Mean Square Error
+        RMSE_mean (double): Root Mean Square Error
+        MAE_mean (double): Mean Absolute Error
+        r_square_mean (double): R Square
     """
 
     # check if GPU available
@@ -218,7 +218,14 @@ def evaluate_model(model, dataloader):
             MAE_lst.append(MAE)
             r_square_lst.append(r_square)
 
-    
+    # compute mean over all batches
+    MSE_mean = sum(MSE_lst) / len(MSE_lst)
+    RMSE_mean = sum(RMSE_lst) / len(RMSE_lst)
+    MAE_mean = sum(MAE_lst) / len(MAE_lst)
+    r_square_mean = sum(r_square_lst) / len(r_square_lst)
+
+    return MSE_mean, RMSE_mean, MAE_mean, r_square_mean
+
 
 
          
