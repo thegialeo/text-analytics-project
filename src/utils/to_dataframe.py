@@ -26,14 +26,14 @@ def text_comp19_to_df():
 
     #Rename columns and insert source of this dataframe for consistency
     corpus = corpus.rename(
-        columns={"Sentence": "raw_text", "Votes_Complexity": "rating"})
+        columns={"Sentence": "raw_text", "MOS_Complexity": "rating"})
 
     corpus.insert(2, "source", "text_comp19")
 
     #Delete all columns except the raw_text and the rating column
     corpus = corpus.drop(columns=
                          ["ID", "Article_ID",
-                          "Article", "MOS_Complexity", "Std_Complexity",
+                          "Article", "Votes_Complexity", "Std_Complexity",
                           "Votes_Understandability", "MOS_Understandability",
                           "Std_Understandability", "Vote_Lexical_difficulty",
                           "MOS_Lexical_difficulty", "Std_Lexical_difficulty"

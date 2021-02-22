@@ -4,10 +4,10 @@ import pandas as pd
 from sklearn.metrics import (homogeneity_score, mean_absolute_error, mean_squared_error,
                              r2_score, silhouette_score)
 from sklearn.model_selection import train_test_split
-from utils import clustering, preprocessing, regression, vectorizer, to_dataframe
+from utils import clustering, preprocessing, regression, vectorizer, to_dataframe, sentencestats
 
 
-def evaluate_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA', stopword='nltk'):
+def evaluate_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA', stopword='nltk', engineered_features=False):
     """Perform clustering, dimension reduction on TextComplexityDE19 data.
        Evaluate clustering by homogeneity and silhouette score.
        
@@ -80,6 +80,10 @@ def evaluate_baseline(vec='tfidf', method='linear', filename="all_data.h5"):
     # feature extraction
     X_train, vec_object = vectorizer.vectorizer_wrapper(df_train.raw_text.values, vec, None, True)
     X_test = vec_object.transform(df_test.raw_text.values)
+
+    # add engineered features
+    if engineered_features:
+        X_train = np.
     
     # labels
     y_train = df_train.rating.values
@@ -98,3 +102,7 @@ def evaluate_baseline(vec='tfidf', method='linear', filename="all_data.h5"):
     MAE = mean_absolute_error(y_test, pred)
 
     return MSE, RMSE, MAE, r_square
+
+
+def evaluate(label, pred):
+    pass
