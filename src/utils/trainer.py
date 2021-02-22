@@ -170,4 +170,17 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
             )
         )
 
+        # save logs
+        file = open(join(log_path, save_name + '.txt'), 'w')
+        print('Last Epoch:', epoch + 1, file=file)
+        print('Final Loss:', loss_log[-1], file=file)
+        print('Final Train MSE:', train_MSE_log[-1], file=file)
+        print('Final Train RMSE:', train_RMSE_log[-1], file=file)
+        print('Final Train MAE:', train_MAE_log[-1], file=file)
+        print('Final Train R2:', train_r2_log[-1], file=file)
+        print('Final Test MSE:', test_MSE_log[-1], file=file)
+        print('Final Test RMSE:', test_RMSE_log[-1], file=file)
+        print('Final Test MAE:', test_MAE_log[-1], file=file)
+        print('Final Test R2:', test_r2_log[-1], file=file)
+
 
