@@ -3,7 +3,7 @@ import torch
 import time
 from torch.utils.data import TensorDataset, DataLoader
 from sklearn.metrics import r2_score
-from utils import to_dataframe, BERT, regression, gpu
+from utils import to_dataframe, BERT, regression, gpu, evaluater
 
 
 
@@ -72,9 +72,14 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
 
     # log
     loss_log = []
+    train_MSE_log = []
+    train_RMSE_log = []
+    train_MAE_log = []
     train_r2_log = []
+    test_MSE_log = []
+    test_RMSE_log = []
+    test_MAE_log = []
     test_r2_log = []
-
 
     for epoch in range(num_epoch):
         start = time.time()
@@ -109,7 +114,25 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
         # evaluation
         reg_model.eval()
         running_loss /= len(trainloader)
+        MSE_train, RMSE_train, MAE_train, r_square_train = evaluater.evaluate_model(reg_model, trainloader)
+        MSE_test, RMSE_test, MAE_test, r_square_test = evaluater.evaluate_model(reg_model, testloader)
+
+        # log evaluation result
         loss_log.append(running_loss)
+        train_MSE_log.append(MSE_train)
+        train_RMSE_log.append(RMSE_train)
+        train_MAE_log.append(MAE_train)
+        train_r2_log.append(r_square_train)
+        test_MSE_log.append(MSE_test)
+        test_RMSE_log.append(RMSE_test)
+        test_MAE_log.append(MAE_test)
+        test_r2_log.append(r_square_test)
+
+        
+
+        
+
+
 
     
 
