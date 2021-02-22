@@ -111,5 +111,7 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
         running_loss /= len(trainloader)
         loss_log.append(running_loss)
 
+    
+
 
 
