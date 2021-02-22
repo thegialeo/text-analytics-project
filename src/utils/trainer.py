@@ -27,6 +27,13 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
     log_path = join(dirname(dirname(dirname(abspath(__file__)))), "result", "BERT")
     fig_path = join(dirname(dirname(dirname(abspath(__file__)))), "figures", "BERT")
 
+    # create directories
+    for path in [model_path, log_path, fig_path]:
+        if not exists(dirname(path)):
+            os.makedirs(dirname(path))
+        if not exists(path):
+            os.makedirs(path)
+
     # set device
     device = gpu.check_gpu()
     num_workers = multiprocessing.cpu_count()
