@@ -1,5 +1,7 @@
 from transformers import BertTokenizer, BertModel, AdamW, BertConfig, get_linear_schedule_with_warmup
 from utils import gpu
+import torch
+import numpy as np
 
 
 class BERT:
@@ -34,26 +36,16 @@ class BERT:
         input_lst = []
         segment_lst = []
 
+        # add special tokens + padding/truncated to token length of 512 + create segment ID + cast to PyTorch tensor
         for sentence in sentences:
-            
-            # add special tokens
-            sentence = "[CLS]" + sentence + "[SEP]"
-            
-            # tokenize
-            tokens = self.tokenizer.tokenize(sentence)
+            encoding = self.tokenizer.encode_plus(sentence, add_special_tokens=True, max_length=512, padding='max_length', truncation=True, return_attention_mask=True, return_tensors='pt')
+            input_lst.append(encoding['input_ids'])
+            segment_lst.append(encoding['attention_mask'])
 
-            # vocabulary indices as pytorch tensor
-            input_ids = self.tokenizer.convert_tokens_to_ids(tokens)
-            input_lst.append(input_ids)
+        # cast list to PyTorch tensor
+        input_tensor = torch.cat(input_lst, dim=0)
+        segment_tensor = torch.cat(segment_lst, dim=0)
 
-            # segment ID as pytorch tensor
-            segments = [1] * len(tokens)
-            segment_lst.append(segments)
-
-        # type cast to pytorch tensor
-        input_tensor = torch.tensor(input_lst)
-        segment_tensor = torch.tensor(segment_lst)
-        
         return input_tensor, segment_tensor
 
     
@@ -67,7 +59,13 @@ class BERT:
         Return:
             features (array-like): feature array (num_sentence, num_features=768)
         """
+
         with torch.no_grad():
+            # move inputs to device 
+            input_tensor = input_tensor.to(self.device)
+            segment_tensor = segment_tensor.to(self.device)
+
+            # get BERT features
             outputs = self.model(input_tensor, segment_tensor)
 
         # last hidden layer 

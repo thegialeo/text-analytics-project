@@ -1,4 +1,5 @@
-from os.path import abspath, dirname, join
+import os
+from os.path import abspath, dirname, join, exists
 import multiprocessing
 import time
 import pickle
@@ -61,16 +62,16 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
     test_input_tensor, test_segment_tensor = bert_model.preprocessing(test_sentences)
 
     # feature extraction
-    train_features = bert_model.get_features(train_input_tensor, train_segment_tensor)
-    test_features = bert_model.get_features(test_input_tensor, test_segment_tensor)
+    #train_features = bert_model.get_features(train_input_tensor, train_segment_tensor)
+    #test_features = bert_model.get_features(test_input_tensor, test_segment_tensor)
 
     # extract labels and cast to PyTorch tensor
     train_labels = torch.tensor(list(df_train.rating.values))
     test_labels = torch.tensor(list(df.test.rating.values))
 
     # prepare dataset
-    trainset = TensorDataset(train_features, train_labels)
-    testset = TensorDataset(test_features, test_labels)
+    trainset = TensorDataset(train_input_tensor, train_segment_tensor, train_labels)
+    testset = TensorDataset(test_input_tensor, test_segment_tensor, test_labels)
 
     # dataloader
     trainloader = DataLoader(
@@ -117,16 +118,20 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
         reg_model.train()
 
         # training
-        for i, (feature, label) in enumerate(trainloader):
+        for i, (input_id, segment, label) in enumerate(trainloader):
             # move batch to device
-            feature = feature.to(device)
+            input_id = input_id.to(device)
+            segment = segment.to(device)
             label = label.to(device)
 
             # clear gradients
             optimizer.zero_grad()
 
+            # BERT feature extraction
+            features = bert_model.get_features(input_id, segment)
+
             # prediction
-            output = reg_model(feature)
+            output = reg_model(features)
 
             # loss evaluation
             loss = criterion(output, label)

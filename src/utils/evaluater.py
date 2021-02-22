@@ -179,7 +179,8 @@ def evaluate_model(model, dataloader):
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
 
     Args:
-        model (torch.nn.Module): PyTorch model of a Neural Network
+        model (torch.nn.Module): PyTorch model of a Regression Neural Network
+        bert_model (torch.nn.Module): BERT PyTorch model for feature extraction
         dataloader (PyTorch dataloader): PyTorch dataloader of dataset
 
     Return:
@@ -203,10 +204,14 @@ def evaluate_model(model, dataloader):
 
     # iterate through dataset
     with torch.no_grad():
-        for i, (feature, label) in enumerate(dataloader):
+        for i, (input_id, segment, label) in enumerate(dataloader):
             # move batch to device 
-            feature = feature.to(device)
+            input_id = input_id.to(device)
+            segment = segment.to(device)
             label = label.to(device)
+
+            # BERT feature extraction
+            features = bert_model.get_features(input_id, segment)
             
             # prediction
             output = model(feature)
