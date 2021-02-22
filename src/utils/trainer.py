@@ -1,6 +1,7 @@
 from os.path import abspath, dirname, join
 import multiprocessing
 import time
+import pickle
 
 import torch
 from sklearn.metrics import r2_score
@@ -183,8 +184,16 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
         print('Final Test MAE:', test_MAE_log[-1], file=file)
         print('Final Test R2:', test_r2_log[-1], file=file)
 
+        # save variables
+        with open(join(log_path, save_name + '.pkl'), 'wb') as f:
+            pickle.dump([loss_log, train_MSE_log, train_RMSE_log, train_MAE_log, train_r2_log, test_MSE_log, test_RMSE_log, test_MAE_log, test_r2_log], f)
+
         # save model weights
         torch.save(reg_model.to('cpu').state_dict(), join(model_path, save_name + '.pt'))
-        
+
+
+
+
+
 
 
