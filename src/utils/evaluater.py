@@ -57,7 +57,7 @@ def evaluate_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA', stopword
 
 def evaluate_baseline(vec='tfidf', method='linear', filename="all_data.h5", engineered_features=False, return_pred=False):
     """Perform baseline regression on TextComplexityDE19 data. Will be extended to all datasets, when raouls dataloader finished.
-       Evaluate RMSE, MSE, MAE and R squares
+       Evaluate RMSE, MSE, MAE and R squares or return prediction
 
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
 
@@ -65,7 +65,7 @@ def evaluate_baseline(vec='tfidf', method='linear', filename="all_data.h5", engi
         vec (str, optional): vectorizer method to used (options: 'tfidf', 'count', 'hash'), default: 'tfidf'
         method (str, optional): regression method to use (options: 'linear', 'lasso', 'ridge', 'elastic-net', 'random-forest'). Defaults to 'linear'.
         filename (str, optional): name of h5 file to load (run augmentation first)
-        return (bool, optional): 
+        return (bool, optional): return predictions, instead of metrics
 
     Return:
         MSE (double): Mean Square Error
@@ -83,20 +83,12 @@ def evaluate_baseline(vec='tfidf', method='linear', filename="all_data.h5", engi
     X_train, vec_object = vectorizer.vectorizer_wrapper(df_train.raw_text.values, vec, None, True)
     X_test = vec_object.transform(df_test.raw_text.values)
 
-    print("raw_train:", X_train.shape)
-    print("raw_test:", X_test.shape)
-    print("train_type:", type(X_train))
-
     # add engineered features
     if engineered_features:
         extra_train_feat = sentencestats.construct_features(df_train.raw_text)
-        print("extra_train_feat:", extra_train_feat.shape)
-        print("train_extra_type:", type(extra_train_feat))
         X_train = np.concatenate((X_train.toarray(), extra_train_feat), axis=1)
         extra_test_feat = sentencestats.construct_features(df_test.raw_text)
         X_test = np.concatenate((X_test.toarray(), extra_test_feat), axis=1)
-        print("train:", X_train.shape)
-        print("test:", X_test.shape)
     
     # labels
     y_train = df_train.rating.values
