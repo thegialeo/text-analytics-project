@@ -1,3 +1,4 @@
+from os.path import abspath, dirname, join
 import multiprocessing
 import time
 
@@ -20,6 +21,11 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
         lr (float): learning rate
         save_name (string): name under which to save trained model and results
     """
+
+    # save paths
+    model_path = join(dirname(dirname(dirname(abspath(__file__)))), "model", "BERT")
+    log_path = join(dirname(dirname(dirname(abspath(__file__)))), "result", "BERT")
+    fig_path = join(dirname(dirname(dirname(abspath(__file__)))), "figures", "BERT")
 
     # set device
     device = gpu.check_gpu()
