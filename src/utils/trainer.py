@@ -6,6 +6,7 @@ import pickle
 import torch
 from sklearn.metrics import r2_score
 from torch.utils.data import DataLoader, TensorDataset
+import matplotlib.pyplot as plt
 from utils import BERT, evaluater, gpu, regression, to_dataframe
 
 
@@ -190,6 +191,16 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
 
         # save model weights
         torch.save(reg_model.to('cpu').state_dict(), join(model_path, save_name + '.pt'))
+
+        # plots 
+        plot_names = ["loss", "train_MSE", "train_RMSE", "train_MAE", "train_r2", "test_MSE", "test_RMSE", "test_MAE", "test_r2"]
+        for i, log in enumerate([loss_log, train_MSE_log, train_RMSE_log, train_MAE_log, train_r2_log, test_MSE_log, test_RMSE_log, test_MAE_log, test_r2_log]):
+            plt.figure(num=None, figsize=(15, 10))
+            plt.plot(log)
+            plt.grid(True, which="both")
+            plt.xlabel('epoch', fontsize=14)
+            plt.ylabel(plot_names[i], fontsize=14)
+            plt.savefig(join(fig_path, save_name + "_" + plot_names[i] + '.png'))
 
 
 
