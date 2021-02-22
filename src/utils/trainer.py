@@ -183,4 +183,8 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
         print('Final Test MAE:', test_MAE_log[-1], file=file)
         print('Final Test R2:', test_r2_log[-1], file=file)
 
+        # save model weights
+        torch.save(reg_model.to('cpu').state_dict(), join(model_path, save_name + '.pt'))
+        
+
 
