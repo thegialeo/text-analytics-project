@@ -173,14 +173,14 @@ def evaluate(label, pred):
     return MSE, RMSE, MAE, r_square
 
 
-def evaluate_model(model, loader):
+def evaluate_model(model, dataloader):
     """Evaluate regression metrics of a model on a dataset
 
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
 
     Args:
         model (torch.nn.Module): PyTorch model of a Neural Network
-        loader (PyTorch dataloader): PyTorch dataloader of dataset
+        dataloader (PyTorch dataloader): PyTorch dataloader of dataset
 
     Return:
         MSE (double): Mean Square Error
@@ -188,4 +188,40 @@ def evaluate_model(model, loader):
         MAE (double): Mean Absolute Error
         r_square (double): R Square
     """
-    pass
+
+    # check if GPU available
+    device = gpu.check_gpu()
+
+    # move model to device
+    model = model.to(device)
+    
+    # record metrics per batch
+    MSE_lst = []
+    RMSE_lst = []
+    MAE_lst = []
+    r_square_lst = []
+
+    # iterate through dataset
+    with torch.no_grad():
+        for i, (feature, label) in enumerate(dataloader):
+            # move batch to device 
+            feature = feature.to(device)
+            label = label.to(device)
+            
+            # prediction
+            output = model(feature)
+
+            # evaluate
+            MSE, RMSE, MAE, r_square = evaluate(label, output)
+            MSE_lst.append(MSE)
+            RMSE_lst.append(RMSE)
+            MAE_lst.append(MAE)
+            r_square_lst.append(r_square)
+
+    
+
+
+         
+
+
+
