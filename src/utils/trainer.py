@@ -10,6 +10,8 @@ from utils import to_dataframe, BERT, regression, gpu
 def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
     """Train a model on the given dataset
 
+       Written by Leo Nguyen. Contact Xenovortex, if problems arises.
+
     Args:
         filename (string): name of h5 file containing dataset
         num_epoch (int): number of epochs
