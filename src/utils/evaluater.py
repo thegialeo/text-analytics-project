@@ -1,5 +1,6 @@
 from os.path import abspath, dirname, join
 
+import numpy as np
 import pandas as pd
 from sklearn.metrics import (homogeneity_score, mean_absolute_error, mean_squared_error,
                              r2_score, silhouette_score)
@@ -7,7 +8,7 @@ from sklearn.model_selection import train_test_split
 from utils import clustering, preprocessing, regression, vectorizer, to_dataframe, sentencestats
 
 
-def evaluate_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA', stopword='nltk', engineered_features=False):
+def evaluate_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA', stopword='nltk'):
     """Perform clustering, dimension reduction on TextComplexityDE19 data.
        Evaluate clustering by homogeneity and silhouette score.
        
@@ -54,7 +55,7 @@ def evaluate_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA', stopword
 
 
 
-def evaluate_baseline(vec='tfidf', method='linear', filename="all_data.h5"):
+def evaluate_baseline(vec='tfidf', method='linear', filename="all_data.h5", engineered_features=False, return_pred=False):
     """Perform baseline regression on TextComplexityDE19 data. Will be extended to all datasets, when raouls dataloader finished.
        Evaluate RMSE, MSE, MAE and R squares
 
@@ -64,6 +65,7 @@ def evaluate_baseline(vec='tfidf', method='linear', filename="all_data.h5"):
         vec (str, optional): vectorizer method to used (options: 'tfidf', 'count', 'hash'), default: 'tfidf'
         method (str, optional): regression method to use (options: 'linear', 'lasso', 'ridge', 'elastic-net', 'random-forest'). Defaults to 'linear'.
         filename (str, optional): name of h5 file to load (run augmentation first)
+        return (bool, optional): 
 
     Return:
         MSE (double): Mean Square Error
@@ -81,9 +83,20 @@ def evaluate_baseline(vec='tfidf', method='linear', filename="all_data.h5"):
     X_train, vec_object = vectorizer.vectorizer_wrapper(df_train.raw_text.values, vec, None, True)
     X_test = vec_object.transform(df_test.raw_text.values)
 
+    print("raw_train:", X_train.shape)
+    print("raw_test:", X_test.shape)
+    print("train_type:", type(X_train))
+
     # add engineered features
     if engineered_features:
-        X_train = np.
+        extra_train_feat = sentencestats.construct_features(df_train.raw_text)
+        print("extra_train_feat:", extra_train_feat.shape)
+        print("train_extra_type:", type(extra_train_feat))
+        X_train = np.concatenate((X_train.toarray(), extra_train_feat), axis=1)
+        extra_test_feat = sentencestats.construct_features(df_test.raw_text)
+        X_test = np.concatenate((X_test.toarray(), extra_test_feat), axis=1)
+        print("train:", X_train.shape)
+        print("test:", X_test.shape)
     
     # labels
     y_train = df_train.rating.values
@@ -101,7 +114,10 @@ def evaluate_baseline(vec='tfidf', method='linear', filename="all_data.h5"):
     RMSE = mean_squared_error(y_test, pred, squared = False)
     MAE = mean_absolute_error(y_test, pred)
 
-    return MSE, RMSE, MAE, r_square
+    if return_pred:
+        return pred
+    else:
+        return MSE, RMSE, MAE, r_square
 
 
 def evaluate(label, pred):

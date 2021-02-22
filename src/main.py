@@ -60,7 +60,7 @@ if __name__ == "__main__":
         if args.experiment == 'vectorizer':
             benchmark.benchmark_vectorizer()
         if args.experiment == 'test':
-            MSE, RMSE, MAE, r_square = evaluater.evaluate_baseline()
+            MSE, RMSE, MAE, r_square = evaluater.evaluate_baseline(engineered_features=True)
             print(r_square)
 
 

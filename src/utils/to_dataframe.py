@@ -3,7 +3,7 @@ import os
 from os.path import join, abspath, dirname
 import textstat
 from google_trans_new import google_translator
-#import exploration
+import exploration
 from sklearn.model_selection import train_test_split
 import nlpaug.augmenter.word as naw
 import spacy
@@ -17,7 +17,7 @@ def text_comp19_to_df():
     """
 
     # Path to relevant csv file
-    csv_path = join(dirname(dirname(abspath(__file__))),
+    csv_path = join(dirname(dirname(dirname(abspath(__file__)))),
                     "data","TextComplexityDE19/ratings.csv")
 
     # read in csv file
@@ -210,7 +210,7 @@ def augmented_all(backtrans = False, lemmatization = False,
     #weebit_train, weebit_test = train_test_split(all_dataset[all_dataset["source"] == "Weebit"],
      #                                            test_size=test_size)
 
-    dw_train, dw_test = train_test_split(all_dataset[all_dataset["source"] == "text_comp19"],
+    dw_train, dw_test = train_test_split(all_dataset[all_dataset["source"] == "dw"],
                                          test_size=test_size)
 
     all_dataset_train = text_comp_train.append(dw_train, ignore_index=True)
