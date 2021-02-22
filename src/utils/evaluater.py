@@ -113,4 +113,18 @@ def evaluate_baseline(vec='tfidf', method='linear', filename="all_data.h5", engi
 
 
 def evaluate(label, pred):
+    """Generic evaluation of regression metrics
+
+       Written by Leo Nguyen. Contact Xenovortex, if problems arises.    
+
+    Args:
+        label (array-like): ground truth label
+        pred (array-like): prediction made by model 
+
+    Return:
+        MSE (double): Mean Square Error
+        RMSE (double): Root Mean Square Error
+        MAE (double): Mean Absolute Error
+        r_square (double): R Square 
+    """
     pass
