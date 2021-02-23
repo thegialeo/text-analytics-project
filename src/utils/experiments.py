@@ -8,10 +8,14 @@ from tqdm import tqdm
 from utils import evaluater, preprocessing, vectorizer, visualizer
 
 
-def benchmark_vectorizer():
+def benchmark_vectorizer(filename, engineered_features=False):
     """Run benchmark on all baseline regressions and all vectorization methods.
 
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
+
+    Args:
+        filename (string): name of h5 file to load (run preprocessing first)
+        engineered_features (bool, optional): contenate engineered features to vectorized sentence
     """
 
     # set all benchmark parameters
@@ -27,7 +31,7 @@ def benchmark_vectorizer():
         
         # evaluation
         for i, method in enumerate(tqdm(reg_lst)):
-            MSE, RMSE, MAE, r_square = evaluater.evaluate_baseline(vec, method)
+            MSE, RMSE, MAE, r_square = evaluater.evaluate_baseline(vec, method, filename, engineered_features)
             results[i][0] = MSE
             results[i][1] = RMSE
             results[i][2] = MAE

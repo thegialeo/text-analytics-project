@@ -18,15 +18,13 @@ if __name__ == "__main__":
     parser.add_argument("--download", dest='download', action='store',
                         help="Download specific or all datasets. Options: 'all', 'TextComplexityDE19', 'Weebit', 'dw'")
     parser.add_argument("--experiment", dest='experiment', action='store',
-                        help="Select experiment to perform. Options: 'vectorizer'")
+                        help="Select experiment to perform. Options: 'compare_methods'")
     parser.add_argument("--search", dest='search', action='store', nargs=6,
                         help="Perform linear search for [hyperparameter, start, end, step, model, filename]. Options: hyperparameter ['feature', 'window', 'count', 'epochs', 'lr', 'min_lr'], model ['word2vec']")
-    parser.add_argument("--augmentation", dest="augmentation", action='store_true',
-                        help="Augmentate the downloaded datasets and save the result in a h5 file")
-    parser.add_argument("--pretrained", dest='pretrained', action='store_true',
-                        help="Finetune pretrained model instead of training from scratch")
+    parser.add_argument("--create_h5", dest="filename", action='store',
+                        help="Preprocess the downloaded datasets and save the result in a h5 file")
 
-    parser.set_defaults(download=None, experiment=None, search=None, augmentation=False, pretrained=False)
+    parser.set_defaults(download=None, experiment=None, search=None, filename=None)
     args = parser.parse_args()
 
 
@@ -67,7 +65,7 @@ if __name__ == "__main__":
             print(r_square)
         # test BERT training
         if args.experiment == 'BERT':
-            trainer.train_model("all_data.h5", 10, [5, 8, 10], 128, 1e-3, "test")
+            trainer.train_model("all_data.h5", 20, [10, 15, 18, 20], 128, 1e-3, "test")
 
 
 

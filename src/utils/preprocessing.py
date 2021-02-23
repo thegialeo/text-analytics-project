@@ -5,7 +5,7 @@ import spacy
 import stop_words
 
 
-def get_stopwords(source="nltk"):
+def get_stopwords(source="spacy"):
     """Return German stopwords based on given source.
 
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.

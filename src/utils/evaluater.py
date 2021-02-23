@@ -97,8 +97,9 @@ def evaluate_baseline(
     Args:
         vec (str, optional): vectorizer method to used (options: 'tfidf', 'count', 'hash'), default: 'tfidf'
         method (str, optional): regression method to use (options: 'linear', 'lasso', 'ridge', 'elastic-net', 'random-forest'). Defaults to 'linear'.
-        filename (str, optional): name of h5 file to load (run augmentation first)
-        return (bool, optional): return predictions, instead of metrics
+        filename (str, optional): name of h5 file to load (run preprocessing first)
+        engineered_features (bool, optional): contenate engineered features to vectorized sentence
+        return_pred (bool, optional): return predictions, instead of metrics
 
     Return:
         MSE (double): Mean Square Error
@@ -116,9 +117,12 @@ def evaluate_baseline(
         df_test["source"] == "text_comp19"
     ]  # TODO: remove once Raoul fixes his dataloader
 
+    # stopwords
+    stopword_lst = preprocessing.get_stopwords()
+
     # feature extraction
     X_train, vec_object = vectorizer.vectorizer_wrapper(
-        df_train.raw_text.values, vec, None, True
+        df_train.raw_text.values, vec, stopword_lst, True
     )
     X_test = vec_object.transform(df_test.raw_text.values)
 
