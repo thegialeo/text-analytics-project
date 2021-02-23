@@ -7,6 +7,7 @@ import pickle
 import torch
 from sklearn.metrics import r2_score
 from torch.utils.data import DataLoader, TensorDataset
+import torch.optim as opt
 import matplotlib.pyplot as plt
 from utils import BERT, evaluater, gpu, regression, to_dataframe
 
@@ -41,7 +42,7 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
     device = gpu.check_gpu()
     num_workers = multiprocessing.cpu_count()
     print("Training on:", device)
-    print("Number of CPUs detected:", num_workers)
+    print("Number of CPU cores detected:", num_workers)
 
     # read data
     df_train, df_test = to_dataframe.read_augmented_h5("all_data.h5")
@@ -61,13 +62,10 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
     train_input_tensor, train_segment_tensor = bert_model.preprocessing(train_sentences)
     test_input_tensor, test_segment_tensor = bert_model.preprocessing(test_sentences)
 
-    # feature extraction
-    #train_features = bert_model.get_features(train_input_tensor, train_segment_tensor)
-    #test_features = bert_model.get_features(test_input_tensor, test_segment_tensor)
 
     # extract labels and cast to PyTorch tensor
-    train_labels = torch.tensor(list(df_train.rating.values))
-    test_labels = torch.tensor(list(df.test.rating.values))
+    train_labels = torch.tensor(list(df_train.rating.values)).unsqueeze_(1)
+    test_labels = torch.tensor(list(df_test.rating.values)).unsqueeze_(1)
 
     # prepare dataset
     trainset = TensorDataset(train_input_tensor, train_segment_tensor, train_labels)
@@ -90,7 +88,7 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
     )
 
     # prepare regression model
-    reg_model = regression.Net()
+    reg_model = regression.Net(768, 512, 1)
     reg_model = reg_model.to(device)
 
     # optimizer
@@ -100,7 +98,7 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
     criterion = torch.nn.MSELoss()
 
     # scheduler
-    scheduler = opt.lr_scheduler.MultiStepLR(optimizer, steps_epochs, 0.1)
+    scheduler = opt.lr_scheduler.MultiStepLR(optimizer, step_epochs, 0.1)
 
     # log
     loss_log = []
@@ -119,7 +117,8 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
 
         # training
         for i, (input_id, segment, label) in enumerate(trainloader):
-            # move batch to device
+            # move batch and model to device
+            reg_model.to(device)
             input_id = input_id.to(device)
             segment = segment.to(device)
             label = label.to(device)
@@ -153,10 +152,10 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
         reg_model.eval()
         running_loss /= len(trainloader)
         MSE_train, RMSE_train, MAE_train, r2_train = evaluater.evaluate_model(
-            reg_model, trainloader
+            reg_model, bert_model, trainloader
         )
         MSE_test, RMSE_test, MAE_test, r2_test = evaluater.evaluate_model(
-            reg_model, testloader
+            reg_model, bert_model, testloader
         )
 
         # log evaluation result
@@ -206,6 +205,7 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
             plt.xlabel('epoch', fontsize=14)
             plt.ylabel(plot_names[i], fontsize=14)
             plt.savefig(join(fig_path, save_name + "_" + plot_names[i] + '.png'))
+            plt.close("all")
 
 
 

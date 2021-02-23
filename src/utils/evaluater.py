@@ -2,6 +2,7 @@ from os.path import abspath, dirname, join
 
 import numpy as np
 import pandas as pd
+import torch
 from sklearn.metrics import (
     homogeneity_score,
     mean_absolute_error,
@@ -17,6 +18,7 @@ from utils import (
     sentencestats,
     to_dataframe,
     vectorizer,
+    gpu
 )
 
 
@@ -173,7 +175,7 @@ def evaluate(label, pred):
     return MSE, RMSE, MAE, r_square
 
 
-def evaluate_model(model, dataloader):
+def evaluate_model(model, bert_model, dataloader):
     """Evaluate regression metrics of a model on a dataset
 
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
@@ -214,10 +216,10 @@ def evaluate_model(model, dataloader):
             features = bert_model.get_features(input_id, segment)
             
             # prediction
-            output = model(feature)
+            output = model(features)
 
             # evaluate
-            MSE, RMSE, MAE, r_square = evaluate(label, output)
+            MSE, RMSE, MAE, r_square = evaluate(label.cpu(), output.cpu())
             MSE_lst.append(MSE)
             RMSE_lst.append(RMSE)
             MAE_lst.append(MAE)

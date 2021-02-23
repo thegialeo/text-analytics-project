@@ -67,7 +67,7 @@ if __name__ == "__main__":
             print(r_square)
         # test BERT training
         if args.experiment == 'BERT':
-            trainer.train_model("all_data.h5", 10, [5, 8, 10], 1024, 1e-3, "test")
+            trainer.train_model("all_data.h5", 10, [5, 8, 10], 128, 1e-3, "test")
 
 
 
