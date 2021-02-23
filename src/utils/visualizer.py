@@ -4,6 +4,7 @@ from os.path import abspath, dirname, exists, join
 import matplotlib.pyplot as plt
 import pandas as pd
 from utils import clustering, dimension_reduction, preprocessing, vectorizer, to_dataframe
+import numpy as np
 
 
 def visualize_vectorizer(vec='tfidf', dim_reduc='PCA', stopword=None, filename="all_data.h5"):
@@ -29,17 +30,20 @@ def visualize_vectorizer(vec='tfidf', dim_reduc='PCA', stopword=None, filename="
         german_stopwords = preprocessing.get_stopwords(stopword)
     else: 
         german_stopwords = None
-    features = vectorizer.vectorizer_wrapper(df_train.raw_text.values, vec, german_stopwords)
-    features = features.toarray()
+    features = vectorizer.vectorizer_wrapper(df_train.raw_text, vec, german_stopwords)
+    if vec == "word2vec" or vec == "pretrained_word2vec":
+        features = np.array(features)
+    else:
+        features = features.toarray()
 
     # dimension reduction
     reduced_features = dimension_reduction.reduce_dim(features, dim_reduc) 
 
     # plotting
     fig, ax = plt.subplots(1, 1, figsize = (15, 10))
-    data = pd.DataFrame({"X value": reduced_features[:, 0], "Y value": reduced_features[:, 1], "Label": df_train.rating.values.round(0)})
+    data = pd.DataFrame({"X value": reduced_features[:, 0], "Y value": reduced_features[:, 1], "Label": df_train.rating.values.astype(np.double).round(0)})
     groups = data.groupby("Label")
-    classes = list(set(df_train.rating.values.round(0)))
+    classes = list(set(df_train.rating.values.astype(np.double).round(0)))
     colors = [plt.cm.jet(float(i)/max(classes)) for i in classes]
     for i, (name, group) in enumerate(groups):
         ax.plot(group["X value"], group["Y value"], marker='o', linestyle='', label=name, c=colors[i], alpha=0.5)

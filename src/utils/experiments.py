@@ -8,7 +8,7 @@ from tqdm import tqdm
 from utils import evaluater, preprocessing, vectorizer, visualizer
 
 
-def benchmark_vectorizer(filename, engineered_features=False):
+def benchmark_all(filename, engineered_features=False):
     """Run benchmark on all baseline regressions and all vectorization methods.
 
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
@@ -19,7 +19,7 @@ def benchmark_vectorizer(filename, engineered_features=False):
     """
 
     # set all benchmark parameters
-    vec_lst = ['tfidf', 'count', 'word2vec'] # hashing vectorizer omitted, because out of memory
+    vec_lst = ['tfidf', 'count', 'word2vec', 'pretrained_word2vec'] # hashing vectorizer omitted, because out of memory
     reg_lst = ['linear', 'lasso', 'ridge', 'elastic-net', 'random-forest']
  
     # run benchmark
@@ -44,12 +44,15 @@ def benchmark_vectorizer(filename, engineered_features=False):
             os.makedirs(dirname(path))
         if not exists(path):
             os.makedirs(path)
-        df.to_csv(join(path, "{}.csv".format(vec)))
+        if engineered_features:
+            df.to_csv(join(path, "{}_{}_extra_feat.csv".format(filename, vec)))
+        else:
+            df.to_csv(join(path, "{}_{}.csv".format(filename, vec)))
         print("Save results to: {}".format(join(path, "{}.csv".format(vec))))
         
         # visualize vectorization
-        visualizer.visualize_vectorizer(vec, 'PCA')
-        visualizer.visualize_vectorizer(vec, 'TSNE')
+        visualizer.visualize_vectorizer(vec, 'PCA', filename=filename)
+        visualizer.visualize_vectorizer(vec, 'TSNE', filename=filename)
         
         # release memory
         gc.collect()

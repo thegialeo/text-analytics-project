@@ -182,4 +182,7 @@ def NN_vectorizer_wrapper(
             )
         )
 
-    return features, model
+    if return_vectorizer:
+        return features, model
+    else:
+        return features

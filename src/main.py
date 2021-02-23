@@ -53,12 +53,13 @@ if __name__ == "__main__":
 
     # experiments
     if args.experiment is not None:
-        # vectorizer
+        # compare all regression and vectorization methods
         if args.experiment == 'compare_all':
-            experiments.benchmark_vectorizer()
+            experiments.benchmark_all("all_data.h5", False)
+            experiments.benchmark_all("all_data.h5", True)
         # test and debug evaluate_baseline
         if args.experiment == 'test':
-            MSE, RMSE, MAE, r_square = evaluater.evaluate_baseline(vec="pretrained_word2vec")
+            MSE, RMSE, MAE, r_square = evaluater.evaluate_baseline(vec="tfidf")
             print(r_square)
 
         # test BERT training
