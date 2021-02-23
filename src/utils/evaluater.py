@@ -122,9 +122,9 @@ def evaluate_baseline(
 
     # feature extraction
     X_train, vec_object = vectorizer.vectorizer_wrapper(
-        df_train.raw_text.values, vec, stopword_lst, True
+        df_train.raw_text, vec, stopword_lst, True
     )
-    X_test = vec_object.transform(df_test.raw_text.values)
+    X_test = vec_object.transform(df_test.raw_text)
 
     # add engineered features
     if engineered_features:

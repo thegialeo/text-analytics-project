@@ -18,13 +18,13 @@ if __name__ == "__main__":
     parser.add_argument("--download", dest='download', action='store',
                         help="Download specific or all datasets. Options: 'all', 'TextComplexityDE19', 'Weebit', 'dw'")
     parser.add_argument("--experiment", dest='experiment', action='store',
-                        help="Select experiment to perform. Options: 'compare_methods'")
+                        help="Select experiment to perform. Options: 'compare_all'")
     parser.add_argument("--search", dest='search', action='store', nargs=6,
                         help="Perform linear search for [hyperparameter, start, end, step, model, filename]. Options: hyperparameter ['feature', 'window', 'count', 'epochs', 'lr', 'min_lr'], model ['word2vec']")
-    parser.add_argument("--create_h5", dest="filename", action='store',
+    parser.add_argument("--create_h5", dest="h5_file", action='store',
                         help="Preprocess the downloaded datasets and save the result in a h5 file")
 
-    parser.set_defaults(download=None, experiment=None, search=None, filename=None)
+    parser.set_defaults(download=None, experiment=None, search=None, h5_file=None)
     args = parser.parse_args()
 
 
@@ -44,25 +44,23 @@ if __name__ == "__main__":
             raise ValueError("Input {} for --download is invalid. Choose one of the following: 'all', 'TextComplexityDE19', 'Weebit', 'dw'".format(args.download))
 
     # augmentation
-    if args.augmentation:
+    if args.h5_file:
         to_dataframe.store_augmented_h5("all_data.h5", test_size=0.2)
 
     # hyperparameter search
     if args.search is not None:
             traverser.traverser(*args.search, args.pretrained)
 
-
-
-
     # experiments
     if args.experiment is not None:
         # vectorizer
-        if args.experiment == 'vectorizer':
-            benchmark.benchmark_vectorizer()
+        if args.experiment == 'compare_all':
+            experiments.benchmark_vectorizer()
         # test and debug evaluate_baseline
         if args.experiment == 'test':
-            MSE, RMSE, MAE, r_square = evaluater.evaluate_baseline(engineered_features=True)
+            MSE, RMSE, MAE, r_square = evaluater.evaluate_baseline(vec="pretrained_word2vec")
             print(r_square)
+
         # test BERT training
         if args.experiment == 'BERT':
             trainer.train_model("all_data.h5", 20, [10, 15, 18, 20], 128, 1e-3, "test")
