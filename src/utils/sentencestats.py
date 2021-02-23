@@ -1,5 +1,7 @@
 import re
+from os import path
 
+import normalization
 import numpy as np
 import pandas as pd
 import spacy
@@ -7,19 +9,21 @@ import to_dataframe
 import wordlists
 
 
-def construct_features(sentence, normalize=False):
+def construct_features(sentence, normalize=True, verbose=True):
     """constructs a #sentences × #features numpy array, rows are sentences, columns
     are features. use by passing a dataframe column containing (normalized) sentences
     and optionally, set normalize to true.
 
-    feature count at time of writing this: 9 features
-
     Kwargs:
     sentence -- a dataframe column containing normalized sentences.
-    normalize (optional) -- normalize feature columns to the same range (default off)
+    scale_features (optional) -- normalize feature columns to the same range (default off)
     when normalized, all values are between 0 and 100, otherwise theyre integer counts
     """
     my_df = pd.DataFrame()
+
+    my_df["commas"] = count_commas(sentence)
+    sentence = normalization.normalize_sentence(sentence)
+
     my_df[["words", "letters"]] = count_words_and_letters(sentence)
     my_df["words_not_pronouns_articles"] = (
         my_df["words"]
@@ -32,10 +36,29 @@ def construct_features(sentence, normalize=False):
     my_df["long_words"] = sentence.apply(count_long_words, args=(6,))
     my_df["infrequent100"] = sentence.apply(count_infrequent_words, args=(100,))
     my_df["infrequent1000"] = sentence.apply(count_infrequent_words, args=(1000,))
+    my_df["wstf"] = wiener_sachtextformel(
+        my_df["ge3syllables"],
+        my_df["words"],
+        my_df["long_words"],
+        my_df["monosyllables"],
+    )
 
     matrix = my_df.to_numpy()
     if normalize:
         matrix = scale_linear_bycolumn(matrix)
+
+    if verbose:
+        print(
+            "==============\nFrom ",
+            len(sentence),
+            " sentences, constructing size ",
+            matrix.shape,
+            " feature matrix. \nThe feature names are: ",
+            my_df.columns,
+            "\n==============",
+            sep="",
+        )
+
     return matrix
 
 
@@ -45,6 +68,10 @@ def scale_linear_bycolumn(rawpoints, high=100.0, low=0.0):
     maxs = np.max(rawpoints, axis=0)
     rng = maxs - mins
     return high - (((high - low) * (maxs - rawpoints)) / rng)
+
+
+def count_commas(sentence):
+    return sentence.str.count(",")
 
 
 def count_words_and_letters(sentence):
@@ -245,8 +272,70 @@ def count_long_words(sentence, length):
     return long_words
 
 
+def wiener_sachtextformel(
+    polysyllables_count, word_count, long_words_count, monosyllables_count
+):
+    """Computes the first wiener sachtextformel, using the number of words with 3 or
+    more syllables, the number of words, the number of words with 6 or more
+    letters and the number of monosyllabic words
+
+    Keyword arguments:
+    polysyllables_count -- number of words with three or more syllables
+    word_count -- number of words
+    long_words_count -- number of words with 6 or more letters
+    monosyllables_count -- number of words with only a single syllable
+    """
+
+    return (
+        0.1935 * polysyllables_count / word_count
+        + 0.1672 * word_count
+        + 0.1297 * long_words_count / word_count
+        - 0.0327 * monosyllables_count / word_count
+        - 0.875
+    )
+
+
 if __name__ == "__main__":
     # load TextComplexityDE dataset
-    df_all = to_dataframe.text_comp19_to_df()
+    # df_all = to_dataframe.text_comp19_to_df()
+    # df_all.columns = df_all.columns.str.lower()
+    # df_all.head()
+    df_all = pd.read_excel(
+        path.join(
+            path.dirname(path.abspath(__file__)),
+            "..",
+            "data",
+            "TextComplexityDE19.xlsx",
+        ),
+        engine="openpyxl",
+        sheet_name=2,
+        header=1,
+    )
     df_all.columns = df_all.columns.str.lower()
-    df_all.head()
+    print(df_all["sentence"])
+
+    feature_matrix = construct_features(
+        df_all["sentence"], scale_features=True, verbose=True
+    )
+    print(feature_matrix)
+    print("\n", feature_matrix[0])
+
+    nlp = spacy.load("de_core_news_sm")
+    doc = df_all["sentence"][0]
+    print(doc)
+    doc = nlp(doc)
+
+    for token in doc:
+        print(
+            token.text,
+            token.lemma_,
+            token.pos_,
+            token.tag_,
+            token.dep_,
+            token.shape_,
+            token.is_alpha,
+            token.is_stop,
+            # token.morph,
+        )
+    for chunk in doc.noun_chunks:
+        print(chunk.text, chunk.root.text, chunk.root.dep_, chunk.root.head.text)

@@ -50,6 +50,7 @@ def remove_punctuation(string, hyphens_are_separators=True, keep_commas=False):
     """
     if hyphens_are_separators:
         string = re.sub(r"\-", " ", string)
+
     if not keep_commas:
         return re.sub(r"[^\w\s]", "", string)
     else:

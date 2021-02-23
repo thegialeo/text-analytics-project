@@ -359,7 +359,7 @@ def wiener_sachtextformel(
     polysyllables_count -- number of words with three or more syllables
     word_count -- number of words
     long_words_count -- number of words with 6 or more letters
-    monosyllables_count -- number of words with only a single syllable
+monosyllables_count -- number of words with only a single syllable
     """
 
     return (
@@ -437,7 +437,7 @@ def scale_linear_bycolumn(rawpoints, high=100.0, low=0.0):
 if __name__ == "__main__":
     # load TextComplexityDE dataset
     df_all = pd.read_excel(
-        "data/TextComplexityDE19/TextComplexityDE19.xlsx",
+        path.join(path.dirname(path.abspath(__file__)), 'data', 'TextComplexityDE19.xlsx'),
         engine="openpyxl",
         sheet_name=2,
         header=1,
