@@ -9,7 +9,7 @@ from utils import evaluater, preprocessing, vectorizer, visualizer
 
 
 def benchmark_vectorizer():
-    """Run benchmark on all baseline regressions.
+    """Run benchmark on all baseline regressions and all vectorization methods.
 
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
     """

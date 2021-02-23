@@ -14,8 +14,6 @@ def check_gpu():
         device = torch.device("cuda")
     else:
         device = torch.device("cpu")
-
-    print("Device used for training and evaluation: {}".format(device))
     
     return device
         

@@ -129,17 +129,17 @@ def visualize_clustering(vec='tfidf', cluster='kmeans', dim_reduc='PCA'):
     ax[1].grid(True)
     plt.tight_layout()
     fig.savefig(join(dirname(dirname(dirname(abspath(__file__)))), "figures", "{}_{}_{}.png".format(cluster, vec, dim_reduc)))
-    
-"""
+
+
 def basic_stats():
 
-    """"""
+    """
     This function is supposed to illustrate the distribution of the data.
     The number of words, sentences and other important statistics
     are being displayed. This will further be used to see the effect of the
     augmentation step.
     Written by Raoul Berger.
-    """"""
+    """
     # define path where figures are saved
     save_path = join(dirname(dirname(abspath(__file__))), "figures")
 
@@ -151,7 +151,7 @@ def basic_stats():
     plt.grid()
     plt.ylabel("entries")
     plt.title("distribution of entries across the datasets")
-    plt.savefig(join(save_path,"Original distribution of entries across datasets")
+    plt.savefig(join(save_path,"Original distribution of entries across datasets"))
 
     # plot the original distribution of word count per sentence for every dataset
     plt.title("Mean word count per entry across datasets")
@@ -163,7 +163,7 @@ def basic_stats():
              all_data[all_data["source"] == "Weebit"]["word_count"].mean(),
              all_data[all_data["source"] == "dw"]["word_count"].mean()
              ])
-    plt.savefig(join(save_path, "Original distribution of word count per entry across datasets")
+    plt.savefig(join(save_path, "Original distribution of word count per entry across datasets"))
 
     # plot the distribution of sentences per dataset
 
@@ -175,9 +175,3 @@ def basic_stats():
 
 
     return all_data
-
-"""
-
-if __name__ == "__main__":
-    visualize_vectorizer()
-    #basic_stats()

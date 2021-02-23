@@ -1,6 +1,6 @@
 import argparse
 
-from utils import benchmark, downloader, evaluater, traverser, to_dataframe
+from utils import experiments, downloader, evaluater, traverser, to_dataframe, trainer
 from utils.sample import hello_world  # import of module from subfolder
 
 
@@ -54,13 +54,21 @@ if __name__ == "__main__":
             traverser.traverser(*args.search, args.pretrained)
 
 
+
+
     # experiments
     if args.experiment is not None:
         # vectorizer
         if args.experiment == 'vectorizer':
             benchmark.benchmark_vectorizer()
+        # test and debug evaluate_baseline
         if args.experiment == 'test':
-            MSE, RMSE, MAE, r_square = evaluater.evaluate_baseline()
+            MSE, RMSE, MAE, r_square = evaluater.evaluate_baseline(engineered_features=True)
             print(r_square)
+        # test BERT training
+        if args.experiment == 'BERT':
+            trainer.train_model("all_data.h5", 10, [5, 8, 10], 128, 1e-3, "test")
+
+
 
 
