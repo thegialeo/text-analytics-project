@@ -129,9 +129,13 @@ def evaluate_baseline(
     # add engineered features
     if engineered_features:
         extra_train_feat = sentencestats.construct_features(df_train.raw_text)
-        X_train = np.concatenate((X_train.toarray(), extra_train_feat), axis=1)
         extra_test_feat = sentencestats.construct_features(df_test.raw_text)
-        X_test = np.concatenate((X_test.toarray(), extra_test_feat), axis=1)
+        if vec == "word2vec" or vec == "pretrained_word2vec":
+            X_train = np.concatenate((np.array(X_train), extra_train_feat), axis=1)
+            X_test = np.concatenate((np.array(X_test), extra_test_feat), axis=1)
+        else:
+            X_train = np.concatenate((X_train.toarray(), extra_train_feat), axis=1)
+            X_test = np.concatenate((X_test.toarray(), extra_test_feat), axis=1)
 
     # labels
     y_train = df_train.rating.values
