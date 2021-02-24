@@ -110,12 +110,6 @@ def evaluate_baseline(
 
     # read data
     df_train, df_test = to_dataframe.read_augmented_h5(filename)
-    df_train = df_train[
-        df_train["source"] == "text_comp19"
-    ]  # TODO: remove once Raoul fixes his dataloader
-    df_test = df_test[
-        df_test["source"] == "text_comp19"
-    ]  # TODO: remove once Raoul fixes his dataloader
 
     # stopwords
     stopword_lst = preprocessing.get_stopwords()
@@ -125,6 +119,8 @@ def evaluate_baseline(
         df_train.raw_text, vec, stopword_lst, True
     )
     X_test = vec_object.transform(df_test.raw_text)
+
+    print("printing X_train: ", X_train)
 
     # add engineered features
     if engineered_features:
