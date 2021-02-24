@@ -5,6 +5,7 @@ from os.path import abspath, dirname, exists, join
 import numpy as np
 from gensim.models import KeyedVectors
 from gensim.models.word2vec import Word2Vec
+from utils import downloader
 
 
 class word2vec:
@@ -50,7 +51,8 @@ class word2vec:
         """Train Word2Vec model on corpus."""
         if self.pretrained:
             """Just load pretrained word2vec (finetuning not possible)"""
-            if 
+            if not exists(self.pretrained_path):
+                downloader.download_file_from_google_drive("1aoblaJyK_nUpXMR_jP6EgKiY9MDGjY2W", self.pretrained_path)
             self.load_model(pretrained=True, print_path=False)
             self.wv = self.model.wv
             self.model.init_sims(replace=True)
