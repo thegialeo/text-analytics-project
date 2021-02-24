@@ -120,8 +120,6 @@ def evaluate_baseline(
     )
     X_test = vec_object.transform(df_test.raw_text)
 
-    print("printing X_train: ", X_train)
-
     # add engineered features
     if engineered_features:
         extra_train_feat = sentencestats.construct_features(df_train.raw_text)

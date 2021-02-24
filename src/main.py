@@ -58,17 +58,15 @@ if __name__ == "__main__":
         else:
             raise ValueError("Input {} for --download is invalid. Choose one of the following: 'all', 'TextComplexityDE19', 'Weebit', 'dw'".format(args.download))
 
-    # specify which datasets are used
-    if '0' in args.dset:
-        use_textcomp = True
-    if '1' in args.dset:
-        use_weebit = True
-    if '2' in args.dset:
-        use_dw = True
+   
 
     # preprocessing + augmentation
     if args.create_h5:
-        to_dataframe.store_augmented_h5(use_textcomp, use_weebit, use_dw, args.filename, args.backtrans, args.lemma, args.stem, args.swap, args.delete, 0.2)
+        use_textcomp = True if '0' in args.dset else False
+        use_weebit = True if '1' in args.dset else False
+        use_dw = True if '2' in args.dset else False
+        print(use_textcomp, use_weebit, use_dw)
+        to_dataframe.store_augmented_h5(args.filename, use_textcomp, use_weebit, use_dw, args.backtrans, args.lemma, args.stem, args.swap, args.delete, 0.2)
 
     # hyperparameter search
     if args.search is not None:
