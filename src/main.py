@@ -25,7 +25,7 @@ if __name__ == "__main__":
                         help="Use backtranslation during --create_h5")
     parser.add_argument("--lemmatization", dest="lemma", action='store_true',
                         help="Use lemmatization during --create_h5")
-    parser.add_argument("--stemming", dest="stemm", action='store_true',
+    parser.add_argument("--stemming", dest="stem", action='store_true',
                         help="Use stemming during --create_h5")
     parser.add_argument("--random_swap", dest="swap", action='store_true',
                         help="Use random swap during --create_h5")
