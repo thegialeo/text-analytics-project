@@ -36,10 +36,16 @@ if __name__ == "__main__":
     parser.add_argument("--search", dest='search', action='store', nargs=6,
                         help="Perform linear search for [hyperparameter, start, end, step, model, filename]. Options: hyperparameter ['feature', 'window', 'count', 'epochs', 'lr', 'min_lr'], model ['word2vec']")
     parser.add_argument("--experiment", dest='experiment', action='store',
-                        help="Select experiment to perform. Options: 'compare_all', 'evaluate'")
+                        help="Select experiment to perform. Options: 'compare_all', 'evaluate', 'train_net'")
+    parser.add_argument("--engineered_features", dest='extra_feat', action='store_true',
+                        help="Concatenate engineered features to features obtained by vectorizer")
+    parser.add_argument("--vectorizer", dest="vectorizer", action='store',
+                        help="Specify which vectorizer method to use. Options: 'tfidf', 'count', 'hash', 'word2vec', 'pretrained_word2vec'")
+    parser.add_argument("--method", dest="method", action='store',
+                        help="Specify which regression method to use. Options: 'linear', 'lasso', 'ridge', 'elastic-net', 'random-forest'")                                 
     
 
-    parser.set_defaults(dset='0', download=None, create_h5=False, backtrans=False, lemma=False, stem=False, swap=False, delete=False, filename=None, search=None, experiment=None)
+    parser.set_defaults(dset='0', download=None, create_h5=False, backtrans=False, lemma=False, stem=False, swap=False, delete=False, filename=None, search=None, experiment=None, extra_feat=False, vectorizer=None, method=None)
     args = parser.parse_args()
 
 
@@ -77,13 +83,12 @@ if __name__ == "__main__":
         if args.experiment == 'compare_all':
             experiments.benchmark_all(args.filename, False)
             experiments.benchmark_all(args.filename, True)
-        # test and debug evaluate_baseline
-        if args.experiment == 'test':
-            MSE, RMSE, MAE, r_square = evaluater.evaluate_baseline(vec="tfidf")
-            print(r_square)
+        # evaluate a regression method with a vectorization method
+        if args.experiment == 'evaluate':
+            MSE, RMSE, MAE, r_square = evaluater.evaluate_baseline(args.vectorizer, args.method, args.filename, args.extra_feat)
 
-        # test BERT training
-        if args.experiment == 'BERT':
+        # pretrained BERT + regression neural network
+        if args.experiment == 'train_net':
             trainer.train_model(args.filename, 20, [10, 15, 18, 20], 128, 1e-3, "test")
 
 
