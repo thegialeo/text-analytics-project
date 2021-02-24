@@ -63,7 +63,14 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name, eng
     test_labels = torch.tensor(list(df_test.rating.values)).unsqueeze_(1)
 
     # prepare dataset
-    if engineered_features:
+    if engineered_features and multiple_dataset:
+        extra_train_feat = torch.from_numpy(sentencestats.construct_features(train_sentences))
+        extra_test_feat = torch.from_numpy(sentencestats.construct_features(test_sentences))
+        train_dataset_label = torch.tensor(list(df_train.source.values)).unsqueeze_(1)
+        test_dataset_label = torch.tensor(list(df_test.source.values)).unsqueeze_(1)
+        trainset = TensorDataset(train_input_tensor, train_segment_tensor, train_labels, extra_train_feat, train_dataset_label)
+        testset = TensorDataset(test_input_tensor, test_segment_tensor, test_labels, extra_test_feat, test_dataset_label)
+    elif engineered_features:
         extra_train_feat = torch.from_numpy(sentencestats.construct_features(train_sentences))
         extra_test_feat = torch.from_numpy(sentencestats.construct_features(test_sentences))
         trainset = TensorDataset(train_input_tensor, train_segment_tensor, train_labels, extra_train_feat)
@@ -134,9 +141,12 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name, eng
             input_id = data[0].to(device)
             segment = data[1].to(device)
             label = data[2].to(device)
-            if engineered_features:
+            if engineered_features and multiple_dataset:
                 extra_feat = data[3].to(device)
-            if multiple_dataset:
+                dataset_label = data[4].to(device)
+            elif engineered_features:
+                extra_feat = data[3].to(device)
+            elif multiple_dataset:
                 dataset_label = data[3].to(device)
 
             # clear gradients
