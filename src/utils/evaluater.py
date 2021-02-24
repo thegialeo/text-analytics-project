@@ -232,7 +232,7 @@ def evaluate_model(model, bert_model, dataloader, engineered_features=False, mul
 
             # add dataset conditional label
             if multiple_dataset:
-                features = torch.cat((features, dataset_label), 1)
+                features = torch.cat((features, torch.tensor(np.zeros(dataset_label.shape))), 1)
             
             # prediction
             output = model(features)
