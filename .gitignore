@@ -28,6 +28,8 @@ TODO.md
 
 # data
 figures
+model
+result
 data
 src/data/*
 !src/data/.gitkeep
