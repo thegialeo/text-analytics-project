@@ -97,8 +97,9 @@ def evaluate_baseline(
     Args:
         vec (str, optional): vectorizer method to used (options: 'tfidf', 'count', 'hash'), default: 'tfidf'
         method (str, optional): regression method to use (options: 'linear', 'lasso', 'ridge', 'elastic-net', 'random-forest'). Defaults to 'linear'.
-        filename (str, optional): name of h5 file to load (run augmentation first)
-        return (bool, optional): return predictions, instead of metrics
+        filename (str, optional): name of h5 file to load (run preprocessing first)
+        engineered_features (bool, optional): contenate engineered features to vectorized sentence
+        return_pred (bool, optional): return predictions, instead of metrics
 
     Return:
         MSE (double): Mean Square Error
@@ -116,18 +117,25 @@ def evaluate_baseline(
         df_test["source"] == "text_comp19"
     ]  # TODO: remove once Raoul fixes his dataloader
 
+    # stopwords
+    stopword_lst = preprocessing.get_stopwords()
+
     # feature extraction
     X_train, vec_object = vectorizer.vectorizer_wrapper(
-        df_train.raw_text.values, vec, None, True
+        df_train.raw_text, vec, stopword_lst, True
     )
-    X_test = vec_object.transform(df_test.raw_text.values)
+    X_test = vec_object.transform(df_test.raw_text)
 
     # add engineered features
     if engineered_features:
         extra_train_feat = sentencestats.construct_features(df_train.raw_text)
-        X_train = np.concatenate((X_train.toarray(), extra_train_feat), axis=1)
         extra_test_feat = sentencestats.construct_features(df_test.raw_text)
-        X_test = np.concatenate((X_test.toarray(), extra_test_feat), axis=1)
+        if vec == "word2vec" or vec == "pretrained_word2vec":
+            X_train = np.concatenate((np.array(X_train), extra_train_feat), axis=1)
+            X_test = np.concatenate((np.array(X_test), extra_test_feat), axis=1)
+        else:
+            X_train = np.concatenate((X_train.toarray(), extra_train_feat), axis=1)
+            X_test = np.concatenate((X_test.toarray(), extra_test_feat), axis=1)
 
     # labels
     y_train = df_train.rating.values

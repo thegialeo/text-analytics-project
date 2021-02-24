@@ -17,16 +17,27 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--download", dest='download', action='store',
                         help="Download specific or all datasets. Options: 'all', 'TextComplexityDE19', 'Weebit', 'dw'")
-    parser.add_argument("--experiment", dest='experiment', action='store',
-                        help="Select experiment to perform. Options: 'vectorizer'")
+    parser.add_argument("--create_h5", dest="create_h5", action='store_true',
+                        help="Preprocess the downloaded datasets and save the result in a h5 file")
+    parser.add_argument("--backtranslation", dest="backtrans", action='store_true',
+                        help="Use backtranslation during --create_h5")
+    parser.add_argument("--lemmatization", dest="lemma", action='store_true',
+                        help="Use lemmatization during --create_h5")
+    parser.add_argument("--stemming", dest="stemm", action='store_true',
+                        help="Use stemming during --create_h5")
+    parser.add_argument("--random_swap", dest="swap", action='store_true',
+                        help="Use random swap during --create_h5")
+    parser.add_argument("--random_deletion", dest="delete", action='store_true',
+                        help="Use random deletion during --create_h5")                                                                              
+    parser.add_argument("--filename", dest="filename", action='store',
+                        help="Name of h5 file to load or save to")
     parser.add_argument("--search", dest='search', action='store', nargs=6,
                         help="Perform linear search for [hyperparameter, start, end, step, model, filename]. Options: hyperparameter ['feature', 'window', 'count', 'epochs', 'lr', 'min_lr'], model ['word2vec']")
-    parser.add_argument("--augmentation", dest="augmentation", action='store_true',
-                        help="Augmentate the downloaded datasets and save the result in a h5 file")
-    parser.add_argument("--pretrained", dest='pretrained', action='store_true',
-                        help="Finetune pretrained model instead of training from scratch")
+    parser.add_argument("--experiment", dest='experiment', action='store',
+                        help="Select experiment to perform. Options: 'compare_all', 'evaluate'")
+    
 
-    parser.set_defaults(download=None, experiment=None, search=None, augmentation=False, pretrained=False)
+    parser.set_defaults(download=None, create_h5=False, backtrans=False, lemma=False, stem=False, swap=False, delete=False, filename=None, search=None, experiment=None)
     args = parser.parse_args()
 
 
@@ -45,29 +56,28 @@ if __name__ == "__main__":
         else:
             raise ValueError("Input {} for --download is invalid. Choose one of the following: 'all', 'TextComplexityDE19', 'Weebit', 'dw'".format(args.download))
 
-    # augmentation
-    if args.augmentation:
-        to_dataframe.store_augmented_h5("all_data.h5", test_size=0.2)
+    # preprocessing + augmentation
+    if args.create_h5:
+        to_dataframe.store_augmented_h5(args.filename, args.backtrans, args.lemma, args.stem, args.swap, args.delete 0.2)
 
     # hyperparameter search
     if args.search is not None:
             traverser.traverser(*args.search, args.pretrained)
 
-
-
-
     # experiments
     if args.experiment is not None:
-        # vectorizer
-        if args.experiment == 'vectorizer':
-            benchmark.benchmark_vectorizer()
+        # compare all regression and vectorization methods
+        if args.experiment == 'compare_all':
+            experiments.benchmark_all(args.filename, False)
+            experiments.benchmark_all(args.filename, True)
         # test and debug evaluate_baseline
         if args.experiment == 'test':
-            MSE, RMSE, MAE, r_square = evaluater.evaluate_baseline(engineered_features=True)
+            MSE, RMSE, MAE, r_square = evaluater.evaluate_baseline(vec="tfidf")
             print(r_square)
+
         # test BERT training
         if args.experiment == 'BERT':
-            trainer.train_model("all_data.h5", 10, [5, 8, 10], 128, 1e-3, "test")
+            trainer.train_model(args.filename, 20, [10, 15, 18, 20], 128, 1e-3, "test")
 
 
 

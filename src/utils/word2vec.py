@@ -35,7 +35,7 @@ class word2vec:
         self.pretrained = pretrained
         self.model_path = join(dirname(dirname(dirname(abspath(__file__)))), "model", "word2vec", "word2vec.model")
         self.wv_path = join(dirname(dirname(dirname(abspath(__file__)))), "model", "word2vec", "word2vec.wordvectors")
-        self.pretrained_path = join(dirname(dirname(dirname(abspath(__file__)))), "model", "word2vec", "pretrained", "german.model")
+        self.pretrained_path = join(dirname(dirname(dirname(abspath(__file__)))), "model", "word2vec", "pretrained", "model.bin")
 
         if algorithm == "skip-gram":
             self.algorithm = 1
@@ -49,17 +49,11 @@ class word2vec:
     def train(self, print_path=True):
         """Train Word2Vec model on corpus."""
         if self.pretrained:
-            self.load_wv(pretrained=True)
-            self.model.train(self.corpus,
-                             total_examples=len(self.corpus),
-                             iter = self.epochs,
-                             start_alpha = self.lr,
-                             end_alpha = self.min_lr)
-
+            """Just load pretrained word2vec (finetuning not possible)"""
+            self.load_model(pretrained=True, print_path=False)
             self.wv = self.model.wv
             self.model.init_sims(replace=True)
             self.save_model(print_path=print_path)
-
         else:
             self.model = Word2Vec(self.corpus,
                                     sg = self.algorithm,
@@ -76,7 +70,7 @@ class word2vec:
             self.save_model(print_path=print_path)
 
   
-    def vectorize(self, corpus=None):
+    def transform(self, corpus=None):
         """Vectorize the corpus with word2vec model"""
         if corpus is None:
             self.features = [np.mean([self.wv[word] for word in line if word in self.wv.vocab], axis=0) for line in self.corpus]
@@ -100,9 +94,9 @@ class word2vec:
     def load_model(self, pretrained=False, print_path=True):
         """Load word2vec model"""
         if pretrained:
-            self.model = Word2Vec.load(self.pretrained_path)
+            self.model = KeyedVectors.load_word2vec_format(self.pretrained_path, binary=True)
             if print_path:
-                print("Load pretrained word2vec model from: {}".format(self.pretrained_model))
+                print("Load pretrained word2vec model from: {}".format(self.pretrained_path))
         else:
             self.model = Word2Vec.load(self.model_path)
             if print_path:
@@ -110,9 +104,7 @@ class word2vec:
 
     def load_wv(self, pretrained=False, print_path=True):
         """Load wordvectors"""
-        if pretrained:
-            self.wv = KeyedVectors.load(self.pretrained_path)
-        else:
-            self.wv = KeyedVectors.load(self.wv_path, mmap='r') 
-            if print_path:
-                print("Load wordvectors from: {}".format(self.wv_path))
+
+        self.wv = KeyedVectors.load(self.wv_path, mmap='r') 
+        if print_path:
+            print("Load wordvectors from: {}".format(self.wv_path))
