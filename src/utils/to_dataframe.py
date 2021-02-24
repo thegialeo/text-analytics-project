@@ -382,12 +382,18 @@ def augmented_all(use_textcomp19=False,use_weebit=False,use_dw=False,
         all_dataset_train["raw_text"] = all_dataset_train["raw_text"]\
             .apply(lambda x: ' '.join([y.lemma_ for y in nlp(x)]) )
 
+        all_dataset_test["raw_text"] = all_dataset_test["raw_text"] \
+            .apply(lambda x: ' '.join([y.lemma_ for y in nlp(x)]))
+
     # Stemming using
     if stemming == True:
 
         print("stemming")
         stemmer = SnowballStemmer("german")
         all_dataset_train["raw_text"] = all_dataset_train["raw_text"] \
+            .apply(lambda x: stemmer.stem(x))
+
+        all_dataset_test["raw_text"] = all_dataset_test["raw_text"] \
             .apply(lambda x: stemmer.stem(x))
 
     return all_dataset_train, all_dataset_test
