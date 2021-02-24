@@ -117,9 +117,6 @@ def visualize_clustering(vec="tfidf", cluster="kmeans", dim_reduc="PCA"):
 
     # read data
     df_train, df_test = to_dataframe.read_augmented_h5(filename)
-    df_train = df_train[
-        df_train["source"] == "text_comp19"
-    ]  # TODO: remove once Raoul fixes his dataloader
 
     # feature extraction
     german_stopwords = stopwords.words("german")

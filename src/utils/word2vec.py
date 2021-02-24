@@ -69,7 +69,7 @@ class word2vec:
                                     workers=multiprocessing.cpu_count())
 
             self.wv = self.model.wv
-            self.model.init_sims(replace=True)
+            #self.model.init_sims(replace=True)
             self.save_model(print_path=print_path)
 
   
@@ -78,7 +78,7 @@ class word2vec:
         if corpus is None:
             self.features = [np.mean([self.wv[word] for word in line if word in self.wv.vocab], axis=0) for line in self.corpus]
         else:
-            return [np.mean([self.wv[word] for word in line if word in self.wv.vocab], axis=0) for line in corpus]
+            return np.array([np.mean([self.wv[word] for word in line if word in self.wv.vocab], axis=0) for line in corpus])
 
     def save_model(self, print_path=True):
         """Save word2vec model and wordvectors"""

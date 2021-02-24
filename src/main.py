@@ -25,7 +25,7 @@ if __name__ == "__main__":
                         help="Use backtranslation during --create_h5")
     parser.add_argument("--lemmatization", dest="lemma", action='store_true',
                         help="Use lemmatization during --create_h5")
-    parser.add_argument("--stemming", dest="stemm", action='store_true',
+    parser.add_argument("--stemming", dest="stem", action='store_true',
                         help="Use stemming during --create_h5")
     parser.add_argument("--random_swap", dest="swap", action='store_true',
                         help="Use random swap during --create_h5")
@@ -65,7 +65,6 @@ if __name__ == "__main__":
         use_textcomp = True if '0' in args.dset else False
         use_weebit = True if '1' in args.dset else False
         use_dw = True if '2' in args.dset else False
-        print(use_textcomp, use_weebit, use_dw)
         to_dataframe.store_augmented_h5(args.filename, use_textcomp, use_weebit, use_dw, args.backtrans, args.lemma, args.stem, args.swap, args.delete, 0.2)
 
     # hyperparameter search

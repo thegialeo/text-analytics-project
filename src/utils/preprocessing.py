@@ -69,8 +69,6 @@ def tokenizer(df, method="spacy"):
         data = df.apply(lambda x: str(x).lower()).to_list()
         nlp = spacy.load("de_core_news_sm", disable=["tagger", "parser", "ner"])
         corpus = [[token.text for token in nlp(line) if token.text if len(token.text) > 1] for line in data]
-        print(corpus)
-        exit()
         return corpus
     else:
         raise ValueError(
