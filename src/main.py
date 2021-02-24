@@ -58,7 +58,7 @@ if __name__ == "__main__":
 
     # preprocessing + augmentation
     if args.create_h5:
-        to_dataframe.store_augmented_h5(args.filename, args.backtrans, args.lemma, args.stem, args.swap, args.delete), 0.2)
+        to_dataframe.store_augmented_h5(args.filename, args.backtrans, args.lemma, args.stem, args.swap, args.delete 0.2)
 
     # hyperparameter search
     if args.search is not None:
