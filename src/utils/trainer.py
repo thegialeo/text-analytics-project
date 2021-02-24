@@ -69,7 +69,10 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name, eng
         trainset = TensorDataset(train_input_tensor, train_segment_tensor, train_labels, extra_train_feat)
         testset = TensorDataset(test_input_tensor, test_segment_tensor, test_labels, extra_test_feat)
     elif multiple_dataset:
-        dataset_label = torch.tensor(list(df_train.source.values)).unsqueeze_(1)
+        train_dataset_label = torch.tensor(list(df_train.source.values)).unsqueeze_(1)
+        test_dataset_label = torch.tensor(list(df_test.source.values)).unsqueeze_(1)
+        trainset = TensorDataset(train_input_tensor, train_segment_tensor, train_labels, train_dataset_label)
+        testset = TensorDataset(test_input_tensor, test_segment_tensor, test_labels, test_dataset_label)
     else:
         trainset = TensorDataset(train_input_tensor, train_segment_tensor, train_labels)
         testset = TensorDataset(test_input_tensor, test_segment_tensor, test_labels)
@@ -132,7 +135,9 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name, eng
             segment = data[1].to(device)
             label = data[2].to(device)
             if engineered_features:
-                extra_feat = data[3].to(device) 
+                extra_feat = data[3].to(device)
+            if multiple_dataset:
+                dataset_label = data[3].to(device)
 
             # clear gradients
             optimizer.zero_grad()
@@ -143,6 +148,10 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name, eng
             # add engineered features
             if engineered_features:
                 features = torch.cat((features, extra_feat), 1)
+
+            # add dataset conditional label
+            if multiple_dataset:
+                features = torch.cat((features, dataset_label), 1)
 
             # prediction
             output = reg_model(features)
