@@ -17,6 +17,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--download", dest='download', action='store',
                         help="Download specific or all datasets. Options: 'all', 'TextComplexityDE19', 'Weebit', 'dw'")
+    parser.add_argument("--dset", dest='dset', action='store',
+                        help="Specify which datasets are used. Options: '0' = 'TextComplexityDE19','1' = 'Weebit','2' = 'dw'. Enter eg. '012' for all.")
     parser.add_argument("--create_h5", dest="create_h5", action='store_true',
                         help="Preprocess the downloaded datasets and save the result in a h5 file")
     parser.add_argument("--backtranslation", dest="backtrans", action='store_true',
@@ -37,7 +39,7 @@ if __name__ == "__main__":
                         help="Select experiment to perform. Options: 'compare_all', 'evaluate'")
     
 
-    parser.set_defaults(download=None, create_h5=False, backtrans=False, lemma=False, stem=False, swap=False, delete=False, filename=None, search=None, experiment=None)
+    parser.set_defaults(dset='0', download=None, create_h5=False, backtrans=False, lemma=False, stem=False, swap=False, delete=False, filename=None, search=None, experiment=None)
     args = parser.parse_args()
 
 
@@ -56,9 +58,15 @@ if __name__ == "__main__":
         else:
             raise ValueError("Input {} for --download is invalid. Choose one of the following: 'all', 'TextComplexityDE19', 'Weebit', 'dw'".format(args.download))
 
+   
+
     # preprocessing + augmentation
     if args.create_h5:
-        to_dataframe.store_augmented_h5(args.filename, args.backtrans, args.lemma, args.stem, args.swap, args.delete 0.2)
+        use_textcomp = True if '0' in args.dset else False
+        use_weebit = True if '1' in args.dset else False
+        use_dw = True if '2' in args.dset else False
+        print(use_textcomp, use_weebit, use_dw)
+        to_dataframe.store_augmented_h5(args.filename, use_textcomp, use_weebit, use_dw, args.backtrans, args.lemma, args.stem, args.swap, args.delete, 0.2)
 
     # hyperparameter search
     if args.search is not None:

@@ -110,12 +110,6 @@ def evaluate_baseline(
 
     # read data
     df_train, df_test = to_dataframe.read_augmented_h5(filename)
-    df_train = df_train[
-        df_train["source"] == "text_comp19"
-    ]  # TODO: remove once Raoul fixes his dataloader
-    df_test = df_test[
-        df_test["source"] == "text_comp19"
-    ]  # TODO: remove once Raoul fixes his dataloader
 
     # stopwords
     stopword_lst = preprocessing.get_stopwords()
