@@ -50,6 +50,7 @@ class word2vec:
         """Train Word2Vec model on corpus."""
         if self.pretrained:
             """Just load pretrained word2vec (finetuning not possible)"""
+            if 
             self.load_model(pretrained=True, print_path=False)
             self.wv = self.model.wv
             self.model.init_sims(replace=True)

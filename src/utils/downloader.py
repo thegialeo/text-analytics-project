@@ -3,9 +3,9 @@ import shutil
 import zipfile
 from distutils.dir_util import copy_tree
 from os.path import abspath, dirname, exists, join
+from tqdm import tqdm
 
 import requests
-#from git.repo.base import Repo
 
 
 def download_TextComplexityDE19():
