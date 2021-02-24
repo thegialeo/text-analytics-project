@@ -42,7 +42,9 @@ if __name__ == "__main__":
     parser.add_argument("--vectorizer", dest="vectorizer", action='store',
                         help="Specify which vectorizer method to use. Options: 'tfidf', 'count', 'hash', 'word2vec', 'pretrained_word2vec'")
     parser.add_argument("--method", dest="method", action='store',
-                        help="Specify which regression method to use. Options: 'linear', 'lasso', 'ridge', 'elastic-net', 'random-forest'")                                 
+                        help="Specify which regression method to use. Options: 'linear', 'lasso', 'ridge', 'elastic-net', 'random-forest'")
+    parser.add_argument("--save_name", dest="save_name", action='store',
+                        help="Name to save train model under. Only available for --experiment train_net (used for prototyping and hyperparameter tuning)")                                               
     
 
     parser.set_defaults(dset='0', download=None, create_h5=False, backtrans=False, lemma=False, stem=False, swap=False, delete=False, filename=None, search=None, experiment=None, extra_feat=False, vectorizer=None, method=None)
@@ -65,7 +67,6 @@ if __name__ == "__main__":
             raise ValueError("Input {} for --download is invalid. Choose one of the following: 'all', 'TextComplexityDE19', 'Weebit', 'dw'".format(args.download))
 
    
-
     # preprocessing + augmentation
     if args.create_h5:
         use_textcomp = True if '0' in args.dset else False
@@ -89,7 +90,9 @@ if __name__ == "__main__":
 
         # pretrained BERT + regression neural network
         if args.experiment == 'train_net':
-            trainer.train_model(args.filename, 20, [10, 15, 18, 20], 128, 1e-3, "test")
+            if args.save_name is None:
+                args.save_name = args.filename
+            trainer.train_model(args.filename, 20, [10, 15, 18, 20], 128, 1e-3, args.save_name)
 
 
 
