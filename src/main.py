@@ -47,7 +47,7 @@ if __name__ == "__main__":
                         help="Name to save train model under. Only available for --experiment train_net (used for prototyping and hyperparameter tuning)")                                               
     
 
-    parser.set_defaults(dset='0', download=None, create_h5=False, backtrans=False, lemma=False, stem=False, swap=False, delete=False, filename=None, search=None, experiment=None, extra_feat=False, vectorizer=None, method=None)
+    parser.set_defaults(dset='0', download=None, create_h5=False, backtrans=False, lemma=False, stem=False, swap=False, delete=False, filename=None, search=None, experiment=None, extra_feat=False, vectorizer=None, method=None, save_name=None)
     args = parser.parse_args()
 
 
