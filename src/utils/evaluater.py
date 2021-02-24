@@ -120,6 +120,10 @@ def evaluate_baseline(
     )
     X_test = vec_object.transform(df_test.raw_text)
 
+    if vec == "word2vec" or vec == "pretrained_word2vec":
+        X_train = np.array(X_train)
+        X_test = np.array(X_test)
+
     # add engineered features
     if engineered_features:
         extra_train_feat = sentencestats.construct_features(df_train.raw_text)

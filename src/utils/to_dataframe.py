@@ -456,7 +456,7 @@ def read_augmented_h5(filename = ""):
     return data["train"], data["test"]
 
 if __name__ == "__main__":
-    store_augmented_h5(use_weebit=True, backtrans=True)
+    store_augmented_h5(use_textcomp19=True)
 
 
 
