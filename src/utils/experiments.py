@@ -19,7 +19,7 @@ def benchmark_all(filename, engineered_features=False):
     """
 
     # set all benchmark parameters
-    vec_lst = ['tfidf', 'count', 'word2vec', 'pretrained_word2vec'] # hashing vectorizer omitted, because out of memory
+    vec_lst = ['word2vec'] #['tfidf', 'count', 'word2vec', 'pretrained_word2vec'] # hashing vectorizer omitted, because out of memory
     reg_lst = ['linear', 'lasso', 'ridge', 'elastic-net', 'random-forest']
  
     # run benchmark

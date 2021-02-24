@@ -4,6 +4,7 @@ from sklearn.feature_extraction.text import (
     TfidfVectorizer,
 )
 from utils import preprocessing, to_dataframe, word2vec
+import numpy as np
 
 
 def vectorizer_wrapper(
