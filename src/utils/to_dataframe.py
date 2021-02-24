@@ -1,6 +1,6 @@
 import pandas as pd
 import os
-from os.path import join, abspath, dirname
+from os.path import join, abspath, dirname, isfile
 import textstat
 from google_trans_new import google_translator
 import exploration
@@ -8,6 +8,9 @@ from sklearn.model_selection import train_test_split
 import nlpaug.augmenter.word as naw
 import spacy
 from nltk.stem import SnowballStemmer
+import downloader
+
+#from preprocessing import get_stopwords
 
 def text_comp19_to_df():
 
@@ -21,8 +24,16 @@ def text_comp19_to_df():
                     "data","TextComplexityDE19/ratings.csv")
 
     # read in csv file
-    print("Reading in TextComplexityDE19/ratings.csv")
-    corpus = pd.read_csv(csv_path, encoding='windows-1252')
+    print("Check for TextComplexityDE19/ratings.csv")
+    if isfile(csv_path):
+        print("Reading in TextComplexityDE19/ratings.csv")
+        corpus = pd.read_csv(csv_path, encoding='windows-1252')
+
+    else:
+        print("Downloading TextComplexityDE19 Dataset")
+        downloader.download_TextComplexityDE19()
+        print("Reading in TextComplexityDE19/ratings.csv")
+        corpus = pd.read_csv(csv_path, encoding='windows-1252')
 
     #Rename columns and insert source of this dataframe for consistency
     corpus = corpus.rename(
@@ -50,6 +61,7 @@ def weebit_to_df():
     """
 
     # List paths of all .txt files
+
     print("Reading in Weebit Ele-Txt, Int-Txt, Adv-Txt")
     elementary_path = join(dirname(dirname(dirname(abspath(__file__)))),
                            "data","WeebitDataset","Texts-SeparatedByReadingLevel","Ele-Txt")
@@ -59,6 +71,11 @@ def weebit_to_df():
                            "data","WeebitDataset","Texts-SeparatedByReadingLevel","Int-Txt")
 
     path_list = [elementary_path, advanced_path, intermediate_path]
+
+    # Check for availability of Weebit dataset
+    print("Check for weebit dataset")
+    if not (isfile(elementary_path) and isfile(advanced_path) and isfile(intermediate_path)):
+        downloader.download_Weebit()
 
     # create dictionary for creation of dataframe
     data_dict = {"raw_text": [], "rating": [], "source": []}
@@ -95,10 +112,27 @@ def weebit_to_df():
     #translate weebit dataset to german
     print("Translating Weebit dataset to german...")
     trans = google_translator()
+
     weebit_data["raw_text"] = weebit_data["raw_text"].\
         apply(lambda x: trans.translate(x, lang_tgt="de"))
 
     return weebit_data
+
+def store_translated_weebit_h5():
+    """
+    Saves the translated weebit dataset as a HDF5 file in the data folder.
+    """
+    #read in weebit dataset
+    translated_weebit = weebit_to_df()
+
+    #define filename of .HDF5 file
+    filename = "Weebit_translated.h5"
+
+    # define path of .HDF5 file
+    h5_path = join(dirname(dirname(dirname(abspath(__file__)))),
+                   "data", filename)
+
+    translated_weebit.to_hdf(h5_path,key="Weebit", mode="w")
 
 def dw_to_df():
 
@@ -109,7 +143,12 @@ def dw_to_df():
 
     #.h5 file path
     h5_path = join(dirname(dirname(dirname(abspath(__file__)))),
-                           "data", "dw", "dw.h5")
+                           "data","dw.h5")
+
+    # Check for availability of dw set
+    print("Check for dw dataset")
+    if not isfile(h5_path):
+        downloader.download_dw_set()
 
     #read in h5 file
     print("Reading in dw.h5")
@@ -148,12 +187,33 @@ def all_data():
 
     # load all datasets into dataframes and store them in variables
     text_comp19 = text_comp19_to_df()
-    #weebit = weebit_to_df()
     dw = dw_to_df()
 
+    # check if translated weebit dataset exists as .h5 file.
+    print("Check if translated weebit dataset exists...")
+
+    # define filename of .HDF5 file
+    filename = "Weebit_translated.h5"
+
+    # define path of .HDF5 file
+    h5_path = join(dirname(dirname(dirname(abspath(__file__)))),
+                   "data", filename)
+
+    if isfile(h5_path):
+        # read in .HDF5 file
+        weebit_h5obj = pd.HDFStore(h5_path)
+        weebit = weebit_h5obj["Weebit"]
+
+    else:
+        # store the translated weebit dataset in a .h5 file
+        store_translated_weebit_h5()
+        # read in .HDF5 file
+        weebit_h5obj = pd.HDFStore(h5_path)
+        weebit = weebit_h5obj["Weebit"]
+
     # append all dataframes to one dataframe
-    all_dataset = text_comp19.append(dw, ignore_index = True)
-    #all_dataset = all_dataset.append(dw, ignore_index = True)
+    all_dataset = text_comp19.append(weebit, ignore_index = True)
+    all_dataset = all_dataset.append(dw, ignore_index = True)
 
     # delete "\n" and other special symbols
     print("removing newline command")
@@ -171,20 +231,24 @@ def all_data():
     print("removing whitespace sequences from data")
     all_dataset["raw_text"] = all_dataset["raw_text"].apply(lambda x: exploration.remove_whitespace(x))
 
+    # Normalize Sentences
+    print("Normalizing sentences")
+    all_dataset["raw_text"] = all_dataset["raw_text"].apply(lambda x: exploration.normalize_sentence(x))
+
     #add word count to data
-    print("adding word count to data")
-    all_dataset['word_count'] = all_dataset['raw_text'].str.findall(r'(\w+)').str.len()
+    #print("adding word count to data")
+    #all_dataset['word_count'] = all_dataset['raw_text'].str.findall(r'(\w+)').str.len()
 
     #add flesch readability index to data
-    print("adding flesch readability index to data")
-    all_dataset['flesch_readablty'] = all_dataset['raw_text'].apply(textstat.flesch_reading_ease)
+    #print("adding flesch readability index to data")
+    #all_dataset['flesch_readablty'] = all_dataset['raw_text'].apply(textstat.flesch_reading_ease)
 
     return all_dataset
 
 
 def augmented_all(backtrans = False, lemmatization = False,
                   stemming = False, randword_swap = False,
-                  randword_del = False, test_size = 0.1, stopwords = False):
+                  randword_del = False, test_size = 0.1):
 
     """
     Returns the augmented training dataset
@@ -207,17 +271,17 @@ def augmented_all(backtrans = False, lemmatization = False,
     text_comp_train, text_comp_test = train_test_split(
         all_dataset[all_dataset["source"] == "text_comp19"], test_size=test_size)
 
-    #weebit_train, weebit_test = train_test_split(all_dataset[all_dataset["source"] == "Weebit"],
-     #                                            test_size=test_size)
+    weebit_train, weebit_test = train_test_split(all_dataset[all_dataset["source"] == "Weebit"],
+                                                 test_size=test_size)
 
     dw_train, dw_test = train_test_split(all_dataset[all_dataset["source"] == "dw"],
                                          test_size=test_size)
 
-    all_dataset_train = text_comp_train.append(dw_train, ignore_index=True)
-    #all_dataset_train = all_dataset_train.append(dw_train, ignore_index=True)
+    all_dataset_train = text_comp_train.append(weebit_train, ignore_index=True)
+    all_dataset_train = all_dataset_train.append(dw_train, ignore_index=True)
 
-    all_dataset_test = text_comp_test.append(dw_train, ignore_index=True)
-    #all_dataset_test = all_dataset_test.append(dw_train, ignore_index=True)
+    all_dataset_test = text_comp_test.append(weebit_test, ignore_index=True)
+    all_dataset_test = all_dataset_test.append(dw_test, ignore_index=True)
 
     ## Augmentation of data
     print("Start augmenting Data...")
@@ -230,7 +294,7 @@ def augmented_all(backtrans = False, lemmatization = False,
             from_model_name='transformer.wmt19.de-en',
             to_model_name='transformer.wmt19.en-de')
 
-        translated = all_dataset_train
+        translated = all_dataset_train[all_dataset_train["source"]!="Weebit"]
         translated["raw_text"] = translated["raw_text"] \
             .apply(lambda x: back_translation_aug.augment(x))
 
@@ -252,11 +316,6 @@ def augmented_all(backtrans = False, lemmatization = False,
         rand_deleted_data = all_dataset_train
         rand_deleted_data["raw_text"] = all_dataset_train["raw_text"].apply(lambda x: aug2.augment(x))
         all_dataset_train = all_dataset_train.append(rand_deleted_data, ignore_index=True)
-
-    # Remove Stopwords
-    if stopwords == True:
-        print("removing stopwords...")
-        pass
 
     # Lemmatization using spacy
     if lemmatization == True:
@@ -291,7 +350,7 @@ def store_augmented_h5(filename = "",backtrans = False, lemmatization = False,
     lemmatization : self explanatory
     stemming : self explanatory
     randword_swap : enables randomly swapping words around sentences
-    randword_del : enalbles randomly deleting words from sentences
+    randword_del : enables randomly deleting words from sentences
     test_size : gives the ratio of test to train set
 
     The file is saved in the same data folder where the original data also resides.
@@ -338,6 +397,7 @@ def read_augmented_h5(filename = ""):
 
 if __name__ == "__main__":
     store_augmented_h5()
+
 
 
 
