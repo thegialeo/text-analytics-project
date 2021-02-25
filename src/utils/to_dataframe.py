@@ -217,22 +217,22 @@ def all_data(use_textcomp19=False,use_weebit=False,use_dw=False):
             weebit = weebit_h5obj["Weebit"]
 
     # append all dataframes to one dataframe
-    if use_textcomp19:
+    if use_textcomp19 and not(use_weebit and use_dw):
         all_dataset = text_comp19
 
-    elif use_weebit:
+    elif use_weebit and not(use_textcomp19 and use_dw):
         all_dataset = weebit
 
-    elif use_dw:
+    elif use_dw and not(use_textcomp19 and use_weebit):
         all_dataset = dw
 
-    if (use_dw and use_weebit):
+    elif (use_dw and use_weebit and not use_textcomp19):
         all_dataset = dw.append(weebit, ignore_index=True)
 
-    elif (use_textcomp19 and use_weebit):
+    elif (use_textcomp19 and use_weebit and not use_dw):
         all_dataset = text_comp19.append(weebit, ignore_index=True)
 
-    elif (use_textcomp19 and use_dw):
+    elif (use_textcomp19 and use_dw and not use_weebit):
         all_dataset = text_comp19.append(dw, ignore_index=True)
 
     elif (use_dw and use_weebit and use_textcomp19):
@@ -299,43 +299,40 @@ def augmented_all(use_textcomp19=False,use_weebit=False,use_dw=False,
             all_dataset[all_dataset["source"] == 0], test_size=test_size)
 
     if use_weebit:
-        weebit_train, weebit_test = train_test_split(
-            all_dataset[all_dataset["source"] == 1], test_size=test_size)
+        weebit_train = all_dataset[all_dataset["source"] == 1]
 
     if use_dw:
-        dw_train, dw_test = train_test_split(
-            all_dataset[all_dataset["source"] == 2], test_size=test_size)
+        dw_train = all_dataset[all_dataset["source"] == 2]
 
-    if use_textcomp19 and not (use_weebit and use_dw):
+    if use_textcomp19 and not use_weebit and not use_dw:                                  #0
         all_dataset_train = text_comp_train
         all_dataset_test = text_comp_test
 
-    if use_weebit and not (use_textcomp19 and use_dw):
+    if use_weebit and not use_textcomp19 and not use_dw:                                   #1
+        print("No weebit test set available!")
         all_dataset_train = weebit_train
-        all_dataset_test = weebit_test
 
-    if use_dw and not (use_weebit and use_textcomp19):
+    if use_dw and not use_weebit and not use_textcomp19:                                  #2
+        print("No dw test set available!")
         all_dataset_train = dw_train
-        all_dataset_test = dw_test
 
-    if use_textcomp19 and use_weebit:
+    if use_textcomp19 and use_weebit and not use_dw:                                       #01
         all_dataset_train = text_comp_train.append(weebit_train, ignore_index=True)
-        all_dataset_test = text_comp_test.append(weebit_test, ignore_index=True)
+        all_dataset_test = text_comp_test
 
-    if use_weebit and use_dw:
+    if use_weebit and use_dw and not use_textcomp19:                                        #12
+        print("No weebit and dw test set available!")
         all_dataset_train = weebit_train.append(dw_train, ignore_index=True)
-        all_dataset_test = weebit_test.append(dw_test, ignore_index=True)
 
-    if use_textcomp19 and use_dw:
+    if use_textcomp19 and use_dw and not use_weebit:                                        #02
         all_dataset_train = text_comp_train.append(dw_train, ignore_index=True)
-        all_dataset_test = text_comp_test.append(dw_test, ignore_index=True)
+        all_dataset_test = text_comp_test
 
-    if use_textcomp19 and use_weebit and use_dw:
+    if use_textcomp19 and use_weebit and use_dw:                                           # 012
         all_dataset_train = text_comp_train.append(weebit_train, ignore_index=True)
         all_dataset_train = all_dataset_train.append(dw_train, ignore_index=True)
 
-        all_dataset_test = text_comp_test.append(weebit_test, ignore_index=True)
-        all_dataset_test = all_dataset_test.append(dw_test, ignore_index=True)
+        all_dataset_test = text_comp_test
 
     ## Augmentation of data
     print("Start augmenting Data...")
