@@ -203,13 +203,6 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name, eng
         test_MAE_log.append(MAE_test)
         test_r2_log.append(r2_test)
 
-        # print stats
-        print(
-            "epoch {} \t loss {:.5f} \t train_r2 {:.3f} \t test_r2 {:.3f} \t time {:.1f} sec".format(
-                epoch + 1, running_loss, r2_train, r2_test, time.time() - start
-            )
-        )
-
         # save logs
         file = open(join(log_path, save_name + '.txt'), 'w')
         print('Last Epoch:', epoch + 1, file=file)
@@ -229,6 +222,13 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name, eng
 
         # save model weights
         torch.save(reg_model.to('cpu').state_dict(), join(model_path, save_name + '.pt'))
+
+        # print stats
+        print(
+            "epoch {} \t loss {:.5f} \t train_r2 {:.3f} \t test_r2 {:.3f} \t time {:.1f} sec".format(
+                epoch + 1, running_loss, r2_train, r2_test, time.time() - start
+            )
+        )
 
     # plots 
     plot_names = ["loss", "train_MSE", "train_RMSE", "train_MAE", "train_r2", "test_MSE", "test_RMSE", "test_MAE", "test_r2"]
