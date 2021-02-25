@@ -191,6 +191,10 @@ Hyperparameter tuning for word2vec: linear search along hyperparameter (generate
 
 Note: experiment results are saved in folders 'result', 'figures' and 'models'
 
+## License
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 
 
 
