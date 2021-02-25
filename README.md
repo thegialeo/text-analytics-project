@@ -72,6 +72,16 @@ Run pretrained BERT + 3-layer regression network:
 
 Additional tag: --save_name name (name to save trained model under, used for training multiple models without overwriting the previous one. Default: name specified with --filename
 
+Hyperparameter tuning for word2vec: linear search along hyperparameter (generate plots and results saved to txt file)
+
+> pipenv run main --search [hyperparameter, start, end, step, model, filename]
+
+hyperparameter: 'feature', 'window', 'count', 'epochs', 'lr' or 'min_lr' </br>
+start: start value of linear search </br>
+end: end value of linear search </br>
+step: step size of linear search </br>
+model: only option so far 'word2vec' </br>
+filename: h5 filename to load data from </br>
 
 
 

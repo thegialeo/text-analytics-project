@@ -76,7 +76,7 @@ if __name__ == "__main__":
 
     # hyperparameter search
     if args.search is not None:
-            traverser.traverser(*args.search, args.pretrained)
+            traverser.traverser(*args.search)
 
     # experiments
     if args.experiment is not None:
