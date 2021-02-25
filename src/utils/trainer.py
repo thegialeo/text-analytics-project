@@ -103,7 +103,7 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name, eng
     # prepare regression model
     hidden_size = 512
     if engineered_features:
-        hidden_size += 6
+        hidden_size += 21
     if multiple_dataset:
         hidden_size += 1
 
