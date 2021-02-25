@@ -59,15 +59,15 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name, eng
     test_input_tensor, test_segment_tensor = bert_model.preprocessing(test_sentences)
 
     # extract labels and cast to PyTorch tensor
-    train_labels = torch.tensor(list(df_train.rating.values)).unsqueeze_(1)
-    test_labels = torch.tensor(list(df_test.rating.values)).unsqueeze_(1)
+    train_labels = torch.tensor(list(df_train.rating.values), dtype=torch.float).unsqueeze_(1)
+    test_labels = torch.tensor(list(df_test.rating.values), dtype=torch.float).unsqueeze_(1)
 
     # prepare dataset
     if engineered_features and multiple_dataset:
         extra_train_feat = torch.from_numpy(sentencestats.construct_features(train_sentences))
         extra_test_feat = torch.from_numpy(sentencestats.construct_features(test_sentences))
-        train_dataset_label = torch.tensor(list(df_train.source.values)).unsqueeze_(1)
-        test_dataset_label = torch.tensor(list(df_test.source.values)).unsqueeze_(1)
+        train_dataset_label = torch.tensor(list(df_train.source.values), dtype=torch.float).unsqueeze_(1)
+        test_dataset_label = torch.tensor(list(df_test.source.values), dtype=torch.float).unsqueeze_(1)
         trainset = TensorDataset(train_input_tensor, train_segment_tensor, train_labels, extra_train_feat, train_dataset_label)
         testset = TensorDataset(test_input_tensor, test_segment_tensor, test_labels, extra_test_feat, test_dataset_label)
     elif engineered_features:
@@ -76,8 +76,8 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name, eng
         trainset = TensorDataset(train_input_tensor, train_segment_tensor, train_labels, extra_train_feat)
         testset = TensorDataset(test_input_tensor, test_segment_tensor, test_labels, extra_test_feat)
     elif multiple_dataset:
-        train_dataset_label = torch.tensor(list(df_train.source.values)).unsqueeze_(1)
-        test_dataset_label = torch.tensor(list(df_test.source.values)).unsqueeze_(1)
+        train_dataset_label = torch.tensor(list(df_train.source.values), dtype=torch.float).unsqueeze_(1)
+        test_dataset_label = torch.tensor(list(df_test.source.values), dtype=torch.float).unsqueeze_(1)
         trainset = TensorDataset(train_input_tensor, train_segment_tensor, train_labels, train_dataset_label)
         testset = TensorDataset(test_input_tensor, test_segment_tensor, test_labels, test_dataset_label)
     else:
