@@ -12,7 +12,7 @@ import wordlists
 
 def construct_features(sentence, verbose=False):
     """constructs a #sentences × #features numpy array, rows are sentences, columns
-    are features. use by passing a dataframe column containing (normalized) sentences.
+    are features. use by passing a dataframe column containing sentences.
 
     Kwargs:
     sentence -- a dataframe column containing normalized sentences.
@@ -21,10 +21,30 @@ def construct_features(sentence, verbose=False):
 
     # ======= Counting Commas ========
     my_df["commas"] = count_commas(sentence)
-    sentence = normalization.normalize_sentence(sentence)
     # sadly, counting commas only works when they haven't already been removed
     if my_df["commas"].isnull().all():
         my_df.drop(columns="commas")
+
+    # ======= POS tag density =======
+    # ideally the sentence is not normalized ahead of time, for higher quality parsing
+    my_df[
+        [
+            "nouns",
+            "propernouns",
+            "pronouns",
+            "conj",
+            "adj",
+            "adv",
+            "ver",
+            "aux",
+            "not_pron_or_det",
+            "numnp",
+            "parsetreeheight",
+        ]
+    ] = POS_tag_density(sentence)
+
+    # ======= from here on, the sentence is normalized
+    sentence = normalization.normalize_sentence(sentence)
 
     my_df[["words", "letters"]] = count_words_and_letters(sentence)
     my_df["syllables"] = sentence.str.split().apply(count_syllables)
@@ -39,21 +59,6 @@ def construct_features(sentence, verbose=False):
         my_df["long_words"],
         my_df["monosyllables"],
     )
-
-    # ======= POS tag density =======
-    my_df[
-        [
-            "nouns",
-            "propernouns",
-            "pronouns",
-            "conj",
-            "adj",
-            "adv",
-            "ver",
-            "aux",
-            "not_pron_or_det",
-        ]
-    ] = POS_tag_density(sentence)
 
     if verbose:
         print(
@@ -253,6 +258,8 @@ def POS_tag_density(sentences):
     ver_list = []
     aux_list = []
     not_pron_or_det_list = []
+    numnp_list = []
+    parsetreeheight_list = []
 
     for sentence in sentences:
         doc = nlp(sentence)
@@ -297,6 +304,9 @@ def POS_tag_density(sentences):
         ver = ver * 1.0 / len(doc)
         aux = aux * 1.0 / len(doc)
 
+        numnp = len(list(doc.noun_chunks))  # not sure how well that works
+        parsetreeheight = tree_height(list(doc.sents)[0].root)
+
         nouns_list.append(nouns)
         propernouns_list.append(propernouns)
         pronouns_list.append(pronouns)
@@ -306,6 +316,8 @@ def POS_tag_density(sentences):
         ver_list.append(ver)
         aux_list.append(aux)
         not_pron_or_det_list.append(not_pron_or_det)
+        numnp_list.append(numnp)
+        parsetreeheight_list.append(parsetreeheight)
 
     return pd.DataFrame(
         {
@@ -318,8 +330,24 @@ def POS_tag_density(sentences):
             "ver": ver_list,
             "aux": aux_list,
             "not_pron_or_det": not_pron_or_det_list,
+            "numnp": numnp_list,
+            "parsetreeheight": parsetreeheight_list,
         }
     )
+
+
+def tree_height(root):
+    """
+    Find the maximum depth (height) of the dependency parse of a spacy sentence by starting with its root
+    Code adapted from https://stackoverflow.com/questions/35920826/how-to-find-height-for-non-binary-tree
+    :param root: spacy.tokens.token.Token
+    :return: int, maximum height of sentence's dependency parse tree
+    from https://gist.github.com/drussellmrichie/47deb429350e2e99ffb3272ab6ab216a
+    """
+    if not list(root.children):
+        return 1
+    else:
+        return 1 + max(tree_height(x) for x in root.children)
 
 
 if __name__ == "__main__":
@@ -343,38 +371,56 @@ if __name__ == "__main__":
 
     feature_matrix = construct_features(df_all["sentence"], verbose=True)
     print(feature_matrix)
-    print("\n", feature_matrix.iloc[0, :])
+    print("5555555 6666666")
+
+    for i in range(10):
+        print(df_all["sentence"].iloc[i])
+        print("\n", feature_matrix.iloc[i, :])
+        print("======= =======")
 
     nlp = spacy.load("de_core_news_sm")
-    doc = df_all["sentence"][0]
+    doc = df_all["sentence"][1]
+    doc = "Wegen dieser leichten Vergänglichkeit wurde ,Seifenblase‘ zu einer Metapher für etwas, das zwar anziehend, aber dennoch inhalts- und gehaltlos ist.".lower()
     print(doc)
     doc = nlp(doc)
 
-    print(len(doc))
-    for token in doc:
-        print(
-            token.text,
-            token.lemma_,
-            token.pos_,
-            token.tag_,
-            "=",
-            spacy.explain(token.tag_),
-            "=======",
-            token.dep_,
-            token.shape_,
-            token.is_alpha,
-            token.is_stop,
-            # token.morph,
-        )
+    if True:
+        print(len(doc))
+        for token in doc:
+            print(
+                token.text,
+                token.lemma_,
+                token.pos_,
+                token.tag_,
+                "=",
+                spacy.explain(token.tag_),
+                "=======",
+                token.dep_,
+                token.shape_,
+                token.is_alpha,
+                token.is_stop,
+                # token.morph,
+            )
 
-    print("Explain ADP:", spacy.explain("ADP"))
-    print("Explain DET:", spacy.explain("DET"))
-    print("Explain PRON:", spacy.explain("PRON"))
-    print("Explain SCONJ:", spacy.explain("SCONJ"))
-    print("Explain CCONJ:", spacy.explain("CCONJ"))
-    print("Explain VERB:", spacy.explain("VERB"))
-    print("Explain AUX:", spacy.explain("AUX"))
-    print("Explain INTJ:", spacy.explain("INTJ"))
+    print("==============")
+    for i in range(1):
+        doc = df_all["sentence"][i]
+        doc = nlp(doc)
+        print(doc, "\n", len(list(doc.noun_chunks)))
+
+        for chunk in doc.noun_chunks:
+            print(chunk.text)
+        print("==============")
+
+    if False:
+        print("Explain ADP:", spacy.explain("ADP"))
+        print("Explain DET:", spacy.explain("DET"))
+        print("Explain PRON:", spacy.explain("PRON"))
+        print("Explain SCONJ:", spacy.explain("SCONJ"))
+        print("Explain CCONJ:", spacy.explain("CCONJ"))
+        print("Explain VERB:", spacy.explain("VERB"))
+        print("Explain AUX:", spacy.explain("AUX"))
+        print("Explain INTJ:", spacy.explain("INTJ"))
 
     # for chunk in doc.noun_chunks:
     #    print(chunk.text, chunk.root.text, chunk.root.dep_, chunk.root.head.text)
