@@ -211,7 +211,7 @@ def evaluate_model(model, bert_model, dataloader, engineered_features=False, mul
     with torch.no_grad():
         for i, data in enumerate(dataloader):
             # move batch and model to device
-            reg_model.to(device)
+            model.to(device)
             input_id = data[0].to(device)
             segment = data[1].to(device)
             label = data[2].to(device)
