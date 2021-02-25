@@ -18,7 +18,7 @@ from utils import (
     sentencestats,
     to_dataframe,
     vectorizer,
-    gpu
+    gpu,
 )
 
 
@@ -177,7 +177,9 @@ def evaluate(label, pred):
     return MSE, RMSE, MAE, r_square
 
 
-def evaluate_model(model, bert_model, dataloader, engineered_features=False, multiple_dataset=False):
+def evaluate_model(
+    model, bert_model, dataloader, engineered_features=False, multiple_dataset=False
+):
     """Evaluate regression metrics of a model on a dataset
 
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
@@ -187,7 +189,7 @@ def evaluate_model(model, bert_model, dataloader, engineered_features=False, mul
         bert_model (torch.nn.Module): BERT PyTorch model for feature extraction
         dataloader (PyTorch dataloader): PyTorch dataloader of dataset
         engineered_features (bool, optional): contenate engineered features to vectorized sentence
-        multiple_dataset (bool, optional): use multiple datasets 
+        multiple_dataset (bool, optional): use multiple datasets
     Return:
         MSE_mean (double): Mean Square Error
         RMSE_mean (double): Root Mean Square Error
@@ -200,7 +202,7 @@ def evaluate_model(model, bert_model, dataloader, engineered_features=False, mul
 
     # move model to device
     model = model.to(device)
-    
+
     # record metrics per batch
     MSE_lst = []
     RMSE_lst = []
@@ -232,8 +234,10 @@ def evaluate_model(model, bert_model, dataloader, engineered_features=False, mul
 
             # add dataset conditional label (always 0)
             if multiple_dataset:
-                features = torch.cat((features, torch.tensor(np.zeros(dataset_label.shape))), 1)
-            
+                features = torch.cat(
+                    (features, torch.tensor(np.zeros(dataset_label.shape))), 1
+                )
+
             # prediction
             output = model(features)
 
@@ -251,10 +255,3 @@ def evaluate_model(model, bert_model, dataloader, engineered_features=False, mul
     r_square_mean = sum(r_square_lst) / len(r_square_lst)
 
     return MSE_mean, RMSE_mean, MAE_mean, r_square_mean
-
-
-
-         
-
-
-

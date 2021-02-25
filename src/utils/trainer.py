@@ -12,7 +12,16 @@ import matplotlib.pyplot as plt
 from utils import BERT, evaluater, gpu, regression, to_dataframe, sentencestats
 
 
-def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name, engineered_features=False, multiple_dataset=False):
+def train_model(
+    filename,
+    num_epoch,
+    step_epochs,
+    batch_size,
+    lr,
+    save_name,
+    engineered_features=False,
+    multiple_dataset=False,
+):
     """Train a model on the given dataset
 
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
@@ -25,7 +34,7 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name, eng
         lr (float): learning rate
         save_name (string): name under which to save trained model and results
         engineered_features (bool, optional): contenate engineered features to vectorized sentence
-        multiple_dataset (bool, optional): use multiple datasets 
+        multiple_dataset (bool, optional): use multiple datasets
     """
 
     # save paths
@@ -59,27 +68,67 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name, eng
     test_input_tensor, test_segment_tensor = bert_model.preprocessing(test_sentences)
 
     # extract labels and cast to PyTorch tensor
-    train_labels = torch.tensor(list(df_train.rating.values), dtype=torch.float).unsqueeze_(1)
-    test_labels = torch.tensor(list(df_test.rating.values), dtype=torch.float).unsqueeze_(1)
+    train_labels = torch.tensor(
+        list(df_train.rating.values), dtype=torch.float
+    ).unsqueeze_(1)
+    test_labels = torch.tensor(
+        list(df_test.rating.values), dtype=torch.float
+    ).unsqueeze_(1)
 
     # prepare dataset
     if engineered_features and multiple_dataset:
-        extra_train_feat = torch.from_numpy(sentencestats.construct_features(train_sentences))
-        extra_test_feat = torch.from_numpy(sentencestats.construct_features(test_sentences))
-        train_dataset_label = torch.tensor(list(df_train.source.values), dtype=torch.float).unsqueeze_(1)
-        test_dataset_label = torch.tensor(list(df_test.source.values), dtype=torch.float).unsqueeze_(1)
-        trainset = TensorDataset(train_input_tensor, train_segment_tensor, train_labels, extra_train_feat, train_dataset_label)
-        testset = TensorDataset(test_input_tensor, test_segment_tensor, test_labels, extra_test_feat, test_dataset_label)
+        extra_train_feat = torch.from_numpy(
+            sentencestats.construct_features(train_sentences)
+        )
+        extra_test_feat = torch.from_numpy(
+            sentencestats.construct_features(test_sentences)
+        )
+        train_dataset_label = torch.tensor(
+            list(df_train.source.values), dtype=torch.float
+        ).unsqueeze_(1)
+        test_dataset_label = torch.tensor(
+            list(df_test.source.values), dtype=torch.float
+        ).unsqueeze_(1)
+        trainset = TensorDataset(
+            train_input_tensor,
+            train_segment_tensor,
+            train_labels,
+            extra_train_feat,
+            train_dataset_label,
+        )
+        testset = TensorDataset(
+            test_input_tensor,
+            test_segment_tensor,
+            test_labels,
+            extra_test_feat,
+            test_dataset_label,
+        )
     elif engineered_features:
-        extra_train_feat = torch.from_numpy(sentencestats.construct_features(train_sentences))
-        extra_test_feat = torch.from_numpy(sentencestats.construct_features(test_sentences))
-        trainset = TensorDataset(train_input_tensor, train_segment_tensor, train_labels, extra_train_feat)
-        testset = TensorDataset(test_input_tensor, test_segment_tensor, test_labels, extra_test_feat)
+        extra_train_feat = torch.from_numpy(
+            sentencestats.construct_features(train_sentences)
+        )
+        extra_test_feat = torch.from_numpy(
+            sentencestats.construct_features(test_sentences)
+        )
+        trainset = TensorDataset(
+            train_input_tensor, train_segment_tensor, train_labels, extra_train_feat
+        )
+        testset = TensorDataset(
+            test_input_tensor, test_segment_tensor, test_labels, extra_test_feat
+        )
     elif multiple_dataset:
-        train_dataset_label = torch.tensor(list(df_train.source.values), dtype=torch.float).unsqueeze_(1)
-        test_dataset_label = torch.tensor(list(df_test.source.values), dtype=torch.float).unsqueeze_(1)
-        trainset = TensorDataset(train_input_tensor, train_segment_tensor, train_labels, train_dataset_label)
-        testset = TensorDataset(test_input_tensor, test_segment_tensor, test_labels, test_dataset_label)
+        train_dataset_label = torch.tensor(
+            list(df_train.source.values), dtype=torch.float
+        ).unsqueeze_(1)
+        test_dataset_label = torch.tensor(
+            list(df_test.source.values), dtype=torch.float
+        ).unsqueeze_(1)
+        trainset = TensorDataset(
+            train_input_tensor, train_segment_tensor, train_labels, train_dataset_label
+        )
+        testset = TensorDataset(
+            test_input_tensor, test_segment_tensor, test_labels, test_dataset_label
+        )
     else:
         trainset = TensorDataset(train_input_tensor, train_segment_tensor, train_labels)
         testset = TensorDataset(test_input_tensor, test_segment_tensor, test_labels)
@@ -103,7 +152,7 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name, eng
     # prepare regression model
     hidden_size = 512
     if engineered_features:
-        hidden_size += 6
+        hidden_size += 21
     if multiple_dataset:
         hidden_size += 1
 
@@ -204,24 +253,39 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name, eng
         test_r2_log.append(r2_test)
 
         # save logs
-        file = open(join(log_path, save_name + '.txt'), 'w')
-        print('Last Epoch:', epoch + 1, file=file)
-        print('Final Loss:', loss_log[-1], file=file)
-        print('Final Train MSE:', train_MSE_log[-1], file=file)
-        print('Final Train RMSE:', train_RMSE_log[-1], file=file)
-        print('Final Train MAE:', train_MAE_log[-1], file=file)
-        print('Final Train R2:', train_r2_log[-1], file=file)
-        print('Final Test MSE:', test_MSE_log[-1], file=file)
-        print('Final Test RMSE:', test_RMSE_log[-1], file=file)
-        print('Final Test MAE:', test_MAE_log[-1], file=file)
-        print('Final Test R2:', test_r2_log[-1], file=file)
+        file = open(join(log_path, save_name + ".txt"), "w")
+        print("Last Epoch:", epoch + 1, file=file)
+        print("Final Loss:", loss_log[-1], file=file)
+        print("Final Train MSE:", train_MSE_log[-1], file=file)
+        print("Final Train RMSE:", train_RMSE_log[-1], file=file)
+        print("Final Train MAE:", train_MAE_log[-1], file=file)
+        print("Final Train R2:", train_r2_log[-1], file=file)
+        print("Final Test MSE:", test_MSE_log[-1], file=file)
+        print("Final Test RMSE:", test_RMSE_log[-1], file=file)
+        print("Final Test MAE:", test_MAE_log[-1], file=file)
+        print("Final Test R2:", test_r2_log[-1], file=file)
 
         # save variables
-        with open(join(log_path, save_name + '.pkl'), 'wb') as f:
-            pickle.dump([loss_log, train_MSE_log, train_RMSE_log, train_MAE_log, train_r2_log, test_MSE_log, test_RMSE_log, test_MAE_log, test_r2_log], f)
+        with open(join(log_path, save_name + ".pkl"), "wb") as f:
+            pickle.dump(
+                [
+                    loss_log,
+                    train_MSE_log,
+                    train_RMSE_log,
+                    train_MAE_log,
+                    train_r2_log,
+                    test_MSE_log,
+                    test_RMSE_log,
+                    test_MAE_log,
+                    test_r2_log,
+                ],
+                f,
+            )
 
         # save model weights
-        torch.save(reg_model.to('cpu').state_dict(), join(model_path, save_name + '.pt'))
+        torch.save(
+            reg_model.to("cpu").state_dict(), join(model_path, save_name + ".pt")
+        )
 
         # print stats
         print(
@@ -230,20 +294,35 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name, eng
             )
         )
 
-    # plots 
-    plot_names = ["loss", "train_MSE", "train_RMSE", "train_MAE", "train_r2", "test_MSE", "test_RMSE", "test_MAE", "test_r2"]
-    for i, log in enumerate([loss_log, train_MSE_log, train_RMSE_log, train_MAE_log, train_r2_log, test_MSE_log, test_RMSE_log, test_MAE_log, test_r2_log]):
+    # plots
+    plot_names = [
+        "loss",
+        "train_MSE",
+        "train_RMSE",
+        "train_MAE",
+        "train_r2",
+        "test_MSE",
+        "test_RMSE",
+        "test_MAE",
+        "test_r2",
+    ]
+    for i, log in enumerate(
+        [
+            loss_log,
+            train_MSE_log,
+            train_RMSE_log,
+            train_MAE_log,
+            train_r2_log,
+            test_MSE_log,
+            test_RMSE_log,
+            test_MAE_log,
+            test_r2_log,
+        ]
+    ):
         plt.figure(num=None, figsize=(15, 10))
         plt.plot(log)
         plt.grid(True, which="both")
-        plt.xlabel('epoch', fontsize=14)
+        plt.xlabel("epoch", fontsize=14)
         plt.ylabel(plot_names[i], fontsize=14)
-        plt.savefig(join(fig_path, save_name + "_" + plot_names[i] + '.png'))
+        plt.savefig(join(fig_path, save_name + "_" + plot_names[i] + ".png"))
         plt.close("all")
-
-
-
-
-
-
-

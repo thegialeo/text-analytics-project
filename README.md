@@ -1,49 +1,20 @@
 # Automatic Complexity Assessment of German Sentences
-### Team Members
-Leo Nguyen
-Raoul Berger
-Konrad Straube
-Till Nocher
+## Team Members
+Leo Nguyen </br>
+Raoul Berger </br>
+Konrad Straube </br>
+Till Nocher </br>
 
-### Mail Addresses
-Leo.Nguyen@gmx.de
-raoulb97@gmail.com
-konrad.straube@outlook.com
-nocher@cl.uni-heidelberg.de
+## Mail Addresses
+Leo.Nguyen@gmx.de </br>
+raoulb97@gmail.com </br>
+konrad.straube@outlook.com </br>
+nocher@cl.uni-heidelberg.de </br>
 
 
-### Existing Code Fragments
-### Utilized libraries
-
-## Run code (main entry point will be set later)
-Download dataset:
-> python download_data.py
-
-## Project State
-
-## Data Analysis
-
-Our primary data source is the TextComplexityDE 19 dataset (https://github.com/babaknaderi/TextComplexityDE), which contains 1000 German sentences, labelled by foreign language learners of levels A and B on a 7 point Likert scale, where 1 indicates a low complexity, high readability sentence and 7 indicates the opposite. 900 of the sentences were sourced from 23 German Wikipedia articles, the other 100 were sourced from Leichte Sprache. Each sentence in the dataset was labelled by at least 5 persons, their mean rating is provided in the dataset. Aside from complexity/readability, scores for understandability and lexical difficulty of the sentence were also collected.
-
-![image](figures/Figure_1.png)
-
-Figure: Pie chart showing the distribution of (rounded) ratings.
-
-The ratings are not evenly distributed, as no sentence received, on average, a 7, and few received a 6. Of the sentences receiving a 1 complexity rating, the vast majority is from the Leichte Sprache data source.
-
-![image](figures/Figure_2.png)
-
-Figure: Stacked bar chart displaying the rating distribution, coloured by source, with median value
-
-We wrote functions for text normalization, to facilitate gathering text statistics. Our text normalization functions transform all letters to lower case, replace hyphens with spaces, remove all punctuation and remove all digits. We then gather statistics, including number of words, number of letters and, with a simple method, number of syllables.
-
-Additionally, we tried a number of different simple metrics which take into account number of words, letters, syllables, polysyllables, monosyllables etc and tested their correlation to the complexity ratings
-
-![image](figures/Figure_3.png)
-
-Figure: Correlation between Automated Readability Index and complexity labels
-
-Interestingly, all of the simple formulas show a weaker correlation to the labels than the very simple metric which is the number of letters in the sentence.
+## Pretrained models:
+pretrained BERT from [Deepset AI](https://deepset.ai/german-bert) </br>
+pretrained word2vec from [NLPL repository](http://vectors.nlpl.eu/repository/) (model ID: 45)
 
 ## Additional Corpora Used
 * TextComplexityDE19
@@ -59,72 +30,188 @@ Interestingly, all of the simple formulas show a weaker correlation to the label
   
   5 levels of difficulty, 625 documents each
 
+## Utilized libraries
 
-## Clustering Results (to be updated, in progress)
+antlr4-python3-runtime 4.8,
+appdirs 1.4.4,
+beautifulsoup4 4.9.3,
+black 20.8b1,
+blis 0.7.4,
+bs4 0.0.1,
+bz2file 0.98,
+cached-property 1.5.2,
+catalogue 2.0.1,
+certifi 2020.12.5,
+cffi 1.14.5,
+cfgv 3.2.0,
+chardet 4.0.0,
+click 7.1.2,
+cycler 0.10.0,
+cymem 2.0.5,
+Cython 0.29.21,
+dataclasses 0.6,
+distlib 0.3.1,
+fairseq 0.10.2,
+fastBPE 0.1.0,
+filelock 3.0.12,
+gensim 3.8.3,
+gitdb 4.0.5,
+GitPython 3.1.13,
+google-trans-new 1.1.9,
+h5py 3.1.0,
+hydra-core 1.0.6,
+identify 1.5.13,
+idna 2.10,
+importlib-metadata 3.4.0,
+importlib-resources 5.1.0,
+Jinja2 2.11.3,
+joblib 1.0.1,
+kiwisolver 1.3.1,
+langdetect 1.0.8,
+lxml 4.6.2,
+MarkupSafe 1.1.1,
+matplotlib 3.3.4,
+murmurhash 1.0.5,
+mypy-extensions 0.4.3,
+nlpaug 1.1.2,
+nltk 3.5,
+nodeenv 1.5.0,
+numexpr 2.7.2,
+numpy 1.20.1,
+omegaconf 2.0.6,
+packaging 20.9,
+pandas 1.2.2,
+pathspec 0.8.1,
+pathy 0.4.0,
+Pillow 8.1.0,
+plac 1.1.3,
+pluggy 0.13.1,
+portalocker 2.2.1,
+pre-commit 2.10.1,
+preshed 3.0.5,
+py 1.10.0,
+pycparser 2.20,
+pydantic 1.7.3,
+pygit 0.1,
+pyparsing 2.4.7,
+Pyphen 0.10.0,
+python-dateutil 2.8.1,
+pytz 2021.1,
+PyYAML 5.4.1,
+regex 2020.11.13,
+requests 2.25.1,
+sacrebleu 1.5.0,
+sacremoses 0.0.43,
+scikit-learn 0.24.1,
+scipy 1.6.1,
+six 1.15.0,
+sklearn 0.0,
+smart-open 3.0.0,
+smmap 3.0.5,
+soupsieve 2.2,
+spacy 3.0.3,
+spacy-legacy 3.0.1,
+srsly 2.4.0,
+stop-words 2018.7.23,
+tables 3.6.1,
+textstat 0.7.0,
+thinc 8.0.1,
+threadpoolctl 2.1.0,
+tokenizers 0.10.1,
+toml 0.10.2,
+torch 1.7.1,
+tox 3.22.0,
+tqdm 4.57.0,
+transformers 4.3.2,
+translate 3.5.0,
+typed-ast 1.4.2,
+typer 0.3.2,
+typing-extensions 3.7.4.3,
+urllib3 1.26.3,
+virtualenv 20.4.2,
+wasabi 0.8.2,
+zipp 3.4.0
 
-The plot indicates that the features extracted with sklearn TfidfVectorizer are not indicative of the sentence complexity. There is a high change that brute-force Regression might not work well. Note that the preprossing was minimal at this point. However, we should also consider alternative feature spaces/vectorizations for the sentences. 
-
-TODO: Explore further Vectorizer options + improve preprocessing
-
-The homogeneity score shows a value close to zero, which means the cluster found with KMeans are completely different from the rounded MOS Complexity label(k=6, the plot above shows that there are no sentences for the highest difficulty level 7 -> effectively there are only 6 labels). Maybe KMeans clustered by topic other something else (to be further explored). The silhouette score shows that we have strongly overlapping clusters. This further make us sceptical, if the Tfidf feature space is suitable (it doesn't seem too promising).   
-
-homogeneity score: 0.0084
-silhouette score: -0.0026
-
-![image](figures/KMeans_clustering_MOS_Complexity.png)
-
-Figure: Comparison Clustering Results against MOS Complexity (rounded to nearest integer)
 
 ## Setup
 
-1. [Install](https://pipenv.pypa.io/en/latest/#install-pipenv-today) ```pipenv```. You might want to set ```export PIPENV_VENV_IN_PROJECT=1``` in your ```.bashrc/.zshrc``` for local virtual environments. Thereby you are making sure that all dependencies for your application are stored in the same directory under the `.venv` folder.
-<br>
+### Install dependencies
+Install all necessary dependencies with:
 
-2. Clone repository into preferred directory (or simply download the source code and rename the folder as you like): `git clone https://github.com/jomazi/Python-Default`
-<br>
+> pipenv install 
 
-3. Install packages: `cd Python-Default && pipenv install --dev`
-<br>
+### Download datasets: 
 
-4. Init ```.env``` file. Use this file to store all your environment variables, such as credentials or encryption phrases. This file should never be added to your public repository but should always stay local: `mv .example.env .env`
-<br>
+> pipenv run main --download all
 
-5. Activate virtual environment: `pipenv shell`
-<br>
+To download a specific dataset, replace 'all' with ['TextComplexityDE19', 'Weebit', 'dw']
 
-6. Test setup: `pipenv run main`
-<br>
+### Preprocessing and Augmentation
+Run preprocessing and augmentation on datasets and save results in h5 file:
 
-7. Install Git hooks. They help you to execute tasks before your code is committed (see [Working with Git](#working-with-git)). Learn more about pre-commit in the [official docs](https://pre-commit.com/). ([Installation](https://pre-commit.com/#installation) and [Activation](https://pre-commit.com/#3-install-the-git-hook-scripts) are described here) In our case they are used to make sure that the application code is well formatted using [black](https://github.com/psf/black)/[autopep8](https://github.com/hhatto/autopep8), has no syntax errors using [flake8](https://gitlab.com/pycqa/flake8) and that the dependency imports are well sorted using [isort](https://github.com/PyCQA/isort). The pre-commit instructions are given by the `.pre-commit-config.yaml`. Any isort specific settings are given by the `.isort.cfg` file.
+> pipenv run main --create_h5 --filename example.h5 
 
-**Note:** To deactivate the environment again, simply run `deactivate`.
+Additional tags: 
+- --dset with argument 0 = 'TextComplexityDE19', 1 = 'Weebit', 2 = 'dw'. Example: --dset 012 for all datasets.
+- --lemmatization
+- --stemming
+- --random_swap
+- --random_deletion
 
-## Testing
+Example: apply lemmatization
 
-A script to automatically execute tests is already defined in the project's `Pipfile`. Therefore you can simply run: `pipenv run test`
-To generate a report on code coverage alongside run: `pipenv run test && pipenv run report`
+> pipenv run main --create_h5 --filename example.h5 --lemmatization
 
-## Working with Git
+Note: basic preprocessing will always be applied 
 
-In case you do not know about Git yet it is now time to make yourself familiar with it :)
-There are already plenty of very good tutorials about Git out there which is why  we refer to them. For a good introduction written in German you might want to go to [Roger Dudler's awesome post](https://rogerdudler.github.io/git-guide/index.de.html).
 
-### Git Workflow
+## Usage
 
-To coordinate the software development process a set of guidelines are necessary. It is helpful to rely on the [GitHub Flow](https://guides.github.com/introduction/flow/) strategy which defines a branch-based workflow. Essentially, it boils down to the following steps:
+Run experiment for specific vectorizer and regression method:
 
-1. Create a `main/master` branch. This is done automatically by creating a new project.
-2. Create an issue that describes a bug or asks for an additional feature.
-3. Add features or solve bug fixes by creating new branches via `git checkout`. Those branches should be named `feature-*` or `fix-*` accordingly. Assign the issue that the code changes are meant to solve.
-4. Commit to new feature or fix branch. Make sure that you also write `tests` which cover the new features or show that the bug is solved. They should run automatically using the [GitHub CI system](https://docs.github.com/en/free-pro-team@latest/actions/guides/about-continuous-integration). Having a CI system set up is not mandatory but helps a lot to avoid mistakes during the development process.
-5. Create pull request once you are done with your work. Use the @mention system to get the maintainer's attention or ask questions to specific people.
-6. Optional discussion about the pull request. If necessary, additional changes can be made.
-7. New branch is merged into `main/master` branch.
+> pipenv run main --experiment evaluate --filename example.h5 --vectorizer option --method option 
 
-## Packaging
+Addtional tag: --engineered_features (concatenate engineered features to sentence vector)
 
-Packaging a Python application is not as trivial as it seems to be. A good introduction into this topic is given by the official [docs](https://packaging.python.org/overview/). In any case you should always make sure that your program has only one entry point. In this example project it is the `src/main.py` file.
+Options:
 
-## Important Note
+- vectorizer: 'tfidf', 'count', 'hash', 'word2vec', 'pretrained_word2vec'
+- method: 'linear', 'lasso', 'ridge', 'elastic-net', 'random-forest' 
 
-Leave a star ⭐ ;)
+Run all combination of vectorizers and regression methods with and without engineered features:
+
+> pipenv run main --experiment compare_all --filename example.h5
+
+Run pretrained BERT + 3-layer regression network:
+
+> pipenv run main --experiment train_net --filename example.h5
+
+Additional tag: 
+- --save_name name (name to save trained model under, used for training multiple models without overwriting the previous one. Default: name specified with --filename
+- --engineered_features (concatenate engineered features to sentence vector)
+
+If multiple datasets were used, you have to specify conditional training by providing the tag --multiple_datasets.
+
+Hyperparameter tuning for word2vec: linear search along hyperparameter (generate plots and results saved to txt file)
+
+> pipenv run main --search [hyperparameter, start, end, step, model, filename]
+
+- hyperparameter: 'feature', 'window', 'count', 'epochs', 'lr' or 'min_lr' </br>
+- start: start value of linear search </br>
+- end: end value of linear search </br>
+- step: step size of linear search </br>
+- model: only option so far 'word2vec' </br>
+- filename: h5 filename to load data from </br>
+
+Note: experiment results are saved in folders 'result', 'figures' and 'models'
+
+## License
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+
+
+
+
+
+
