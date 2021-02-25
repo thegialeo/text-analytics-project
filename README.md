@@ -21,44 +21,7 @@ Download dataset:
 
 ## Project State
 
-## Data Analysis
 
-Our primary data source is the TextComplexityDE 19 dataset (https://github.com/babaknaderi/TextComplexityDE), which contains 1000 German sentences, labelled by foreign language learners of levels A and B on a 7 point Likert scale, where 1 indicates a low complexity, high readability sentence and 7 indicates the opposite. 900 of the sentences were sourced from 23 German Wikipedia articles, the other 100 were sourced from Leichte Sprache. Each sentence in the dataset was labelled by at least 5 persons, their mean rating is provided in the dataset. Aside from complexity/readability, scores for understandability and lexical difficulty of the sentence were also collected.
-
-![image](figures/Figure_1.png)
-
-Figure: Pie chart showing the distribution of (rounded) ratings.
-
-The ratings are not evenly distributed, as no sentence received, on average, a 7, and few received a 6. Of the sentences receiving a 1 complexity rating, the vast majority is from the Leichte Sprache data source.
-
-![image](figures/Figure_2.png)
-
-Figure: Stacked bar chart displaying the rating distribution, coloured by source, with median value
-
-We wrote functions for text normalization, to facilitate gathering text statistics. Our text normalization functions transform all letters to lower case, replace hyphens with spaces, remove all punctuation and remove all digits. We then gather statistics, including number of words, number of letters and, with a simple method, number of syllables.
-
-Additionally, we tried a number of different simple metrics which take into account number of words, letters, syllables, polysyllables, monosyllables etc and tested their correlation to the complexity ratings
-
-![image](figures/Figure_3.png)
-
-Figure: Correlation between Automated Readability Index and complexity labels
-
-Interestingly, all of the simple formulas show a weaker correlation to the labels than the very simple metric which is the number of letters in the sentence.
-
-## Clustering Results (to be updated, in progress)
-
-The plot indicates that the features extracted with sklearn TfidfVectorizer are not indicative of the sentence complexity. There is a high change that brute-force Regression might not work well. Note that the preprossing was minimal at this point. However, we should also consider alternative feature spaces/vectorizations for the sentences. 
-
-TODO: Explore further Vectorizer options + improve preprocessing
-
-The homogeneity score shows a value close to zero, which means the cluster found with KMeans are completely different from the rounded MOS Complexity label(k=6, the plot above shows that there are no sentences for the highest difficulty level 7 -> effectively there are only 6 labels). Maybe KMeans clustered by topic other something else (to be further explored). The silhouette score shows that we have strongly overlapping clusters. This further make us sceptical, if the Tfidf feature space is suitable (it doesn't seem too promising).   
-
-homogeneity score: 0.0084
-silhouette score: -0.0026
-
-![image](figures/KMeans_clustering_MOS_Complexity.png)
-
-Figure: Comparison Clustering Results against MOS Complexity (rounded to nearest integer)
 
 ## Setup
 
