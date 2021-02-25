@@ -87,6 +87,10 @@ if __name__ == "__main__":
         # evaluate a regression method with a vectorization method
         if args.experiment == 'evaluate':
             MSE, RMSE, MAE, r_square = evaluater.evaluate_baseline(args.vectorizer, args.method, args.filename, args.extra_feat)
+            print("MSE:", MSE)
+            print("RMSE:", RMSE)
+            print("MAE:", MAE)
+            print("R square:", r_square)
 
         # pretrained BERT + regression neural network
         if args.experiment == 'train_net':

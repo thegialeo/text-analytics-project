@@ -22,10 +22,11 @@ Install all necessary dependencies with:
 
 > pipenv install 
 
-### Download datasets:
-To download a specific dataset, replace 'all' with ['TextComplexityDE19', 'Weebit', 'dw']: 
+### Download datasets: 
 
 > pipenv run main --download all
+
+To download a specific dataset, replace 'all' with ['TextComplexityDE19', 'Weebit', 'dw']
 
 ### Preprocessing and Augmentation
 Run preprocessing and augmentation on datasets and save results in h5 file:
@@ -43,14 +44,29 @@ Example: apply lemmatization
 
 > pipenv run main --create_h5 --filename example.h5 --lemmatization
 
+Note: basic preprocessing will always be applied 
+
 
 ## Usage
 
+Run experiment for specific vectorizer and regression method:
+
+> pipenv run main --experiment evaluate --filename example.h5 --vectorizer option --method option 
+
+Addtional tag: --engineered_features (concatenate engineered features to sentence vector)
+
+Options:
+
+- vectorizer: 'tfidf', 'count', 'hash', 'word2vec', 'pretrained_word2vec'
+- method: 'linear', 'lasso', 'ridge', 'elastic-net', 'random-forest' 
+
+Run all combination of vectorizers and regression methods with and without engineered features:
+
+> pipenv run main --experiment compare_all --filename example.h5
+
+Note: experiment results are saved in folders 'result', 'figures' and 'models'
 
 
-
-
-## Project State
 
 
 
