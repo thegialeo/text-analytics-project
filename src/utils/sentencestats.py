@@ -5,31 +5,27 @@ import normalization
 import numpy as np
 import pandas as pd
 import spacy
-import to_dataframe
+# import to_dataframe
 import wordlists
 
 
-def construct_features(sentence, normalize=True, verbose=True):
+def construct_features(sentence, verbose=False):
     """constructs a #sentences × #features numpy array, rows are sentences, columns
-    are features. use by passing a dataframe column containing (normalized) sentences
-    and optionally, set normalize to true.
+    are features. use by passing a dataframe column containing (normalized) sentences.
 
     Kwargs:
     sentence -- a dataframe column containing normalized sentences.
-    scale_features (optional) -- normalize feature columns to the same range (default off)
-    when normalized, all values are between 0 and 100, otherwise theyre integer counts
     """
     my_df = pd.DataFrame()
 
+    # ======= Counting Commas ========
     my_df["commas"] = count_commas(sentence)
     sentence = normalization.normalize_sentence(sentence)
+    # sadly, counting commas only works when they haven't already been removed
+    if my_df["commas"].isnull().all():
+        my_df.drop(columns="commas")
 
     my_df[["words", "letters"]] = count_words_and_letters(sentence)
-    my_df["words_not_pronouns_articles"] = (
-        my_df["words"]
-        - sentence.apply(count_pronouns)
-        - sentence.apply(count_definite_articles)
-    )
     my_df["syllables"] = sentence.str.split().apply(count_syllables)
     my_df["monosyllables"] = sentence.apply(count_monosyllables)
     my_df["ge3syllables"] = sentence.apply(count_polysyllables, args=(3,))
@@ -43,31 +39,24 @@ def construct_features(sentence, normalize=True, verbose=True):
         my_df["monosyllables"],
     )
 
-    matrix = my_df.to_numpy()
-    if normalize:
-        matrix = scale_linear_bycolumn(matrix)
+    # ======= POS tag density =======
+    my_df[
+        ["nouns", "propernouns", "pronouns", "conj", "adj", "ver", "not_pron_or_det"]
+    ] = POS_tag_density(sentence)
 
     if verbose:
         print(
             "==============\nFrom ",
             len(sentence),
             " sentences, constructing size ",
-            matrix.shape,
-            " feature matrix. \nThe feature names are: ",
+            my_df.shape,
+            " feature dataframe. \nThe feature names are: ",
             my_df.columns,
             "\n==============",
             sep="",
         )
 
-    return matrix
-
-
-def scale_linear_bycolumn(rawpoints, high=100.0, low=0.0):
-    # Source: https://gist.github.com/perrygeo/4512375
-    mins = np.min(rawpoints, axis=0)
-    maxs = np.max(rawpoints, axis=0)
-    rng = maxs - mins
-    return high - (((high - low) * (maxs - rawpoints)) / rng)
+    return my_df
 
 
 def count_commas(sentence):
@@ -202,60 +191,6 @@ def count_infrequent_words(sentence, size=100):
     return number_of_words
 
 
-def count_pronouns(sentence):
-    # TODO write desc
-    number_of_pronouns = 0
-    number_of_pronouns += len(
-        re.findall(
-            r"(?<!\w)ich(?!\w)"
-            + r"|(?<!\w)du(?!\w)"
-            + r"|(?<!\w)er(?!\w)"
-            + r"|(?<!\w)sie(?!\w)"
-            + r"|(?<!\w)es(?!\w)"
-            + r"|(?<!\w)[mds]einer(?!\w)"
-            + r"|(?<!\w)[mdw]ir(?!\w)"
-            + r"|(?<!\w)ih[nm](?!\w)"
-            + r"|(?<!\w)ihr\w{,2}(?!\w)"
-            + r"|(?<!\w)uns(?!\w)"
-            + r"|(?<!\w)euch(?!\w)"
-            + r"|(?<!\w)ihnen(?!\w)"
-            + r"|(?<!\w)[mds]ich(?!\w)"
-            + r"|(?<!\w)wessen(?!\w)"
-            + r"|(?<!\w)we[rnm](?!\w)"
-            + r"|(?<!\w)was(?!\w)"
-            + r"|(?<!\w)welche[rnms]?(?!\w)"
-            + r"|(?<!\w)etwas(?!\w)"
-            + r"|(?<!\w)nichts(?!\w)"
-            + r"|(?<!\w)jemand\w{,2}(?!\w)"
-            + r"|(?<!\w)jede\w?(?!\w)"
-            + r"|(?<!\w)irgend\w{,6}(?!\w)"
-            + r"|(?<!\w)man(?!\w)"
-            + r"|(?<!\w)[mds]ein\w{,2}(?!\w)"
-            + r"|(?<!\w)unser\w{,2}(?!\w)"
-            + r"|(?<!\w)euer(?!\w)"
-            + r"|(?<!\w)eur\w{1,2}(?!\w)"
-            + r"|, de[nmr](?!\w)"
-            + r"|, die(?!\w)"
-            + r"|, das(?!\w)"
-            + r"|, denen(?!\w)",
-            sentence,
-        )
-    )
-    return number_of_pronouns
-
-
-def count_definite_articles(sentence):
-    # TODO write desc
-    number_of_definite_articles = 0
-    number_of_definite_articles += len(
-        re.findall(
-            r"(?<!\w)de[rsnm](?!\w)|(?<!\w)das(?!\w)|(?<!\w)die(?!\w)",
-            sentence,
-        )
-    )
-    return number_of_definite_articles
-
-
 def count_long_words(sentence, length):
     """Given a sentence, computes and returns the number of words equal to or longer
     than the provided threshold length
@@ -295,6 +230,73 @@ def wiener_sachtextformel(
     )
 
 
+def POS_tag_density(sentences):
+    nlp = spacy.load("de_core_news_sm")
+
+    nouns_list = []
+    propernouns_list = []
+    pronouns_list = []
+    conj_list = []
+    adj_list = []
+    ver_list = []
+    not_pron_or_det_list = []
+
+    for sentence in sentences:
+        doc = nlp(sentence)
+
+        nouns = 0
+        propernouns = 0
+        pronouns = 0
+        conj = 0
+        adj = 0
+        ver = 0
+        not_pron_or_det = len(doc)
+
+        for token in doc:
+            if token.pos_ == "NOUN":
+                nouns += 1
+            elif token.pos_ == "PROPN":
+                propernouns += 1
+            elif token.pos_ == "PRON":
+                pronouns += 1
+                not_pron_or_det -= 1
+            elif token.pos_ == "SCONJ" or token.pos_ == "CCONJ":
+                conj += 1
+            elif token.pos_ == "ADJ":
+                adj += 1
+            elif token.pos_ == "VERB":
+                ver += 1
+            elif token.pos_ == "DET":
+                not_pron_or_det -= 1
+
+        nouns = nouns * 1.0 / len(doc)
+        propernouns = propernouns * 1.0 / len(doc)
+        pronouns = pronouns * 1.0 / len(doc)
+        conj = conj * 1.0 / len(doc)
+        adj = adj * 1.0 / len(doc)
+        ver = ver * 1.0 / len(doc)
+
+        nouns_list.append(nouns)
+        propernouns_list.append(propernouns)
+        pronouns_list.append(pronouns)
+        conj_list.append(conj)
+        adj_list.append(adj)
+        ver_list.append(ver)
+        not_pron_or_det_list.append(not_pron_or_det)
+
+    return pd.DataFrame(
+        {
+            "nouns": nouns_list,
+            "propernouns": propernouns_list,
+            "pronouns": pronouns_list,
+            "conj": conj_list,
+            "adj": adj_list,
+            "ver": ver_list,
+            "not_pron_or_det": not_pron_or_det_list,
+        }
+    )
+
+
 if __name__ == "__main__":
     # load TextComplexityDE dataset
     # df_all = to_dataframe.text_comp19_to_df()
@@ -315,7 +317,7 @@ if __name__ == "__main__":
     print(df_all["sentence"])
 
     feature_matrix = construct_features(
-        df_all["sentence"], scale_features=True, verbose=True
+        df_all["sentence"], normalize=True, verbose=True
     )
     print(feature_matrix)
     print("\n", feature_matrix[0])
@@ -325,17 +327,30 @@ if __name__ == "__main__":
     print(doc)
     doc = nlp(doc)
 
+    print(len(doc))
     for token in doc:
         print(
             token.text,
             token.lemma_,
             token.pos_,
             token.tag_,
+            "=",
+            spacy.explain(token.tag_),
+            "=======",
             token.dep_,
             token.shape_,
             token.is_alpha,
             token.is_stop,
             # token.morph,
         )
-    for chunk in doc.noun_chunks:
-        print(chunk.text, chunk.root.text, chunk.root.dep_, chunk.root.head.text)
+
+    print("Explain ADP:", spacy.explain("ADP"))
+    print("Explain DET:", spacy.explain("DET"))
+    print("Explain PRON:", spacy.explain("PRON"))
+    print("Explain SCONJ:", spacy.explain("SCONJ"))
+    print("Explain CCONJ:", spacy.explain("CCONJ"))
+    print("Explain VERB:", spacy.explain("VERB"))
+    print("Explain AUX:", spacy.explain("AUX"))
+
+    # for chunk in doc.noun_chunks:
+    #    print(chunk.text, chunk.root.text, chunk.root.dep_, chunk.root.head.text)
