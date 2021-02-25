@@ -45,6 +45,21 @@ Figure: Correlation between Automated Readability Index and complexity labels
 
 Interestingly, all of the simple formulas show a weaker correlation to the labels than the very simple metric which is the number of letters in the sentence.
 
+## Additional Corpora Used
+* TextComplexityDE19
+  7 levels of difficulty
+  
+  1100 Wikipedia articles, 100 of them in Simple German
+
+* Deutsche Welle - Deutsch Lernen
+  2 levels of difficulty
+
+* WEEBIT
+  English news corpus
+  
+  5 levels of difficulty, 625 documents each
+
+
 ## Clustering Results (to be updated, in progress)
 
 The plot indicates that the features extracted with sklearn TfidfVectorizer are not indicative of the sentence complexity. There is a high change that brute-force Regression might not work well. Note that the preprossing was minimal at this point. However, we should also consider alternative feature spaces/vectorizations for the sentences. 
