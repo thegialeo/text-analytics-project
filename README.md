@@ -66,6 +66,11 @@ Run all combination of vectorizers and regression methods with and without engin
 
 Note: experiment results are saved in folders 'result', 'figures' and 'models'
 
+Run pretrained BERT + 3-layer regression network:
+
+> pipenv run main --experiment train_net --filename example.h5
+
+Additional tag: --save_name name (name to save trained model under, used for training multiple models without overwriting the previous one. Default: name specified with --filename
 
 
 
