@@ -25,7 +25,7 @@ if __name__ == "__main__":
                         help="Use backtranslation during --create_h5")
     parser.add_argument("--lemmatization", dest="lemma", action='store_true',
                         help="Use lemmatization during --create_h5")
-    parser.add_argument("--stemming", dest="stemm", action='store_true',
+    parser.add_argument("--stemming", dest="stem", action='store_true',
                         help="Use stemming during --create_h5")
     parser.add_argument("--random_swap", dest="swap", action='store_true',
                         help="Use random swap during --create_h5")
@@ -36,10 +36,18 @@ if __name__ == "__main__":
     parser.add_argument("--search", dest='search', action='store', nargs=6,
                         help="Perform linear search for [hyperparameter, start, end, step, model, filename]. Options: hyperparameter ['feature', 'window', 'count', 'epochs', 'lr', 'min_lr'], model ['word2vec']")
     parser.add_argument("--experiment", dest='experiment', action='store',
-                        help="Select experiment to perform. Options: 'compare_all', 'evaluate'")
+                        help="Select experiment to perform. Options: 'compare_all', 'evaluate', 'train_net'")
+    parser.add_argument("--engineered_features", dest='extra_feat', action='store_true',
+                        help="Concatenate engineered features to features obtained by vectorizer")
+    parser.add_argument("--vectorizer", dest="vectorizer", action='store',
+                        help="Specify which vectorizer method to use. Options: 'tfidf', 'count', 'hash', 'word2vec', 'pretrained_word2vec'")
+    parser.add_argument("--method", dest="method", action='store',
+                        help="Specify which regression method to use. Options: 'linear', 'lasso', 'ridge', 'elastic-net', 'random-forest'")
+    parser.add_argument("--save_name", dest="save_name", action='store',
+                        help="Name to save train model under. Only available for --experiment train_net (used for prototyping and hyperparameter tuning)")                                               
     
 
-    parser.set_defaults(dset='0', download=None, create_h5=False, backtrans=False, lemma=False, stem=False, swap=False, delete=False, filename=None, search=None, experiment=None)
+    parser.set_defaults(dset='0', download=None, create_h5=False, backtrans=False, lemma=False, stem=False, swap=False, delete=False, filename=None, search=None, experiment=None, extra_feat=False, vectorizer=None, method=None, save_name=None)
     args = parser.parse_args()
 
 
@@ -59,13 +67,11 @@ if __name__ == "__main__":
             raise ValueError("Input {} for --download is invalid. Choose one of the following: 'all', 'TextComplexityDE19', 'Weebit', 'dw'".format(args.download))
 
    
-
     # preprocessing + augmentation
     if args.create_h5:
         use_textcomp = True if '0' in args.dset else False
         use_weebit = True if '1' in args.dset else False
         use_dw = True if '2' in args.dset else False
-        print(use_textcomp, use_weebit, use_dw)
         to_dataframe.store_augmented_h5(args.filename, use_textcomp, use_weebit, use_dw, args.backtrans, args.lemma, args.stem, args.swap, args.delete, 0.2)
 
     # hyperparameter search
@@ -78,14 +84,15 @@ if __name__ == "__main__":
         if args.experiment == 'compare_all':
             experiments.benchmark_all(args.filename, False)
             experiments.benchmark_all(args.filename, True)
-        # test and debug evaluate_baseline
-        if args.experiment == 'test':
-            MSE, RMSE, MAE, r_square = evaluater.evaluate_baseline(vec="tfidf")
-            print(r_square)
+        # evaluate a regression method with a vectorization method
+        if args.experiment == 'evaluate':
+            MSE, RMSE, MAE, r_square = evaluater.evaluate_baseline(args.vectorizer, args.method, args.filename, args.extra_feat)
 
-        # test BERT training
-        if args.experiment == 'BERT':
-            trainer.train_model(args.filename, 20, [10, 15, 18, 20], 128, 1e-3, "test")
+        # pretrained BERT + regression neural network
+        if args.experiment == 'train_net':
+            if args.save_name is None:
+                args.save_name = args.filename
+            trainer.train_model(args.filename, 20, [10, 15, 18, 20], 128, 1e-3, args.save_name)
 
 
 

@@ -5,6 +5,7 @@ from os.path import abspath, dirname, exists, join
 import numpy as np
 from gensim.models import KeyedVectors
 from gensim.models.word2vec import Word2Vec
+from utils import downloader
 
 
 class word2vec:
@@ -50,6 +51,8 @@ class word2vec:
         """Train Word2Vec model on corpus."""
         if self.pretrained:
             """Just load pretrained word2vec (finetuning not possible)"""
+            if not exists(self.pretrained_path):
+                downloader.download_file_from_google_drive("1aoblaJyK_nUpXMR_jP6EgKiY9MDGjY2W", self.pretrained_path)
             self.load_model(pretrained=True, print_path=False)
             self.wv = self.model.wv
             self.model.init_sims(replace=True)
@@ -66,7 +69,7 @@ class word2vec:
                                     workers=multiprocessing.cpu_count())
 
             self.wv = self.model.wv
-            self.model.init_sims(replace=True)
+            #self.model.init_sims(replace=True)
             self.save_model(print_path=print_path)
 
   
@@ -75,7 +78,7 @@ class word2vec:
         if corpus is None:
             self.features = [np.mean([self.wv[word] for word in line if word in self.wv.vocab], axis=0) for line in self.corpus]
         else:
-            return [np.mean([self.wv[word] for word in line if word in self.wv.vocab], axis=0) for line in corpus]
+            return np.array([np.mean([self.wv[word] for word in line if word in self.wv.vocab], axis=0) for line in corpus])
 
     def save_model(self, print_path=True):
         """Save word2vec model and wordvectors"""

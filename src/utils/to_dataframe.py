@@ -39,7 +39,7 @@ def text_comp19_to_df():
     corpus = corpus.rename(
         columns={"Sentence": "raw_text", "MOS_Complexity": "rating"})
 
-    corpus.insert(2, "source", "0")
+    corpus.insert(2, "source", 0)
 
     #Delete all columns except the raw_text and the rating column
     corpus = corpus.drop(columns=
@@ -105,7 +105,7 @@ def weebit_to_df():
 
             # create dataframe out of dictionary
             data_dict["raw_text"].append(text)
-            data_dict["source"].append("1")
+            data_dict["source"].append(1)
 
     weebit_data = pd.DataFrame(data_dict)
 
@@ -173,7 +173,7 @@ def dw_to_df():
                           "artikel_y", "tags", "y_y"],
                          )
     dw_set.rename(columns={"text": "raw_text", "levels": "rating"}, inplace=True)
-    dw_set.insert(2, "source", "2")
+    dw_set.insert(2, "source", 2)
 
     return dw_set
 
@@ -296,15 +296,15 @@ def augmented_all(use_textcomp19=False,use_weebit=False,use_dw=False,
 
     if use_textcomp19:
         text_comp_train, text_comp_test = train_test_split(
-            all_dataset[all_dataset["source"] == "0"], test_size=test_size)
+            all_dataset[all_dataset["source"] == 0], test_size=test_size)
 
     if use_weebit:
         weebit_train, weebit_test = train_test_split(
-            all_dataset[all_dataset["source"] == "1"], test_size=test_size)
+            all_dataset[all_dataset["source"] == 1], test_size=test_size)
 
     if use_dw:
         dw_train, dw_test = train_test_split(
-            all_dataset[all_dataset["source"] == "2"], test_size=test_size)
+            all_dataset[all_dataset["source"] == 2], test_size=test_size)
 
     if use_textcomp19 and not (use_weebit and use_dw):
         all_dataset_train = text_comp_train
@@ -348,7 +348,7 @@ def augmented_all(use_textcomp19=False,use_weebit=False,use_dw=False,
             from_model_name='transformer.wmt19.de-en',
             to_model_name='transformer.wmt19.en-de')
         if use_weebit:
-            translated = all_dataset_train[all_dataset_train["source"]!="1"]
+            translated = all_dataset_train[all_dataset_train["source"]!=1]
         else:
             translated = all_dataset_train
 
@@ -382,12 +382,18 @@ def augmented_all(use_textcomp19=False,use_weebit=False,use_dw=False,
         all_dataset_train["raw_text"] = all_dataset_train["raw_text"]\
             .apply(lambda x: ' '.join([y.lemma_ for y in nlp(x)]) )
 
+        all_dataset_test["raw_text"] = all_dataset_test["raw_text"] \
+            .apply(lambda x: ' '.join([y.lemma_ for y in nlp(x)]))
+
     # Stemming using
     if stemming == True:
 
         print("stemming")
         stemmer = SnowballStemmer("german")
         all_dataset_train["raw_text"] = all_dataset_train["raw_text"] \
+            .apply(lambda x: stemmer.stem(x))
+
+        all_dataset_test["raw_text"] = all_dataset_test["raw_text"] \
             .apply(lambda x: stemmer.stem(x))
 
     return all_dataset_train, all_dataset_test
@@ -456,7 +462,7 @@ def read_augmented_h5(filename = ""):
     return data["train"], data["test"]
 
 if __name__ == "__main__":
-    store_augmented_h5(use_weebit=True, backtrans=True)
+    store_augmented_h5(use_textcomp19=True)
 
 
 

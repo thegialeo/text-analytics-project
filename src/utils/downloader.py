@@ -3,9 +3,9 @@ import shutil
 import zipfile
 from distutils.dir_util import copy_tree
 from os.path import abspath, dirname, exists, join
+from tqdm import tqdm
 
 import requests
-#from git.repo.base import Repo
 
 
 def download_TextComplexityDE19():
@@ -117,3 +117,32 @@ def download_dw_set():
 
     with open(path_with_name, "wb") as file:
         file.write(r.content)
+
+
+def download_file_from_google_drive(id, destination):
+    # taken from https://gist.github.com/joshtch/8e51c6d40b1e3205d1bb2eea18fb57ae and modified
+    URL = 'https://docs.google.com/uc?export=download'
+
+    session = requests.Session()
+    response = session.get(URL, params = { 'id' : id }, stream = True)
+
+    token = None
+    for key, value in response.cookies.items():
+        if key.startswith('download_warning'):
+            token = value
+            break
+
+    if token:
+        params = { 'id' : id, 'confirm' : token }
+        response = session.get(URL, params = params, stream = True)
+
+    CHUNK_SIZE = 32*1024
+    # TODO: this doesn't seem to work; there's no Content-Length value in header?
+    total_size = int(response.headers.get('content-length', 0))
+
+    with tqdm(desc=destination, total=total_size, unit='B', unit_scale=True) as pbar:
+        with open(destination, 'wb') as f:
+            for chunk in response.iter_content(CHUNK_SIZE):
+                if chunk:
+                    pbar.update(CHUNK_SIZE)
+                    f.write(chunk)

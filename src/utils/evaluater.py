@@ -177,7 +177,7 @@ def evaluate(label, pred):
     return MSE, RMSE, MAE, r_square
 
 
-def evaluate_model(model, bert_model, dataloader):
+def evaluate_model(model, bert_model, dataloader, engineered_features=False, multiple_dataset=False):
     """Evaluate regression metrics of a model on a dataset
 
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
@@ -186,7 +186,8 @@ def evaluate_model(model, bert_model, dataloader):
         model (torch.nn.Module): PyTorch model of a Regression Neural Network
         bert_model (torch.nn.Module): BERT PyTorch model for feature extraction
         dataloader (PyTorch dataloader): PyTorch dataloader of dataset
-
+        engineered_features (bool, optional): contenate engineered features to vectorized sentence
+        multiple_dataset (bool, optional): use multiple datasets 
     Return:
         MSE_mean (double): Mean Square Error
         RMSE_mean (double): Root Mean Square Error
@@ -208,14 +209,30 @@ def evaluate_model(model, bert_model, dataloader):
 
     # iterate through dataset
     with torch.no_grad():
-        for i, (input_id, segment, label) in enumerate(dataloader):
-            # move batch to device 
-            input_id = input_id.to(device)
-            segment = segment.to(device)
-            label = label.to(device)
+        for i, data in enumerate(dataloader):
+            # move batch and model to device
+            model.to(device)
+            input_id = data[0].to(device)
+            segment = data[1].to(device)
+            label = data[2].to(device)
+            if engineered_features and multiple_dataset:
+                extra_feat = data[3].to(device)
+                dataset_label = data[4].to(device)
+            elif engineered_features:
+                extra_feat = data[3].to(device)
+            elif multiple_dataset:
+                dataset_label = data[3].to(device)
 
             # BERT feature extraction
             features = bert_model.get_features(input_id, segment)
+
+            # add engineered features
+            if engineered_features:
+                features = torch.cat((features, extra_feat), 1)
+
+            # add dataset conditional label (always 0)
+            if multiple_dataset:
+                features = torch.cat((features, torch.tensor(np.zeros(dataset_label.shape))), 1)
             
             # prediction
             output = model(features)

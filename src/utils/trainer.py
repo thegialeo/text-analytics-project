@@ -9,10 +9,10 @@ from sklearn.metrics import r2_score
 from torch.utils.data import DataLoader, TensorDataset
 import torch.optim as opt
 import matplotlib.pyplot as plt
-from utils import BERT, evaluater, gpu, regression, to_dataframe
+from utils import BERT, evaluater, gpu, regression, to_dataframe, sentencestats
 
 
-def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
+def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name, engineered_features=False, multiple_dataset=False):
     """Train a model on the given dataset
 
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
@@ -24,6 +24,8 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
         batch_size (int): batch size
         lr (float): learning rate
         save_name (string): name under which to save trained model and results
+        engineered_features (bool, optional): contenate engineered features to vectorized sentence
+        multiple_dataset (bool, optional): use multiple datasets 
     """
 
     # save paths
@@ -45,13 +47,7 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
     print("Number of CPU cores detected:", num_workers)
 
     # read data
-    df_train, df_test = to_dataframe.read_augmented_h5("all_data.h5")
-    df_train = df_train[
-        df_train["source"] == "text_comp19"
-    ]  # TODO: remove once Raoul fixes his dataloader
-    df_test = df_test[
-        df_test["source"] == "text_comp19"
-    ]  # TODO: remove once Raoul fixes his dataloader
+    df_train, df_test = to_dataframe.read_augmented_h5(filename)
 
     # setup BERT model
     bert_model = BERT.BERT()
@@ -62,14 +58,31 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
     train_input_tensor, train_segment_tensor = bert_model.preprocessing(train_sentences)
     test_input_tensor, test_segment_tensor = bert_model.preprocessing(test_sentences)
 
-
     # extract labels and cast to PyTorch tensor
-    train_labels = torch.tensor(list(df_train.rating.values)).unsqueeze_(1)
-    test_labels = torch.tensor(list(df_test.rating.values)).unsqueeze_(1)
+    train_labels = torch.tensor(list(df_train.rating.values), dtype=torch.float).unsqueeze_(1)
+    test_labels = torch.tensor(list(df_test.rating.values), dtype=torch.float).unsqueeze_(1)
 
     # prepare dataset
-    trainset = TensorDataset(train_input_tensor, train_segment_tensor, train_labels)
-    testset = TensorDataset(test_input_tensor, test_segment_tensor, test_labels)
+    if engineered_features and multiple_dataset:
+        extra_train_feat = torch.from_numpy(sentencestats.construct_features(train_sentences))
+        extra_test_feat = torch.from_numpy(sentencestats.construct_features(test_sentences))
+        train_dataset_label = torch.tensor(list(df_train.source.values), dtype=torch.float).unsqueeze_(1)
+        test_dataset_label = torch.tensor(list(df_test.source.values), dtype=torch.float).unsqueeze_(1)
+        trainset = TensorDataset(train_input_tensor, train_segment_tensor, train_labels, extra_train_feat, train_dataset_label)
+        testset = TensorDataset(test_input_tensor, test_segment_tensor, test_labels, extra_test_feat, test_dataset_label)
+    elif engineered_features:
+        extra_train_feat = torch.from_numpy(sentencestats.construct_features(train_sentences))
+        extra_test_feat = torch.from_numpy(sentencestats.construct_features(test_sentences))
+        trainset = TensorDataset(train_input_tensor, train_segment_tensor, train_labels, extra_train_feat)
+        testset = TensorDataset(test_input_tensor, test_segment_tensor, test_labels, extra_test_feat)
+    elif multiple_dataset:
+        train_dataset_label = torch.tensor(list(df_train.source.values), dtype=torch.float).unsqueeze_(1)
+        test_dataset_label = torch.tensor(list(df_test.source.values), dtype=torch.float).unsqueeze_(1)
+        trainset = TensorDataset(train_input_tensor, train_segment_tensor, train_labels, train_dataset_label)
+        testset = TensorDataset(test_input_tensor, test_segment_tensor, test_labels, test_dataset_label)
+    else:
+        trainset = TensorDataset(train_input_tensor, train_segment_tensor, train_labels)
+        testset = TensorDataset(test_input_tensor, test_segment_tensor, test_labels)
 
     # dataloader
     trainloader = DataLoader(
@@ -88,7 +101,13 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
     )
 
     # prepare regression model
-    reg_model = regression.Net(768, 512, 1)
+    hidden_size = 512
+    if engineered_features:
+        hidden_size += 6
+    if multiple_dataset:
+        hidden_size += 1
+
+    reg_model = regression.Net(768, hidden_size, 1)
     reg_model = reg_model.to(device)
 
     # optimizer
@@ -116,18 +135,33 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
         reg_model.train()
 
         # training
-        for i, (input_id, segment, label) in enumerate(trainloader):
+        for i, data in enumerate(trainloader):
             # move batch and model to device
             reg_model.to(device)
-            input_id = input_id.to(device)
-            segment = segment.to(device)
-            label = label.to(device)
+            input_id = data[0].to(device)
+            segment = data[1].to(device)
+            label = data[2].to(device)
+            if engineered_features and multiple_dataset:
+                extra_feat = data[3].to(device)
+                dataset_label = data[4].to(device)
+            elif engineered_features:
+                extra_feat = data[3].to(device)
+            elif multiple_dataset:
+                dataset_label = data[3].to(device)
 
             # clear gradients
             optimizer.zero_grad()
 
             # BERT feature extraction
             features = bert_model.get_features(input_id, segment)
+
+            # add engineered features
+            if engineered_features:
+                features = torch.cat((features, extra_feat), 1)
+
+            # add dataset conditional label
+            if multiple_dataset:
+                features = torch.cat((features, dataset_label), 1)
 
             # prediction
             output = reg_model(features)
@@ -169,13 +203,6 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
         test_MAE_log.append(MAE_test)
         test_r2_log.append(r2_test)
 
-        # print stats
-        print(
-            "epoch {} \t loss {:.5f} \t train_r2 {:.3f} \t test_r2 {:.3f} \t time {:.1f} sec".format(
-                epoch + 1, running_loss, r2_train, r2_test, time.time() - start
-            )
-        )
-
         # save logs
         file = open(join(log_path, save_name + '.txt'), 'w')
         print('Last Epoch:', epoch + 1, file=file)
@@ -195,6 +222,13 @@ def train_model(filename, num_epoch, step_epochs, batch_size, lr, save_name):
 
         # save model weights
         torch.save(reg_model.to('cpu').state_dict(), join(model_path, save_name + '.pt'))
+
+        # print stats
+        print(
+            "epoch {} \t loss {:.5f} \t train_r2 {:.3f} \t test_r2 {:.3f} \t time {:.1f} sec".format(
+                epoch + 1, running_loss, r2_train, r2_test, time.time() - start
+            )
+        )
 
     # plots 
     plot_names = ["loss", "train_MSE", "train_RMSE", "train_MAE", "train_r2", "test_MSE", "test_RMSE", "test_MAE", "test_r2"]
