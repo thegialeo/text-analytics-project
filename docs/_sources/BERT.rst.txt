@@ -1,0 +1,7 @@
+BERT module
+===========
+
+.. automodule:: BERT
+   :members:
+   :undoc-members:
+   :show-inheritance:

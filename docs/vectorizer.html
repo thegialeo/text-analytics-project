@@ -1,0 +1,297 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>vectorizer module &mdash; Automatic Complexity Assessment of German Sentences  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="visualizer module" href="visualizer.html" />
+    <link rel="prev" title="traverser module" href="traverser.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Automatic Complexity Assessment of German Sentences
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">utils</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="BERT.html">BERT module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architectures.html">architectures module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clustering.html">clustering module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dimension_reduction.html">dimension_reduction module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="downloader.html">downloader module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluater.html">evaluater module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="experiments.html">experiments module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exploration.html">exploration module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gpu.html">gpu module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="normalization.html">normalization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="preprocessing.html">preprocessing module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="regression.html">regression module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sample.html">sample module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sentencestats.html">sentencestats module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="to_dataframe.html">to_dataframe module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trainer.html">trainer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="traverser.html">traverser module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">vectorizer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visualizer.html">visualizer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="word2vec.html">word2vec module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordlists.html">wordlists module</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Automatic Complexity Assessment of German Sentences</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="modules.html">utils</a> &raquo;</li>
+        
+      <li>vectorizer module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/vectorizer.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-vectorizer">
+<span id="vectorizer-module"></span><h1>vectorizer module<a class="headerlink" href="#module-vectorizer" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="vectorizer.ML_vectorizer_wrapper">
+<code class="sig-prename descclassname">vectorizer.</code><code class="sig-name descname">ML_vectorizer_wrapper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">vectorizer</span><span class="o">=</span><span class="default_value">'tfidf'</span></em>, <em class="sig-param"><span class="n">stopwords</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_vectorizer</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#vectorizer.ML_vectorizer_wrapper" title="Permalink to this definition">¶</a></dt>
+<dd><dl>
+<dt>Takes in a numpy array of sentences and perform the selected vectorizer on the data.</dt><dd><p>Returns a numpy array of sentence features represented by number vectors.</p>
+<p>Written by Leo Nguyen. Contact Xenovortex, if problems arises.</p>
+</dd>
+<dt>Args:</dt><dd><p>data (numpy array): 1d array containing sentences
+vectorizer (str, optional): Select the vectorizer type. Implemented so far are: ‘tfidf’, ‘count’, ‘hash’. Defaults to ‘tfidf’.
+stop_words (list, optional): List of stopwords. Defaults to None.
+return_vectorizer (bool, optional): Return vectorizer model if true. Defaults to False.</p>
+</dd>
+<dt>Returns:</dt><dd><p>features [scipy sparse matrix (csr)]: document-term matrix with dimension (number of sentences, features per sentence)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="vectorizer.NN_vectorizer_wrapper">
+<code class="sig-prename descclassname">vectorizer.</code><code class="sig-name descname">NN_vectorizer_wrapper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">corpus</span></em>, <em class="sig-param"><span class="n">epochs</span></em>, <em class="sig-param"><span class="n">lr</span></em>, <em class="sig-param"><span class="n">min_lr</span></em>, <em class="sig-param"><span class="n">num_features</span></em>, <em class="sig-param"><span class="n">window_size</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">min_count</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">algorithm</span><span class="o">=</span><span class="default_value">'skip-gram'</span></em>, <em class="sig-param"><span class="n">vectorizer</span><span class="o">=</span><span class="default_value">'word2vec'</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'train'</span></em>, <em class="sig-param"><span class="n">return_vectorizer</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">pretrained</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">print_path</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#vectorizer.NN_vectorizer_wrapper" title="Permalink to this definition">¶</a></dt>
+<dd><dl>
+<dt>Takes in a 2d list of sentences and perform the selected vectorizer on the data.</dt><dd><p>Returns an array of sentence features represented by number vectors.</p>
+<p>Written by Leo Nguyen. Contact Xenovortex, if problems arises.</p>
+</dd>
+<dt>Args:</dt><dd><p>corpus (2d list): 2d list of tokens for each sentence
+epochs (int): number of epochs
+lr (double): start learning rate
+min_lr (double): end learning rate
+num_features (int): dimension of feature space
+window_size (int, optional): window size of word2vec. Defaults to 5.
+min_count (int, optional): ignore words that occur less than min_count. Defaults to 5.
+algorithm (str, optional): choose between “CBOW” and “skip-gram”. Defaults to “skip-gram”.
+vectorizer (str, optional): Select the vectorizer type. Implemented so far are: ‘word2vec’. Defaults to ‘word2vec’.
+mode (str, optional): train new word2vec model or load existing model (options: ‘train’ or ‘load’)
+return_vectorizer (bool, optional): Return vectorizer model if true. Defaults to False.
+pretrained (bool, optional): if True, finetune the pretrained model instead of training from scratch
+print_path (bool, optional): print save path of the trained word2vec model. default: True</p>
+</dd>
+<dt>Return:</dt><dd><p>features [2d array]: document-term matrix with dimension (number of sentences, features per sentence)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="vectorizer.vectorizer_wrapper">
+<code class="sig-prename descclassname">vectorizer.</code><code class="sig-name descname">vectorizer_wrapper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">vectorizer</span><span class="o">=</span><span class="default_value">'tfidf'</span></em>, <em class="sig-param"><span class="n">stopwords</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_vectorizer</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">pretrained</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">print_path</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#vectorizer.vectorizer_wrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper to combine word2vec wrapper with the count/tfidf/hashing vectorizer wrapper.</p>
+<blockquote>
+<div><p>Written by Leo Nguyen. Contact Xenovortex, if problems arises.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data (numpy array): 1d array containing sentences
+filename (str): name of h5 file to load (run preprocessing first)
+vectorizer (str, optional): Select the vectorizer type. Implemented so far are: ‘tfidf’, ‘count’, ‘hash’. Defaults to ‘tfidf’.
+stopwords (list, optional): List of stopwords. Defaults to None.
+return_vectorizer (bool, optional): Return vectorizer model if true. Defaults to False.
+pretrained (bool, optional): if True, finetune the pretrained model instead of training from scratch
+print_path (bool, optional): print save path of the trained word2vec model. default: True</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="visualizer.html" class="btn btn-neutral float-right" title="visualizer module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="traverser.html" class="btn btn-neutral float-left" title="traverser module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Leo Nguyen, Raoul Berger, Konrad Straube, Till Nocher.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

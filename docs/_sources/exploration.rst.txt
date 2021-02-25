@@ -1,0 +1,7 @@
+exploration module
+==================
+
+.. automodule:: exploration
+   :members:
+   :undoc-members:
+   :show-inheritance:

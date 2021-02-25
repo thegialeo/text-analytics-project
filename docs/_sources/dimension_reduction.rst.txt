@@ -1,0 +1,7 @@
+dimension\_reduction module
+===========================
+
+.. automodule:: dimension_reduction
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,7 @@
+normalization module
+====================
+
+.. automodule:: normalization
+   :members:
+   :undoc-members:
+   :show-inheritance:

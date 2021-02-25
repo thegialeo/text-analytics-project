@@ -1,0 +1,7 @@
+wordlists module
+================
+
+.. automodule:: wordlists
+   :members:
+   :undoc-members:
+   :show-inheritance:

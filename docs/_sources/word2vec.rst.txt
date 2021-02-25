@@ -1,0 +1,7 @@
+word2vec module
+===============
+
+.. automodule:: word2vec
+   :members:
+   :undoc-members:
+   :show-inheritance:

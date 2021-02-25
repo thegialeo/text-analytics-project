@@ -1,0 +1,467 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>exploration module &mdash; Automatic Complexity Assessment of German Sentences  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="gpu module" href="gpu.html" />
+    <link rel="prev" title="experiments module" href="experiments.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Automatic Complexity Assessment of German Sentences
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">utils</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="BERT.html">BERT module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architectures.html">architectures module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clustering.html">clustering module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dimension_reduction.html">dimension_reduction module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="downloader.html">downloader module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluater.html">evaluater module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="experiments.html">experiments module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">exploration module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gpu.html">gpu module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="normalization.html">normalization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="preprocessing.html">preprocessing module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="regression.html">regression module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sample.html">sample module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sentencestats.html">sentencestats module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="to_dataframe.html">to_dataframe module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trainer.html">trainer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="traverser.html">traverser module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vectorizer.html">vectorizer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visualizer.html">visualizer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="word2vec.html">word2vec module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordlists.html">wordlists module</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Automatic Complexity Assessment of German Sentences</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="modules.html">utils</a> &raquo;</li>
+        
+      <li>exploration module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/exploration.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-exploration">
+<span id="exploration-module"></span><h1>exploration module<a class="headerlink" href="#module-exploration" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="exploration.automated_readability_index">
+<code class="sig-prename descclassname">exploration.</code><code class="sig-name descname">automated_readability_index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">letter_count</span></em>, <em class="sig-param"><span class="n">word_count</span></em><span class="sig-paren">)</span><a class="headerlink" href="#exploration.automated_readability_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a number of letters and number of words in a sentence, computes the
+automated readability index</p>
+<p>Keyword arguments:
+letter_count – number of letters in the sentence
+word_count – number of words in the sentence</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="exploration.coleman_liau_index">
+<code class="sig-prename descclassname">exploration.</code><code class="sig-name descname">coleman_liau_index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">letter_count</span></em>, <em class="sig-param"><span class="n">word_count</span></em><span class="sig-paren">)</span><a class="headerlink" href="#exploration.coleman_liau_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a number of letters and number of words in a sentence, computes the
+coleman-liau index</p>
+<p>Keyword arguments:
+letter_count – number of letters in the sentence
+word_count – number of words in the sentence</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="exploration.construct_features">
+<code class="sig-prename descclassname">exploration.</code><code class="sig-name descname">construct_features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sentence</span></em>, <em class="sig-param"><span class="n">normalize</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#exploration.construct_features" title="Permalink to this definition">¶</a></dt>
+<dd><p>constructs a #sentences × #features numpy array, rows are sentences, columns
+are features. use by passing a dataframe column containing (normalized) sentences
+and optionally, set normalize to true.</p>
+<p>feature count at time of writing this: 9 features</p>
+<p>Kwargs:
+sentence – a dataframe column containing normalized sentences.
+normalize (optional) – normalize feature columns to the same range (default off)
+when normalized, all values are between 0 and 100, otherwise theyre integer counts</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="exploration.count_definite_articles">
+<code class="sig-prename descclassname">exploration.</code><code class="sig-name descname">count_definite_articles</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sentence</span></em><span class="sig-paren">)</span><a class="headerlink" href="#exploration.count_definite_articles" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="exploration.count_infrequent_words">
+<code class="sig-prename descclassname">exploration.</code><code class="sig-name descname">count_infrequent_words</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sentence</span></em>, <em class="sig-param"><span class="n">size</span><span class="o">=</span><span class="default_value">100</span></em><span class="sig-paren">)</span><a class="headerlink" href="#exploration.count_infrequent_words" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="exploration.count_long_words">
+<code class="sig-prename descclassname">exploration.</code><code class="sig-name descname">count_long_words</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sentence</span></em>, <em class="sig-param"><span class="n">length</span></em><span class="sig-paren">)</span><a class="headerlink" href="#exploration.count_long_words" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a sentence, computes and returns the number of words equal to or longer
+than the provided threshold length</p>
+<p>Keyword arguments:
+sentence – sentence or series of sentences
+length – minimum length for a word to be counted</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="exploration.count_monosyllables">
+<code class="sig-prename descclassname">exploration.</code><code class="sig-name descname">count_monosyllables</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sentence</span></em><span class="sig-paren">)</span><a class="headerlink" href="#exploration.count_monosyllables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a sentence, computes and returns the number of monosyllabic words
+(words which are just 1 syllable long) contained within.</p>
+<p>Keyword arguments:
+sentence – sentence or series of sentences</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="exploration.count_polysyllables">
+<code class="sig-prename descclassname">exploration.</code><code class="sig-name descname">count_polysyllables</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sentence</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">2</span></em><span class="sig-paren">)</span><a class="headerlink" href="#exploration.count_polysyllables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a sentence, computes and returns the number of polysyllabic words
+containing at least a certain, optionally specified amount of syllables</p>
+<p>Keyword arguments:
+sentence – sentence or series of sentences
+threshold – (optional) this function will count words with at least this many
+syllables (default 2)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="exploration.count_pronouns">
+<code class="sig-prename descclassname">exploration.</code><code class="sig-name descname">count_pronouns</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sentence</span></em><span class="sig-paren">)</span><a class="headerlink" href="#exploration.count_pronouns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="exploration.count_syllables">
+<code class="sig-prename descclassname">exploration.</code><code class="sig-name descname">count_syllables</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">words</span></em><span class="sig-paren">)</span><a class="headerlink" href="#exploration.count_syllables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of words, counts the syllables in each and returns the sum.
+Counting syllables doesn’t necessarily give very good results yet</p>
+<p>TODO improve syllable counting method</p>
+<p>Keyword arguments:
+words – list of words (use split() on sentences, maybe)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="exploration.count_words_and_letters">
+<code class="sig-prename descclassname">exploration.</code><code class="sig-name descname">count_words_and_letters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sentence</span></em><span class="sig-paren">)</span><a class="headerlink" href="#exploration.count_words_and_letters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Counts the basic statistics number of words and number of letters. Takes a
+dataframe column of sentences as the input and returns a new dataframe with two
+columns for word_count and letter_count.
+letter_count only counts so-called word symbols, so letters and numbers, not
+punctuation. word_count splits the sentence at whitespaces and gives the number
+of components after the split.</p>
+<p>Keyword arguments:
+sentence – a dataframe column containing sentences, maybe also similar structures</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="exploration.flesch_kincaid_grade_level">
+<code class="sig-prename descclassname">exploration.</code><code class="sig-name descname">flesch_kincaid_grade_level</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">word_count</span></em>, <em class="sig-param"><span class="n">syllable_count</span></em><span class="sig-paren">)</span><a class="headerlink" href="#exploration.flesch_kincaid_grade_level" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a number of words and number of syllables in a sentence, computes the
+flesch kincaid grade level.</p>
+<p>Keyword arguments:
+word_count – number of words in the sentence
+syllable_count – number of syllables in the sentence</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="exploration.flesch_reading_ease">
+<code class="sig-prename descclassname">exploration.</code><code class="sig-name descname">flesch_reading_ease</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">word_count</span></em>, <em class="sig-param"><span class="n">syllable_count</span></em>, <em class="sig-param"><span class="n">deutsch</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#exploration.flesch_reading_ease" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a number of words and number of syllables in a sentence, this will
+compute the flesch reading ease score for the sentence</p>
+<p>Keyword arguments:
+word_count – number of words in the sentence
+syllable_count – number of syllables in the sentence
+deutsch – (optional) use german instead of english formula (default True)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="exploration.gulpease_index">
+<code class="sig-prename descclassname">exploration.</code><code class="sig-name descname">gulpease_index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">character_count</span></em>, <em class="sig-param"><span class="n">word_count</span></em><span class="sig-paren">)</span><a class="headerlink" href="#exploration.gulpease_index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="exploration.gunning_fox_index">
+<code class="sig-prename descclassname">exploration.</code><code class="sig-name descname">gunning_fox_index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">word_count</span></em>, <em class="sig-param"><span class="n">polysyllables_count</span></em><span class="sig-paren">)</span><a class="headerlink" href="#exploration.gunning_fox_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a number of words and the number of words with at least 3 syllables in a
+sentence, compute the gunning-fox-index.
+Note that this was originally intended for the english language, and for a section
+of text containing at least 100 words.</p>
+<p>Keyword arguments:
+word_count – number of words in the sentence
+polysyllables_count – number of words with at least 3 syllables in the sentence`</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="exploration.normalize_sentence">
+<code class="sig-prename descclassname">exploration.</code><code class="sig-name descname">normalize_sentence</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sentence</span></em>, <em class="sig-param"><span class="n">keep_numbers</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">hyphens_are_separators</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">keep_commas</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#exploration.normalize_sentence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normalizes sentences, meaning it decapitalizes letters, removes whitespace
+sequences, removes punctuation and removes numbers. Then returns the normalized
+sentence.</p>
+<p>Keyword arguments:
+sentence – a series of sentences, for example as in a single column from a</p>
+<blockquote>
+<div><p>pandas dataframe, to be normalized</p>
+</div></blockquote>
+<dl class="simple">
+<dt>keep_numbers – (optional) set true to keep numbers in the sentence instead of</dt><dd><p>removing them (default False)</p>
+</dd>
+<dt>hyphens_are_separators – (optional) if true, a hyphenated word is counted as 2</dt><dd><p>words (e.g. e-sports -&gt; e sports), otherwise as one
+(e-sports -&gt; esports) (default True)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="exploration.remove_numbers">
+<code class="sig-prename descclassname">exploration.</code><code class="sig-name descname">remove_numbers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">string</span></em><span class="sig-paren">)</span><a class="headerlink" href="#exploration.remove_numbers" title="Permalink to this definition">¶</a></dt>
+<dd><p>removes numbers from a string (simple regex replacing d with nothing) and
+returns the string</p>
+<p>Keyword arguments:
+string – the string to remove numbers from</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="exploration.remove_punctuation">
+<code class="sig-prename descclassname">exploration.</code><code class="sig-name descname">remove_punctuation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">string</span></em>, <em class="sig-param"><span class="n">hyphens_are_separators</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">keep_commas</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#exploration.remove_punctuation" title="Permalink to this definition">¶</a></dt>
+<dd><p>removes punctuation from a string (simple regex replacing everything but w and
+s with nothing) and returns the string</p>
+<p>Keyword arguments:
+string – the string to remove punctuation from
+hyphens_are_separators – (optional) replace hyphens with a space first (creates a
+space in hyphenated words instead of concatenating them) (default True)
+keep_commas - (optional) don’t delete commas if true (default False)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="exploration.remove_whitespace">
+<code class="sig-prename descclassname">exploration.</code><code class="sig-name descname">remove_whitespace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">string</span></em><span class="sig-paren">)</span><a class="headerlink" href="#exploration.remove_whitespace" title="Permalink to this definition">¶</a></dt>
+<dd><p>if the string contains whitespace sequences, all whitespace is replaced by a
+single space.</p>
+<p>Keyword arguments:
+string – the string to remove unnecessary whitespace from</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="exploration.scale_linear_bycolumn">
+<code class="sig-prename descclassname">exploration.</code><code class="sig-name descname">scale_linear_bycolumn</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rawpoints</span></em>, <em class="sig-param"><span class="n">high</span><span class="o">=</span><span class="default_value">100.0</span></em>, <em class="sig-param"><span class="n">low</span><span class="o">=</span><span class="default_value">0.0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#exploration.scale_linear_bycolumn" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="exploration.smog">
+<code class="sig-prename descclassname">exploration.</code><code class="sig-name descname">smog</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">polysyllables_count</span></em><span class="sig-paren">)</span><a class="headerlink" href="#exploration.smog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the number of words with at least 3 syllables in a text, compute the SMOG
+grade.
+Note that this was originally intended for the english language, and for a section
+of text containing at least 30 sentences.</p>
+<p>Keyword arguments:
+polysyllables_count – number of words with at least 3 syllables in the sentence`</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="exploration.wiener_sachtextformel">
+<code class="sig-prename descclassname">exploration.</code><code class="sig-name descname">wiener_sachtextformel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">polysyllables_count</span></em>, <em class="sig-param"><span class="n">word_count</span></em>, <em class="sig-param"><span class="n">long_words_count</span></em>, <em class="sig-param"><span class="n">monosyllables_count</span></em><span class="sig-paren">)</span><a class="headerlink" href="#exploration.wiener_sachtextformel" title="Permalink to this definition">¶</a></dt>
+<dd><dl>
+<dt>Computes the first wiener sachtextformel, using the number of words with 3 or</dt><dd><p>more syllables, the number of words, the number of words with 6 or more
+letters and the number of monosyllabic words</p>
+<p>Keyword arguments:
+polysyllables_count – number of words with three or more syllables
+word_count – number of words
+long_words_count – number of words with 6 or more letters</p>
+</dd>
+</dl>
+<p>monosyllables_count – number of words with only a single syllable</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="exploration.wiener_sachtextformel2">
+<code class="sig-prename descclassname">exploration.</code><code class="sig-name descname">wiener_sachtextformel2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">polysyllables_count</span></em>, <em class="sig-param"><span class="n">word_count</span></em>, <em class="sig-param"><span class="n">long_words_count</span></em><span class="sig-paren">)</span><a class="headerlink" href="#exploration.wiener_sachtextformel2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the second wiener sachtextformel, using the number of words with 3 or
+more syllables, the number of words and the number of words with 6 or more
+letters.</p>
+<p>Keyword arguments:
+polysyllables_count – number of words with three or more syllables
+word_count – number of words
+long_words_count – number of words with 6 or more letters</p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="gpu.html" class="btn btn-neutral float-right" title="gpu module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="experiments.html" class="btn btn-neutral float-left" title="experiments module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Leo Nguyen, Raoul Berger, Konrad Straube, Till Nocher.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

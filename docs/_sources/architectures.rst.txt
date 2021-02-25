@@ -1,0 +1,7 @@
+architectures module
+====================
+
+.. automodule:: architectures
+   :members:
+   :undoc-members:
+   :show-inheritance:

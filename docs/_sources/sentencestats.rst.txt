@@ -1,0 +1,7 @@
+sentencestats module
+====================
+
+.. automodule:: sentencestats
+   :members:
+   :undoc-members:
+   :show-inheritance:
