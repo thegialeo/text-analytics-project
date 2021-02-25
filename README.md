@@ -16,9 +16,16 @@ nocher@cl.uni-heidelberg.de </br>
 ## Utilized libraries
 
 ## Setup
+
+### Install dependencies
+Install all necessary dependencies with:
+> pipenv install 
+
 ### Download datasets:
-To download a specific dataset, replace 'all' with ['TextComplexityDE19', 'Weebit', 'dw']. 
+To download a specific dataset, replace 'all' with ['TextComplexityDE19', 'Weebit', 'dw']: 
 > pipenv run main --download all
+
+## Usage
 
 
 ## Project State
