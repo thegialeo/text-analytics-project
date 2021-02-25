@@ -45,9 +45,11 @@ if __name__ == "__main__":
                         help="Specify which regression method to use. Options: 'linear', 'lasso', 'ridge', 'elastic-net', 'random-forest'")
     parser.add_argument("--save_name", dest="save_name", action='store',
                         help="Name to save train model under. Only available for --experiment train_net (used for prototyping and hyperparameter tuning)")                                               
-    
+    parser.add_argument("--multiple_datasets", dest="conditional", action='store_true',
+                        help="If multiple datasets are used, to conditional training")               
 
-    parser.set_defaults(dset='0', download=None, create_h5=False, backtrans=False, lemma=False, stem=False, swap=False, delete=False, filename=None, search=None, experiment=None, extra_feat=False, vectorizer=None, method=None, save_name=None)
+
+    parser.set_defaults(dset='0', download=None, create_h5=False, backtrans=False, lemma=False, stem=False, swap=False, delete=False, filename=None, search=None, experiment=None, extra_feat=False, vectorizer=None, method=None, save_name=None, conditional=False)
     args = parser.parse_args()
 
 
@@ -96,7 +98,7 @@ if __name__ == "__main__":
         if args.experiment == 'train_net':
             if args.save_name is None:
                 args.save_name = args.filename
-            trainer.train_model(args.filename, 20, [10, 15, 18, 20], 128, 1e-3, args.save_name)
+            trainer.train_model(args.filename, 20, [10, 15, 18, 20], 128, 1e-3, args.save_name, args.extra_feat, args.conditional)
 
 
 
