@@ -5,6 +5,7 @@ import normalization
 import numpy as np
 import pandas as pd
 import spacy
+
 # import to_dataframe
 import wordlists
 
@@ -41,7 +42,17 @@ def construct_features(sentence, verbose=False):
 
     # ======= POS tag density =======
     my_df[
-        ["nouns", "propernouns", "pronouns", "conj", "adj", "ver", "not_pron_or_det"]
+        [
+            "nouns",
+            "propernouns",
+            "pronouns",
+            "conj",
+            "adj",
+            "adv",
+            "ver",
+            "aux",
+            "not_pron_or_det",
+        ]
     ] = POS_tag_density(sentence)
 
     if verbose:
@@ -238,7 +249,9 @@ def POS_tag_density(sentences):
     pronouns_list = []
     conj_list = []
     adj_list = []
+    adv_list = []
     ver_list = []
+    aux_list = []
     not_pron_or_det_list = []
 
     for sentence in sentences:
@@ -249,7 +262,9 @@ def POS_tag_density(sentences):
         pronouns = 0
         conj = 0
         adj = 0
+        adv = 0
         ver = 0
+        aux = 0
         not_pron_or_det = len(doc)
 
         for token in doc:
@@ -264,8 +279,12 @@ def POS_tag_density(sentences):
                 conj += 1
             elif token.pos_ == "ADJ":
                 adj += 1
+            elif token.pos_ == "ADV":
+                adv += 1
             elif token.pos_ == "VERB":
                 ver += 1
+            elif token.pos_ == "AUX":
+                aux += 1
             elif token.pos_ == "DET":
                 not_pron_or_det -= 1
 
@@ -274,14 +293,18 @@ def POS_tag_density(sentences):
         pronouns = pronouns * 1.0 / len(doc)
         conj = conj * 1.0 / len(doc)
         adj = adj * 1.0 / len(doc)
+        adv = adv * 1.0 / len(doc)
         ver = ver * 1.0 / len(doc)
+        aux = aux * 1.0 / len(doc)
 
         nouns_list.append(nouns)
         propernouns_list.append(propernouns)
         pronouns_list.append(pronouns)
         conj_list.append(conj)
         adj_list.append(adj)
+        adv_list.append(adv)
         ver_list.append(ver)
+        aux_list.append(aux)
         not_pron_or_det_list.append(not_pron_or_det)
 
     return pd.DataFrame(
@@ -291,7 +314,9 @@ def POS_tag_density(sentences):
             "pronouns": pronouns_list,
             "conj": conj_list,
             "adj": adj_list,
+            "adv": adv_list,
             "ver": ver_list,
+            "aux": aux_list,
             "not_pron_or_det": not_pron_or_det_list,
         }
     )
@@ -316,11 +341,9 @@ if __name__ == "__main__":
     df_all.columns = df_all.columns.str.lower()
     print(df_all["sentence"])
 
-    feature_matrix = construct_features(
-        df_all["sentence"], normalize=True, verbose=True
-    )
+    feature_matrix = construct_features(df_all["sentence"], verbose=True)
     print(feature_matrix)
-    print("\n", feature_matrix[0])
+    print("\n", feature_matrix.iloc[0, :])
 
     nlp = spacy.load("de_core_news_sm")
     doc = df_all["sentence"][0]
@@ -351,6 +374,7 @@ if __name__ == "__main__":
     print("Explain CCONJ:", spacy.explain("CCONJ"))
     print("Explain VERB:", spacy.explain("VERB"))
     print("Explain AUX:", spacy.explain("AUX"))
+    print("Explain INTJ:", spacy.explain("INTJ"))
 
     # for chunk in doc.noun_chunks:
     #    print(chunk.text, chunk.root.text, chunk.root.dep_, chunk.root.head.text)
