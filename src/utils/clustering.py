@@ -1,9 +1,16 @@
-from sklearn.cluster import (DBSCAN, OPTICS, AffinityPropagation,
-                             AgglomerativeClustering, Birch, MeanShift, MiniBatchKMeans,
-                             SpectralClustering)
+from sklearn.cluster import (
+    DBSCAN,
+    OPTICS,
+    AffinityPropagation,
+    AgglomerativeClustering,
+    Birch,
+    MeanShift,
+    MiniBatchKMeans,
+    SpectralClustering,
+)
 
 
-def clustering_wrapper(features, cluster_method='kmeans', dim_reduc='PCA'):
+def clustering_wrapper(features, cluster_method="kmeans", dim_reduc="PCA"):
     """Performs clustering, dimension reduction to 2d space.
 
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
@@ -20,59 +27,67 @@ def clustering_wrapper(features, cluster_method='kmeans', dim_reduc='PCA'):
     """
 
     # perform selected clustering method
-    if cluster_method == 'kmeans':
+    if cluster_method == "kmeans":
         sklearn_cls = MiniBatchKMeans(n_clusters=6, random_state=0)
         sklearn_cls.fit(features)
         sklearn_cls.predict(features)
         centroid_method = True
-    elif cluster_method == 'AP':
+    elif cluster_method == "AP":
         sklearn_cls = AffinityPropagation(random_state=0)
         sklearn_cls.fit(features)
         sklearn_cls.predict(features)
         centroid_method = True
-    elif cluster_method == 'mean_shift':
+    elif cluster_method == "mean_shift":
         sklearn_cls = MeanShift()
         sklearn_cls.fit(features)
         sklearn_cls.predict(features)
         centroid_method = True
-    elif cluster_method == 'spectral':
-        sklearn_cls = SpectralClustering(n_clusters=6, assign_labels='discretize', random_state=0)
+    elif cluster_method == "spectral":
+        sklearn_cls = SpectralClustering(
+            n_clusters=6, assign_labels="discretize", random_state=0
+        )
         sklearn_cls.fit(features)
         centroid_method = False
-    elif cluster_method == 'Agg':
+    elif cluster_method == "Agg":
         sklearn_cls = AgglomerativeClustering(n_clusters=6)
         sklearn_cls.fit(features)
         centroid_method = False
-    elif cluster_method == 'DBSCAN':
+    elif cluster_method == "DBSCAN":
         sklearn_cls = DBSCAN()
         sklearn_cls.fit(features)
         centroid_method = False
-    elif cluster_method == 'OPTICS':
+    elif cluster_method == "OPTICS":
         sklearn_cls = OPTICS()
         sklearn_cls.fit(features)
         centroid_method = False
-    elif cluster_method == 'Birch':
+    elif cluster_method == "Birch":
         sklearn_cls = Birch(n_clusters=6)
         sklearn_cls.fit(features)
         sklearn_cls.predict(features)
         centroid_method = False
     else:
-        raise ValueError("Clustering method {} is not implemented yet. Please select one of the following options: 'kmeans', 'AP', 'mean_shift', 'spectral', 'Agg', 'DBSCAN', 'OPTICS', 'Birch'".format(cluster_method))
-
+        raise ValueError(
+            "Clustering method {} is not implemented yet. Please select one of the following options: 'kmeans', 'AP', 'mean_shift', 'spectral', 'Agg', 'DBSCAN', 'OPTICS', 'Birch'".format(
+                cluster_method
+            )
+        )
 
     # perform selected dimension reduction
-    if dim_reduc == 'PCA':
+    if dim_reduc == "PCA":
         reduced_features = pca.fit_transform(features)
         if centroid_method:
             reduced_cluster_centers = pca.transform(sklearn_cls.cluster_centers_)
-    elif dim_reduc == 'TSNE':
+    elif dim_reduc == "TSNE":
         tsne = TSNE(n_components=2, random_state=0)
         reduced_features = tsne.fit_transform(features)
         if centroid_method:
             reduced_cluster_centers = tsne.transform(sklearn_cls.cluster_centers_)
-    else:       
-        raise ValueError("Dimension Reduction method {} is not implemented yet. Please select one the folling options: 'PCA', 'TSNE'".format(method))
-   
+    else:
+        raise ValueError(
+            "Dimension Reduction method {} is not implemented yet. Please select one the folling options: 'PCA', 'TSNE'".format(
+                method
+            )
+        )
 
     if centroid_method:
         return sklearn_cls, reduced_features, reduced_cluster_centers
