@@ -157,9 +157,6 @@ if __name__ == "__main__":
         use_textcomp = True if "0" in args.dset else False
         use_weebit = True if "1" in args.dset else False
         use_dw = True if "2" in args.dset else False
-        print("textcomp:", use_textcomp)
-        print("weebit:", use_weebit)
-        print("dw:", use_dw)
         to_dataframe.store_augmented_h5(
             args.filename,
             use_textcomp,

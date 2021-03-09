@@ -351,7 +351,6 @@ def augmented_all(
 
     if use_dw:
         dw_train = all_dataset[all_dataset["source"] == 2]
-        print("dw shape:", dw_train.shape)
 
     if use_textcomp19 and not use_weebit and not use_dw:                                  #0
         all_dataset_train = text_comp_train
@@ -505,11 +504,6 @@ def store_augmented_h5(
         randword_del,
         test_size,
     )
-    print("textcomp:", use_textcomp19)
-    print("weebit:", use_weebit)
-    print("dw:", use_dw)
-    print("train:", all_dataset_train.shape)
-    print("test:", all_dataset_test.shape)
 
     # Write augmented data to h5 file at the above path "h5_path"
     all_dataset_train.to_hdf(h5_path, key="train")
