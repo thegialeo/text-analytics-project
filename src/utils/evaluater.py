@@ -19,6 +19,7 @@ from utils import (
     to_dataframe,
     vectorizer,
     gpu,
+    normalization
 )
 
 

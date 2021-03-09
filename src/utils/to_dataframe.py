@@ -1,13 +1,12 @@
 import pandas as pd
 import os
 from os.path import join, abspath, dirname, isfile
-import textstat
 from google_trans_new import google_translator
 from sklearn.model_selection import train_test_split
 import nlpaug.augmenter.word as naw
 import spacy
 from nltk.stem import SnowballStemmer
-from utils import downloader, exploration
+from utils import downloader, exploration, normalization
 
 # from preprocessing import get_stopwords
 
@@ -62,6 +61,28 @@ def text_comp19_to_df():
 
     return corpus
 
+def replace_rating(x):
+
+    """
+    Function to replace string ratings to int ratings.
+    """
+    if "Elementary" in str(x):
+        return 0
+
+    elif "Intermediate" in str(x):
+        return 1
+
+    elif "Advanced" in str(x):
+        return 2
+
+    elif "B2" and "C1" in str(x):
+        return 1
+
+    elif "B1" and not "C1" in str(x):
+        return 0
+
+    else:
+        return 0
 
 def weebit_to_df():
 
@@ -122,9 +143,9 @@ def weebit_to_df():
                     if omit:
                         omit = False
                         # write difficulty to dataframe
-                        data_dict["rating"].append(line)
+                        data_dict["rating"].append(replace_rating(line))
                         continue
-                    str_list.append(line)
+                    str_list.append(replace_rating(line))
 
             # flatten list of line to one big string
             text = ""
@@ -210,6 +231,7 @@ def dw_to_df():
     )
     dw_set.rename(columns={"text": "raw_text", "levels": "rating"}, inplace=True)
     dw_set.insert(2, "source", 2)
+    dw_set["rating"] = dw_set["rating"].apply(lambda x: replace_rating(x))
 
     return dw_set
 
@@ -253,27 +275,28 @@ def all_data(use_textcomp19=False, use_weebit=False, use_dw=False):
             weebit = weebit_h5obj["Weebit"]
 
     # append all dataframes to one dataframe
+    if use_dw and use_weebit and use_textcomp19:
+        all_dataset = text_comp19.append(weebit, ignore_index=True)
+        all_dataset = all_dataset.append(dw, ignore_index=True)
+
     if use_textcomp19 and not use_weebit and not use_dw:
         all_dataset = text_comp19
 
-    elif use_weebit and not use_textcomp19 and not use_dw:
+    if use_weebit and not use_textcomp19 and not use_dw:
         all_dataset = weebit
 
-    elif use_dw and not use_textcomp19 and not use_weebit:
+    if use_dw and not use_textcomp19 and not use_weebit:
         all_dataset = dw
 
-    elif (use_dw and use_weebit and not use_textcomp19):
+    if use_dw and use_weebit and not use_textcomp19:
         all_dataset = dw.append(weebit, ignore_index=True)
 
-    elif (use_textcomp19 and use_weebit and not use_dw):
+    if use_textcomp19 and use_weebit and not use_dw:
         all_dataset = text_comp19.append(weebit, ignore_index=True)
 
-    elif (use_textcomp19 and use_dw and not use_weebit):
+    if use_textcomp19 and use_dw and not use_weebit:
         all_dataset = text_comp19.append(dw, ignore_index=True)
 
-    elif use_dw and use_weebit and use_textcomp19:
-        all_dataset = text_comp19.append(weebit, ignore_index=True)
-        all_dataset = all_dataset.append(dw, ignore_index=True)
 
     # delete "\n" and other special symbols
     print("removing newline command")
@@ -339,7 +362,9 @@ def augmented_all(
 
     # Perform a Train-Test Split keeping dataset proportions the same
     print("perform train-test split keeping dataset proportions the same")
+
     all_dataset = all_data(use_textcomp19, use_weebit, use_dw)
+    print("#####################",all_dataset[all_dataset["source"]==1])
 
     if use_textcomp19:
         text_comp_train, text_comp_test = train_test_split(
@@ -348,6 +373,7 @@ def augmented_all(
 
     if use_weebit:
         weebit_train = all_dataset[all_dataset["source"] == 1]
+        print(weebit_train)
 
     if use_dw:
         dw_train = all_dataset[all_dataset["source"] == 2]
