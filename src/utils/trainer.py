@@ -213,7 +213,7 @@ def train_model(
                 features = torch.cat((features, dataset_label), 1)
 
             # prediction
-            print(features.size())
+            #print(features.size())
             output = reg_model(features)
 
             # loss evaluation
