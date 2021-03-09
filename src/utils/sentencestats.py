@@ -1,13 +1,13 @@
 import re
 from os import path
 
-import normalization
+from utils import normalization
 import numpy as np
 import pandas as pd
 import spacy
 
 # import to_dataframe
-import wordlists
+from utils import wordlists
 
 
 def construct_features(sentence, verbose=False):
