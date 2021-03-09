@@ -253,13 +253,13 @@ def all_data(use_textcomp19=False, use_weebit=False, use_dw=False):
             weebit = weebit_h5obj["Weebit"]
 
     # append all dataframes to one dataframe
-    if use_textcomp19 and not(use_weebit and use_dw):
+    if use_textcomp19 and not use_weebit and not use_dw:
         all_dataset = text_comp19
 
-    elif use_weebit and not(use_textcomp19 and use_dw):
+    elif use_weebit and not use_textcomp19 and not use_dw:
         all_dataset = weebit
 
-    elif use_dw and not(use_textcomp19 and use_weebit):
+    elif use_dw and not use_textcomp19 and not use_weebit:
         all_dataset = dw
 
     elif (use_dw and use_weebit and not use_textcomp19):
@@ -351,6 +351,7 @@ def augmented_all(
 
     if use_dw:
         dw_train = all_dataset[all_dataset["source"] == 2]
+        print("dw shape:", dw_train.shape)
 
     if use_textcomp19 and not use_weebit and not use_dw:                                  #0
         all_dataset_train = text_comp_train
@@ -504,6 +505,11 @@ def store_augmented_h5(
         randword_del,
         test_size,
     )
+    print("textcomp:", use_textcomp19)
+    print("weebit:", use_weebit)
+    print("dw:", use_dw)
+    print("train:", all_dataset_train.shape)
+    print("test:", all_dataset_test.shape)
 
     # Write augmented data to h5 file at the above path "h5_path"
     all_dataset_train.to_hdf(h5_path, key="train")
