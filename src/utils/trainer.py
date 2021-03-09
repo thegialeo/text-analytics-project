@@ -9,7 +9,7 @@ from sklearn.metrics import r2_score
 from torch.utils.data import DataLoader, TensorDataset
 import torch.optim as opt
 import matplotlib.pyplot as plt
-from utils import BERT, evaluater, gpu, regression, to_dataframe, sentencestats
+from utils import BERT, evaluater, gpu, regression, to_dataframe, sentencestats, architectures
 
 
 def train_model(
@@ -150,13 +150,13 @@ def train_model(
     )
 
     # prepare regression model
-    hidden_size = 512
+    feat_size = 768
     if engineered_features:
-        hidden_size += 21
+        feat_size += 21
     if multiple_dataset:
-        hidden_size += 1
+        feat_size += 1
 
-    reg_model = regression.Net(768, hidden_size, 1)
+    reg_model = architectures.Net(feat_size, 512, 1)
     reg_model = reg_model.to(device)
 
     # optimizer
