@@ -23,7 +23,9 @@ def train_model(
     engineered_features=False,
     multiple_dataset=False,
     pretask_epoch=None,
-    pretask_file=None
+    pretask_file=None,
+    dropout=False,
+    batchnorm=False
 ):
     """Train a model on the given dataset
 
@@ -40,6 +42,8 @@ def train_model(
         multiple_dataset (bool, optional): use multiple datasets for conditional training
         pretask_epoch (int, optional): integer provided will be the number of epochs spent on the pretask
         pretask_file (str, optional): filename of dataset for pretask
+        dropout (bool, optional): use network architecture with dropout
+        batchnorm (bool, optional): use network architecture with batch normalization
     """
 
     # save paths
@@ -195,7 +199,14 @@ def train_model(
     if multiple_dataset:
         feat_size += 1
 
-    reg_model = architectures.Net(feat_size, 512, 1)
+    if dropout and batchnorm:
+        reg_model = architectures.BN_Dropout_Net(feat_size, 512, 1)
+    elif batchnorm:
+        reg_model = architectures.BN_Net(feat_size, 512, 1)
+    elif dropout:
+        reg_model = architectures.Dropout_Net(feat_size, 512, 1)
+    else:
+        reg_model = architectures.Net(feat_size, 512, 1)
     reg_model = reg_model.to(device)
 
     # optimizer
