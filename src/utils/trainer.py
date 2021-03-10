@@ -184,13 +184,14 @@ def train_model(
             pretask_set = TensorDataset(pretask_input_tensor, pretask_segment_tensor, pretask_labels)
         
         # dataloader 
-        pretask_loader DataLoader(
+        pretask_loader = DataLoader(
             pretask_set,
             batch_size=batch_size,
             shuffle=True,
             num_workers=num_workers,
             pin_memory=True,
         )
+
 
     # prepare regression model
     feat_size = 768

@@ -112,6 +112,25 @@ if __name__ == "__main__":
         action="store_true",
         help="If multiple datasets are used, to conditional training",
     )
+    parser.add_argument(
+        "--pretask",
+        dest="pretask",
+        action="store",
+        nargs=2,
+        help="Provide number of epochs to train pretask and filename of dataset to perform the pretask on"
+    )
+    parser.add_argument(
+        "--dropout",
+        dest="dropout",
+        action="store_true",
+        help="Use network architecture that has dropout layers"
+    )
+    parser.add_argument(
+        "--batchnorm",
+        dest="batchnorm",
+        action="store_true",
+        help="Use network architecture that has batch normalization layers"
+    )
 
     parser.set_defaults(
         dset="0",
@@ -130,6 +149,9 @@ if __name__ == "__main__":
         method=None,
         save_name=None,
         conditional=False,
+        pretask=None,
+        dropout=False,
+        batchnorm=False
     )
     args = parser.parse_args()
 
@@ -203,4 +225,8 @@ if __name__ == "__main__":
                 args.save_name,
                 args.extra_feat,
                 args.conditional,
+                int(args.pretask[0]),
+                args.pretask[1],
+                args.dropout,
+                args.batchnorm
             )
