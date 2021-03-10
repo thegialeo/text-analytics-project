@@ -158,15 +158,27 @@ def train_model(
     if pretask_epoch is not None and pretask_file is not None:
         # read data
         df_pretask = to_dataframe.read_augmented_h5(pretask_file)
+        
         # prepare BERT input
         pretask_sentences = df_pretask.raw_text.values
         pretask_input_tensor, pretask_segment_tensor = bert_model.preprocessing(pretask_sentences)
+        
         # extract labels + cast to PyTorch tensors
         pretask_labels = torch.tensor(
             list(df_pretask.rating.values), dtype=torch.float
         ).unsqueeze_(1)
+        
         # prepare dataset
-        pretask_set = TensorDataset(pretask_input_tensor, pretask_segment_tensor, pretask_labels)
+        if engineered_features:
+            extra_pretask_feat = torch.from_numpy(
+                sentencestats.construct_features(pretask_sentences)
+            )
+            pretask_set = TensorDataset(
+                pretask_input_tensor, pretask_segment_tensor, pretask_labels, extra_pretask_feat
+            )
+        else:
+            pretask_set = TensorDataset(pretask_input_tensor, pretask_segment_tensor, pretask_labels)
+        
         # dataloader 
         pretask_loader DataLoader(
             pretask_set,
