@@ -10,6 +10,7 @@ from torch.utils.data import DataLoader, TensorDataset
 import torch.optim as opt
 import matplotlib.pyplot as plt
 from utils import BERT, evaluater, gpu, regression, to_dataframe, sentencestats, architectures
+from tqdm import tqdm
 
 
 def train_model(
@@ -21,6 +22,7 @@ def train_model(
     save_name,
     engineered_features=False,
     multiple_dataset=False,
+    pretask=None
 ):
     """Train a model on the given dataset
 
@@ -34,7 +36,8 @@ def train_model(
         lr (float): learning rate
         save_name (string): name under which to save trained model and results
         engineered_features (bool, optional): contenate engineered features to vectorized sentence
-        multiple_dataset (bool, optional): use multiple datasets
+        multiple_dataset (bool, optional): use multiple datasets for conditional training
+        pretask (int, optional): use multiple datasets for pretask training, integer provided will be the number of epochs spent on the pretask (pretask will overwrite conditional training)
     """
 
     # save paths
@@ -76,7 +79,9 @@ def train_model(
     ).unsqueeze_(1)
 
     # prepare dataset
-    if engineered_features and multiple_dataset:
+    if pretask is not None:
+        pass
+    elif engineered_features and multiple_dataset:
         extra_train_feat = torch.from_numpy(
             sentencestats.construct_features(train_sentences)
         )
@@ -183,8 +188,10 @@ def train_model(
         start = time.time()
         reg_model.train()
 
+        print("Training:")
+
         # training
-        for i, data in enumerate(trainloader):
+        for i, data in enumerate(tqdm(trainloader)):
             # move batch and model to device
             reg_model.to(device)
             input_id = data[0].to(device)
@@ -213,7 +220,6 @@ def train_model(
                 features = torch.cat((features, dataset_label), 1)
 
             # prediction
-            #print(features.size())
             output = reg_model(features)
 
             # loss evaluation
@@ -233,13 +239,14 @@ def train_model(
         scheduler.step()
 
         # evaluation
+        print("Evaluation:")
         reg_model.eval()
         running_loss /= len(trainloader)
         MSE_train, RMSE_train, MAE_train, r2_train = evaluater.evaluate_model(
-            reg_model, bert_model, trainloader
+            reg_model, bert_model, trainloader, engineered_features, multiple_dataset
         )
         MSE_test, RMSE_test, MAE_test, r2_test = evaluater.evaluate_model(
-            reg_model, bert_model, testloader
+            reg_model, bert_model, testloader, engineered_features, multiple_dataset
         )
 
         # log evaluation result

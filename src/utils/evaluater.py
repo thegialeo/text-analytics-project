@@ -1,5 +1,5 @@
 from os.path import abspath, dirname, join
-
+from tqdm import tqdm
 import numpy as np
 import pandas as pd
 import torch
@@ -212,7 +212,7 @@ def evaluate_model(
 
     # iterate through dataset
     with torch.no_grad():
-        for i, data in enumerate(dataloader):
+        for i, data in enumerate(tqdm(dataloader)):
             # move batch and model to device
             model.to(device)
             input_id = data[0].to(device)
@@ -236,7 +236,7 @@ def evaluate_model(
             # add dataset conditional label (always 0)
             if multiple_dataset:
                 features = torch.cat(
-                    (features, torch.tensor(np.zeros(dataset_label.shape))), 1
+                    (features, torch.tensor(np.zeros(dataset_label.shape), dtype=torch.float).to(device)), 1
                 )
 
             # prediction
