@@ -22,7 +22,8 @@ def train_model(
     save_name,
     engineered_features=False,
     multiple_dataset=False,
-    pretask=None
+    pretask_epoch=None,
+    pretask_file=None
 ):
     """Train a model on the given dataset
 
@@ -37,7 +38,8 @@ def train_model(
         save_name (string): name under which to save trained model and results
         engineered_features (bool, optional): contenate engineered features to vectorized sentence
         multiple_dataset (bool, optional): use multiple datasets for conditional training
-        pretask (int, optional): use multiple datasets for pretask training, integer provided will be the number of epochs spent on the pretask (pretask will overwrite conditional training)
+        pretask_epoch (int, optional): integer provided will be the number of epochs spent on the pretask
+        pretask_file (str, optional): filename of dataset for pretask
     """
 
     # save paths
@@ -79,9 +81,7 @@ def train_model(
     ).unsqueeze_(1)
 
     # prepare dataset
-    if pretask is not None:
-        pass
-    elif engineered_features and multiple_dataset:
+    if engineered_features and multiple_dataset:
         extra_train_feat = torch.from_numpy(
             sentencestats.construct_features(train_sentences)
         )
@@ -153,6 +153,28 @@ def train_model(
         num_workers=num_workers,
         pin_memory=True,
     )
+
+    # setup pretask
+    if pretask_epoch is not None and pretask_file is not None:
+        # read data
+        df_pretask = to_dataframe.read_augmented_h5(pretask_file)
+        # prepare BERT input
+        pretask_sentences = df_pretask.raw_text.values
+        pretask_input_tensor, pretask_segment_tensor = bert_model.preprocessing(pretask_sentences)
+        # extract labels + cast to PyTorch tensors
+        pretask_labels = torch.tensor(
+            list(df_pretask.rating.values), dtype=torch.float
+        ).unsqueeze_(1)
+        # prepare dataset
+        pretask_set = TensorDataset(pretask_input_tensor, pretask_segment_tensor, pretask_labels)
+        # dataloader 
+        pretask_loader DataLoader(
+            pretask_set,
+            batch_size=batch_size,
+            shuffle=True,
+            num_workers=num_workers,
+            pin_memory=True,
+        )
 
     # prepare regression model
     feat_size = 768
