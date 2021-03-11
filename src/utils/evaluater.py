@@ -280,6 +280,9 @@ def evaluate_acc(model, bert_model, dataloader, engineered_features=False):
     # move model to device
     model = model.to(device)
 
+    # sigmoid 
+    sigmoid = torch.nn.Sigmoid()
+
     # log
     correct = 0
     total = 0
@@ -302,11 +305,11 @@ def evaluate_acc(model, bert_model, dataloader, engineered_features=False):
                 features = torch.cat((features, extra_feat), 1)
 
             # prediction
-            output = torch.nn.Sigmoid(model(features))
-            _, pred = torch.max(out.data, 1)
+            output = sigmoid(model(features))
+            _, pred = torch.max(output.data, 1)
             
             # count correct predictions
-            total += label.size(0)
+            total += label.size(1)
             correct += (pred == label).sum().item()
 
     return 100 * correct / total

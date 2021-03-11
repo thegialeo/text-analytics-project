@@ -162,7 +162,7 @@ def train_model(
     # setup pretask
     if pretask_epoch is not None and pretask_file is not None:
         # read data
-        df_pretask = to_dataframe.read_augmented_h5(pretask_file)
+        df_pretask, _ = to_dataframe.read_augmented_h5(pretask_file)
         
         # prepare BERT input
         pretask_sentences = df_pretask.raw_text.values
@@ -421,6 +421,14 @@ def train_pretask(pretask_epoch, model, bert_model, dataloader, criterion, optim
     device = gpu.check_gpu()
     print("Pretask Training on:", device)
 
+    # sigmoid 
+    sigmoid = torch.nn.Sigmoid()
+
+    # create directories
+    for path in [model_path, log_path, fig_path]:
+        if not exists(join(path, "pretask")):
+            os.makedirs(join(path, "pretask"))
+
     for epoch in range(pretask_epoch):
         start = time.time()
         model.train()
@@ -448,7 +456,7 @@ def train_pretask(pretask_epoch, model, bert_model, dataloader, criterion, optim
                 features = torch.cat((features, extra_feat), 1)
             
             # prediction
-            output = torch.nn.Sigmoid(model(features))
+            output = sigmoid(model(features))
 
             # loss evaluation
             loss = criterion(output, label)

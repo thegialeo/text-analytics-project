@@ -389,6 +389,7 @@ def augmented_all(
     if use_dw and not use_weebit and not use_textcomp19:                                  #2
         print("No dw test set available!")
         all_dataset_train = dw_train
+        all_dataset_test = dw_train # added so that dataset with only dw can be created
 
     if use_textcomp19 and use_weebit and not use_dw:                                       #01
         all_dataset_train = text_comp_train.append(weebit_train, ignore_index=True)
