@@ -405,17 +405,51 @@ def train_pretask(pretask_epoch, model, bert_model, dataloader, criterion, optim
     pretask_train_RMSE_log = []
     pretask_train_MAE_log = []
     pretask_train_r2_log = []
-    pretask_test_MSE_log = []
-    pretask_test_RMSE_log = []
-    pretask_test_MAE_log = []
-    pretask_test_r2_log = []
+   
+    # set device
+    device = gpu.check_gpu()
+    print("Pretask Training on:", device)
 
     for epoch in range(pretask_epoch):
         start = time.time()
         model.train()
 
-        print("Start Pretask Training:")
+        print("Training:")
 
         # training
         for i, data in enumerate(tqdm(dataloader)):
-            pass
+            # move batch and model to device
+            model.to(device)
+            input_id = data[0].to(device)
+            segment = data[1].to(device)
+            label = data[2].to(device)
+            if engineered_features:
+                extra_feat = data[3].to(device)
+
+            # clear gradients
+            optimizer.zero_grad()
+
+            # BERT feature extraction
+            features = bert_model.get_features(input_id, segment)
+
+            # add engineered features
+            if engineered_features:
+                features = torch.cat((features, extra_feat), 1)
+            
+            # prediction
+            output = model(features)
+
+            # loss evaluation
+            loss = criterion(output, label)
+            loss.backward()
+
+            # backpropagation
+            optimizer.step()
+
+            # record loss 
+            curr_loss = torch.mean(loss).item()
+            running_loss = (
+                curr_loss if ((i == 0) and (epoch == 0)) else running_loss + curr_loss
+            )
+
+       

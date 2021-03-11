@@ -27,6 +27,7 @@ class BERT:
         self.model = BertModel.from_pretrained("bert-base-german-cased")
         self.model = self.model.to(self.device)
         self.model.eval()
+        print("BERT model moved to device:", self.device)
 
     def preprocessing(self, sentences):
         """Prepare sentences for to conform with BERT input (tokenize, add special tokens, create Segment ID)
