@@ -259,30 +259,54 @@ def evaluate_model(
     return MSE_mean, RMSE_mean, MAE_mean, r_square_mean
 
 
-def evaluate_acc(model, bert_model, loader, device):
-    """
-    Evaluate accuracy of a model.
+def evaluate_acc(model, bert_model, dataloader, engineered_features=False):
+    """Evaluate accuracy of a model.
+
+    Written by Leo Nguyen. Contact Xenovortex, if problems arises.
 
     Args:
-        model: classifier to train on top of mobilenet
-        loader: dataloader for dataset
-        device: CPU or GPU
+        model (torch.nn.Module): PyTorch model of a Regression Neural Network
+        bert_model (torch.nn.Module): BERT PyTorch model for feature extraction
+        dataloader (PyTorch dataloader): PyTorch dataloader of dataset
+        engineered_features (bool, optional): contenate engineered features to vectorized sentence
     
     Return: 
         accuracy of the model on dataset
     """
+
+    # check if GPU available
+    device = gpu.check_gpu()
+
+    # move model to device
+    model = model.to(device)
+
+    # log
     correct = 0
     total = 0
+    
     with torch.no_grad():
-        for i, (img, label) in enumerate(loader):
-            img = img.to(device)
-            label = label.to(device)
-            if mtcnn is not None:
-                faces = mtcnn(img)
-                out = model(faces)
-            else:
-                out = model(img)
+        for i, data in enumerate(tqdm(dataloader)):
+            # move batch and model to device
+            model.to(device)
+            input_id = data[0].to(device)
+            segment = data[1].to(device)
+            label = data[2].to(device)
+            if engineered_features:
+                extra_feat = data[3].to(device)
+
+            # BERT feature extraction
+            features = bert_model.get_features(input_id, segment)
+
+            # add engineered features
+            if engineered_features:
+                features = torch.cat((features, extra_feat), 1)
+
+            # prediction
+            output = model(features)
             _, pred = torch.max(out.data, 1)
+            
+            # count correct predictions
             total += label.size(0)
             correct += (pred == label).sum().item()
+
     return 100 * correct / total
