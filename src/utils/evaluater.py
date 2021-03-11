@@ -191,6 +191,7 @@ def evaluate_model(
         dataloader (PyTorch dataloader): PyTorch dataloader of dataset
         engineered_features (bool, optional): contenate engineered features to vectorized sentence
         multiple_dataset (bool, optional): use multiple datasets
+
     Return:
         MSE_mean (double): Mean Square Error
         RMSE_mean (double): Root Mean Square Error
@@ -256,3 +257,32 @@ def evaluate_model(
     r_square_mean = sum(r_square_lst) / len(r_square_lst)
 
     return MSE_mean, RMSE_mean, MAE_mean, r_square_mean
+
+
+def evaluate_acc(model, bert_model, loader, device):
+    """
+    Evaluate accuracy of a model.
+
+    Args:
+        model: classifier to train on top of mobilenet
+        loader: dataloader for dataset
+        device: CPU or GPU
+    
+    Return: 
+        accuracy of the model on dataset
+    """
+    correct = 0
+    total = 0
+    with torch.no_grad():
+        for i, (img, label) in enumerate(loader):
+            img = img.to(device)
+            label = label.to(device)
+            if mtcnn is not None:
+                faces = mtcnn(img)
+                out = model(faces)
+            else:
+                out = model(img)
+            _, pred = torch.max(out.data, 1)
+            total += label.size(0)
+            correct += (pred == label).sum().item()
+    return 100 * correct / total

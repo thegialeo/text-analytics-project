@@ -33,12 +33,12 @@ def train_model(
        Written by Leo Nguyen. Contact Xenovortex, if problems arises.
 
     Args:
-        filename (string): name of h5 file containing dataset
+        filename (str): name of h5 file containing dataset
         num_epoch (int): number of epochs
         step_epochs (list): list of epoch number, where learning rate will be reduce by a factor of 10
         batch_size (int): batch size
         lr (float): learning rate
-        save_name (string): name under which to save trained model and results
+        save_name (str): name under which to save trained model and results
         engineered_features (bool, optional): contenate engineered features to vectorized sentence
         multiple_dataset (bool, optional): use multiple datasets for conditional training
         pretask_epoch (int, optional): integer provided will be the number of epochs spent on the pretask
@@ -216,7 +216,7 @@ def train_model(
 
     # criterion
     criterion = torch.nn.MSELoss()
-    pretask_criterion = torch.nn
+    pretask_criterion = torch.nn.
 
     # scheduler
     scheduler = opt.lr_scheduler.MultiStepLR(optimizer, step_epochs, 0.1)
@@ -384,7 +384,7 @@ def train_model(
         plt.close("all")
 
 
-def train_pretask(pretask_epoch, model, bert_model, dataloader, criterion, optimizer, engineered_features=False):
+def train_pretask(pretask_epoch, model, bert_model, dataloader, criterion, optimizer, engineered_features, log_path, fig_path, model_path, save_name):
     """Train a model on a pretask
 
     Written by Leo Nguyen. Contact Xenovortex, if problems arises.
@@ -396,7 +396,14 @@ def train_pretask(pretask_epoch, model, bert_model, dataloader, criterion, optim
         dataloader (PyTorch dataloader): PyTorch dataloader of dataset
         criterion (function): loss function
         optimizer (PyTorch optimizer): optimizer of model parameters
-        engineered_features (bool, optional): contenate engineered features to vectorized sentence
+        engineered_features (bool): contenate engineered features to vectorized sentence
+        log_path (str): path to save log files
+        fig_path (str): path to save figures
+        model_path (str): path to save model
+        save_name (str): name under which to save trained model and results
+    
+    Return:
+        model (torch.nn.Module): trained PyTorch model 
     """
 
     # log
@@ -440,7 +447,7 @@ def train_pretask(pretask_epoch, model, bert_model, dataloader, criterion, optim
             output = model(features)
 
             # loss evaluation
-            loss = criterion(output, label)
+            loss = criterion(torch.nn.Sigmoid(output), label)
             loss.backward()
 
             # backpropagation
@@ -452,4 +459,76 @@ def train_pretask(pretask_epoch, model, bert_model, dataloader, criterion, optim
                 curr_loss if ((i == 0) and (epoch == 0)) else running_loss + curr_loss
             )
 
+        # evaluation
+        print("Evaluation:")
+        model.eval()
+        running_loss /= len(dataloader)
        
+
+        # log evaluation result
+        pretask_loss_log.append(running_loss)
+        pretask_train_MSE_log.append(MSE_train)
+        pretask_train_RMSE_log.append(RMSE_train)
+        pretask_train_MAE_log.append(MAE_train)
+        pretask_train_r2_log.append(r2_train)
+
+        # save logs
+        file = open(join(log_path, "pretask", save_name + ".txt"), "w")
+        print("Last Epoch:", epoch + 1, file=file)
+        print("Final Loss:", loss_log[-1], file=file)
+        print("Final Train MSE:", train_MSE_log[-1], file=file)
+        print("Final Train RMSE:", train_RMSE_log[-1], file=file)
+        print("Final Train MAE:", train_MAE_log[-1], file=file)
+        print("Final Train R2:", train_r2_log[-1], file=file)
+
+        # save variables 
+        with open(join(log_path, "pretask", save_name + ".pkl"), "wb") as f:
+            pickle.dump(
+                [
+                    loss_log,
+                    train_MSE_log,
+                    train_RMSE_log,
+                    train_MAE_log,
+                    train_r2_log,
+                ],
+                f,
+            )
+
+        # save model weights
+        torch.save(
+            model.to("cpu").state_dict(), join(model_path, "pretask", save_name + ".pt")
+        )
+        
+        # print stats
+        print(
+            "epoch {} \t loss {:.5f} \t train_r2 {:.3f} \t time {:.1f} sec".format(
+                epoch + 1, running_loss, r2_train, time.time() - start
+            )
+        )
+
+    # plots 
+    plot_names = [
+        "loss",
+        "train_MSE",
+        "train_RMSE",
+        "train_MAE",
+        "train_r2",
+    ]
+    for i, log in enumerate(
+        [
+            loss_log,
+            train_MSE_log,
+            train_RMSE_log,
+            train_MAE_log,
+            train_r2_log,
+        ]
+    ):
+        plt.figure(num=None, figsize=(15, 10))
+        plt.plot(log)
+        plt.grid(True, which="both")
+        plt.xlabel("epoch", fontsize=14)
+        plt.ylabel(plot_names[i], fontsize=14)
+        plt.savefig(join(fig_path, "pretask", save_name + "_" + plot_names[i] + ".png"))
+        plt.close("all")
+    
+    return model 
