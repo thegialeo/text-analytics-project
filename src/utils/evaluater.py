@@ -302,7 +302,7 @@ def evaluate_acc(model, bert_model, dataloader, engineered_features=False):
                 features = torch.cat((features, extra_feat), 1)
 
             # prediction
-            output = model(features)
+            output = torch.nn.Sigmoid(model(features))
             _, pred = torch.max(out.data, 1)
             
             # count correct predictions

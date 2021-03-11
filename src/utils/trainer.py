@@ -216,10 +216,17 @@ def train_model(
 
     # criterion
     criterion = torch.nn.MSELoss()
-    pretask_criterion = torch.nn.
+    pretask_criterion = torch.nn.BCELoss()
 
     # scheduler
     scheduler = opt.lr_scheduler.MultiStepLR(optimizer, step_epochs, 0.1)
+
+    # training on pretask
+    reg_model = train_pretask(pretask_epoch, reg_model, bert_model, pretask_loader, pretask_criterion, optimizer, engineered_features, log_path, fig_path, model_path, save_name)
+
+    # freeze first layer of the model 
+    for params in reg_model.model[0].parameters():
+        params.requires_grad = False
 
     # log
     loss_log = []
@@ -408,10 +415,7 @@ def train_pretask(pretask_epoch, model, bert_model, dataloader, criterion, optim
 
     # log
     pretask_loss_log = []
-    pretask_train_MSE_log = []
-    pretask_train_RMSE_log = []
-    pretask_train_MAE_log = []
-    pretask_train_r2_log = []
+    pretask_acc_log = []
    
     # set device
     device = gpu.check_gpu()
@@ -444,10 +448,10 @@ def train_pretask(pretask_epoch, model, bert_model, dataloader, criterion, optim
                 features = torch.cat((features, extra_feat), 1)
             
             # prediction
-            output = model(features)
+            output = torch.nn.Sigmoid(model(features))
 
             # loss evaluation
-            loss = criterion(torch.nn.Sigmoid(output), label)
+            loss = criterion(output, label)
             loss.backward()
 
             # backpropagation
@@ -463,33 +467,25 @@ def train_pretask(pretask_epoch, model, bert_model, dataloader, criterion, optim
         print("Evaluation:")
         model.eval()
         running_loss /= len(dataloader)
+        accuracy = evaluater.evaluate_acc(model, bert_model, dataloader, engineered_features)
        
 
         # log evaluation result
         pretask_loss_log.append(running_loss)
-        pretask_train_MSE_log.append(MSE_train)
-        pretask_train_RMSE_log.append(RMSE_train)
-        pretask_train_MAE_log.append(MAE_train)
-        pretask_train_r2_log.append(r2_train)
+        pretask_acc_log.append(accuracy)
 
         # save logs
         file = open(join(log_path, "pretask", save_name + ".txt"), "w")
         print("Last Epoch:", epoch + 1, file=file)
-        print("Final Loss:", loss_log[-1], file=file)
-        print("Final Train MSE:", train_MSE_log[-1], file=file)
-        print("Final Train RMSE:", train_RMSE_log[-1], file=file)
-        print("Final Train MAE:", train_MAE_log[-1], file=file)
-        print("Final Train R2:", train_r2_log[-1], file=file)
+        print("Final Loss:", pretask_loss_log[-1], file=file)
+        print("Final Train Accuracy:", pretask_acc_log[-1], file=file)
 
         # save variables 
         with open(join(log_path, "pretask", save_name + ".pkl"), "wb") as f:
             pickle.dump(
                 [
-                    loss_log,
-                    train_MSE_log,
-                    train_RMSE_log,
-                    train_MAE_log,
-                    train_r2_log,
+                    pretask_loss_log,
+                    pretask_acc_log,
                 ],
                 f,
             )
@@ -501,26 +497,20 @@ def train_pretask(pretask_epoch, model, bert_model, dataloader, criterion, optim
         
         # print stats
         print(
-            "epoch {} \t loss {:.5f} \t train_r2 {:.3f} \t time {:.1f} sec".format(
-                epoch + 1, running_loss, r2_train, time.time() - start
+            "epoch {} \t loss {:.5f} \t train_acc {:.3f} \t time {:.1f} sec".format(
+                epoch + 1, running_loss, accuracy, time.time() - start
             )
         )
 
     # plots 
     plot_names = [
         "loss",
-        "train_MSE",
-        "train_RMSE",
-        "train_MAE",
-        "train_r2",
+        "accuracy",
     ]
     for i, log in enumerate(
         [
-            loss_log,
-            train_MSE_log,
-            train_RMSE_log,
-            train_MAE_log,
-            train_r2_log,
+            pretask_loss_log,
+            pretask_acc_log
         ]
     ):
         plt.figure(num=None, figsize=(15, 10))
