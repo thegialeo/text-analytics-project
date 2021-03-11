@@ -5,6 +5,7 @@ import time
 import pickle
 
 import torch
+import numpy as np
 from sklearn.metrics import r2_score
 from torch.utils.data import DataLoader, TensorDataset
 import torch.optim as opt
@@ -87,11 +88,11 @@ def train_model(
     # prepare dataset
     if engineered_features and multiple_dataset:
         extra_train_feat = torch.from_numpy(
-            sentencestats.construct_features(train_sentences)
-        )
+            np.nan_to_num(sentencestats.construct_features(df_train.raw_text).values)
+        ).float()
         extra_test_feat = torch.from_numpy(
-            sentencestats.construct_features(test_sentences)
-        )
+            np.nan_to_num(sentencestats.construct_features(df_test.raw_text).values)
+        ).float()
         train_dataset_label = torch.tensor(
             list(df_train.source.values), dtype=torch.float
         ).unsqueeze_(1)
@@ -114,11 +115,11 @@ def train_model(
         )
     elif engineered_features:
         extra_train_feat = torch.from_numpy(
-            sentencestats.construct_features(train_sentences)
-        )
+            np.nan_to_num(sentencestats.construct_features(df_train.raw_text).values)
+        ).float()
         extra_test_feat = torch.from_numpy(
-            sentencestats.construct_features(test_sentences)
-        )
+            np.nan_to_num(sentencestats.construct_features(df_test.raw_text).values)
+        ).float()
         trainset = TensorDataset(
             train_input_tensor, train_segment_tensor, train_labels, extra_train_feat
         )
@@ -215,6 +216,7 @@ def train_model(
 
     # criterion
     criterion = torch.nn.MSELoss()
+    pretask_criterion = torch.nn
 
     # scheduler
     scheduler = opt.lr_scheduler.MultiStepLR(optimizer, step_epochs, 0.1)
@@ -380,3 +382,40 @@ def train_model(
         plt.ylabel(plot_names[i], fontsize=14)
         plt.savefig(join(fig_path, save_name + "_" + plot_names[i] + ".png"))
         plt.close("all")
+
+
+def train_pretask(pretask_epoch, model, bert_model, dataloader, criterion, optimizer, engineered_features=False):
+    """Train a model on a pretask
+
+    Written by Leo Nguyen. Contact Xenovortex, if problems arises.
+
+    Args:
+        pretask_epoch (int): integer provided will be the number of epochs spent on the pretask
+        model (torch.nn.Module): PyTorch model of a Regression Neural Network
+        bert_model (torch.nn.Module): BERT PyTorch model for feature extraction
+        dataloader (PyTorch dataloader): PyTorch dataloader of dataset
+        criterion (function): loss function
+        optimizer (PyTorch optimizer): optimizer of model parameters
+        engineered_features (bool, optional): contenate engineered features to vectorized sentence
+    """
+
+    # log
+    pretask_loss_log = []
+    pretask_train_MSE_log = []
+    pretask_train_RMSE_log = []
+    pretask_train_MAE_log = []
+    pretask_train_r2_log = []
+    pretask_test_MSE_log = []
+    pretask_test_RMSE_log = []
+    pretask_test_MAE_log = []
+    pretask_test_r2_log = []
+
+    for epoch in range(pretask_epoch):
+        start = time.time()
+        model.train()
+
+        print("Start Pretask Training:")
+
+        # training
+        for i, data in enumerate(tqdm(dataloader)):
+            pass

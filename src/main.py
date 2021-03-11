@@ -149,11 +149,12 @@ if __name__ == "__main__":
         method=None,
         save_name=None,
         conditional=False,
-        pretask=None,
+        pretask=[None, None],
         dropout=False,
         batchnorm=False
     )
     args = parser.parse_args()
+
 
     # load datasets
     if args.download is not None:
@@ -216,6 +217,8 @@ if __name__ == "__main__":
         if args.experiment == "train_net":
             if args.save_name is None:
                 args.save_name = args.filename
+            if args.pretask[0] is not None:
+                args.pretask[0] = int(args.pretask[0])
             trainer.train_model(
                 args.filename,
                 20,
@@ -225,7 +228,7 @@ if __name__ == "__main__":
                 args.save_name,
                 args.extra_feat,
                 args.conditional,
-                int(args.pretask[0]),
+                args.pretask[0],
                 args.pretask[1],
                 args.dropout,
                 args.batchnorm
