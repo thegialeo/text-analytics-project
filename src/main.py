@@ -131,6 +131,12 @@ if __name__ == "__main__":
         action="store_true",
         help="Use network architecture that has batch normalization layers"
     )
+    parser.add_argument(
+        "--no_freeze",
+        dest="no_freeze",
+        action="store_true",
+        help="Don't freeze first layer in pretask training"
+    )
 
     parser.set_defaults(
         dset="0",
@@ -151,7 +157,8 @@ if __name__ == "__main__":
         conditional=False,
         pretask=[None, None],
         dropout=False,
-        batchnorm=False
+        batchnorm=False,
+        no_freeze=False
     )
     args = parser.parse_args()
 
@@ -231,5 +238,6 @@ if __name__ == "__main__":
                 args.pretask[0],
                 args.pretask[1],
                 args.dropout,
-                args.batchnorm
+                args.batchnorm,
+                args.no_freeze
             )

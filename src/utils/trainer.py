@@ -26,7 +26,8 @@ def train_model(
     pretask_epoch=None,
     pretask_file=None,
     dropout=False,
-    batchnorm=False
+    batchnorm=False,
+    no_freeze=False
 ):
     """Train a model on the given dataset
 
@@ -45,6 +46,7 @@ def train_model(
         pretask_file (str, optional): filename of dataset for pretask
         dropout (bool, optional): use network architecture with dropout
         batchnorm (bool, optional): use network architecture with batch normalization
+        no_freeze (bool, optional): in pretask training, don't freeze first layer
     """
 
     # save paths
@@ -221,12 +223,15 @@ def train_model(
     # scheduler
     scheduler = opt.lr_scheduler.MultiStepLR(optimizer, step_epochs, 0.1)
 
-    # training on pretask
-    reg_model = train_pretask(pretask_epoch, reg_model, bert_model, pretask_loader, pretask_criterion, optimizer, engineered_features, log_path, fig_path, model_path, save_name)
 
-    # freeze first layer of the model 
-    for params in reg_model.model[0].parameters():
-        params.requires_grad = False
+    if pretask_epoch is not None and pretask_file is not None:
+        # training on pretask
+        reg_model = train_pretask(pretask_epoch, reg_model, bert_model, pretask_loader, pretask_criterion, optimizer, engineered_features, log_path, fig_path, model_path, save_name)
+
+        if not no_freeze:
+            # freeze first layer of the model 
+            for params in reg_model.model[0].parameters():
+                params.requires_grad = False
 
     # log
     loss_log = []
@@ -457,7 +462,7 @@ def train_pretask(pretask_epoch, model, bert_model, dataloader, criterion, optim
             
             # prediction
             output = sigmoid(model(features))
-
+ 
             # loss evaluation
             loss = criterion(output, label)
             loss.backward()

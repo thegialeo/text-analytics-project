@@ -306,10 +306,10 @@ def evaluate_acc(model, bert_model, dataloader, engineered_features=False):
 
             # prediction
             output = sigmoid(model(features))
-            _, pred = torch.max(output.data, 1)
-            
+            pred = torch.round(output)
+ 
             # count correct predictions
-            total += label.size(1)
+            total += label.size(0)
             correct += (pred == label).sum().item()
 
     return 100 * correct / total
