@@ -192,6 +192,8 @@ Additional tag:
 
 If multiple datasets were used, you have to specify conditional training by providing the tag --multiple_datasets.
 
+The tag --pretask [pretask_epoch, pretask_file] will overwrite the --multiple_datasets tag. In that case, instead of conditional training, the model will be first trained on a pretask (on the provided pretask_file for the given pretask_epoch) and than fine-tuned on the dataset provided by --filename. Note that the first layer of the model will be freezed after the pretask. To allow fine-tuning the first layer, use the tag --no_freeze. 
+
 Hyperparameter tuning for word2vec: linear search along hyperparameter (generate plots and results saved to txt file)
 
 > pipenv run main --search [hyperparameter, start, end, step, model, filename]
