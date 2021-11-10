@@ -9,7 +9,6 @@ Till Nocher </br>
 Leo.Nguyen@gmx.de </br>
 raoulb97@gmail.com </br>
 konrad.straube@outlook.com </br>
-nocher@cl.uni-heidelberg.de </br>
 
 
 ## Pretrained models:
